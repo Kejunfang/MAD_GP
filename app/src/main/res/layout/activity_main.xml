@@ -1,21 +1,145 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    android:background="@color/minimal_bg"
+    android:paddingHorizontal="24dp">
 
     <TextView
+        android:id="@+id/tvGreeting"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="MentaLeaf"
-        android:textStyle="bold"
-        android:textSize="30sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="48dp"
+        android:fontFamily="sans-serif-light"
+        android:text="Good Morning,\nAlex."
+        android:textColor="@color/text_main"
+        android:textSize="34sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tvDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:fontFamily="sans-serif"
+        android:text="October 24, Tuesday"
+        android:textColor="@color/text_secondary"
+        android:textSize="16sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvGreeting" />
+
+    <TextView
+        android:id="@+id/labelMood"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="48dp"
+        android:fontFamily="sans-serif-medium"
+        android:text="How do you feel right now?"
+        android:textColor="@color/text_main"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvDate" />
+
+    <LinearLayout
+        android:id="@+id/layoutEmojis"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:orientation="horizontal"
+        android:weightSum="5"
+        app:layout_constraintTop_toBottomOf="@id/labelMood">
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:src="@drawable/ic_mood_1"
+            app:tint="@color/icon_inactive" />
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:src="@drawable/ic_mood_1"
+            app:tint="@color/icon_inactive" />
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:layout_weight="1"
+            android:src="@drawable/ic_mood_1"
+            app:tint="@color/sage_green" />
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:src="@drawable/ic_mood_1"
+            app:tint="@color/icon_inactive" />
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:src="@drawable/ic_mood_1"
+            app:tint="@color/icon_inactive" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/labelChart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="48dp"
+        android:fontFamily="sans-serif-medium"
+        android:text="Weekly Mood Trend"
+        android:textColor="@color/text_main"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/layoutEmojis" />
+
+    <ImageView
+        android:id="@+id/ivFakeChart"
+        android:layout_width="match_parent"
+        android:layout_height="220dp"
+        android:layout_marginTop="24dp"
+        android:src="@drawable/ic_fake_chart"
+        android:scaleType="fitXY"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/labelChart" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@id/ivFakeChart">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Mon"
+            android:textColor="@color/text_secondary"
+            android:textSize="12sp"/>
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="Wed"
+            android:textColor="@color/text_secondary"
+            android:textSize="12sp"/>
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="end"
+            android:text="Fri"
+            android:textColor="@color/text_secondary"
+            android:textSize="12sp"/>
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

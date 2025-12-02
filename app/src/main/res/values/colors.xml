@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
-</resources>
+    <color name="purple_200">#8FB396</color>
+    <color name="purple_500">#8FB396</color>
+    <color name="purple_700">#8FB396</color>
+    <color name="teal_200">#8FB396</color>
+    <color name="teal_700">#8FB396</color>
+    <color name="black">#2D3142</color>
+    <color name="white">#FFFFFF</color>
+
+    <color name="minimal_bg">#F8F9FA</color>       <color name="sage_green">#8FB396</color>       <color name="text_main">#2D3142</color>        <color name="text_secondary">#90949C</color>   <color name="icon_inactive">#E0E0E0</color>    </resources>

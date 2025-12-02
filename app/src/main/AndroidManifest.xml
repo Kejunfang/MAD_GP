@@ -12,7 +12,16 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MAD_GP">
         <activity
-            android:name=".MainActivity"
+            android:name=".AppointmentBooking"
+            android:exported="false" />
+        <activity
+            android:name=".MindfulnessPlayer"
+            android:exported="false" />
+        <activity
+            android:name=".CommunityFeed"
+            android:exported="false" />
+        <activity
+            android:name=".HomePage"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
