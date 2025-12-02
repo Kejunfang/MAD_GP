@@ -272,13 +272,23 @@
 
         <!-- Book Now Button -->
         <Button
-            android:id="@+id/btnBook"
+            android:id="@+id/bookbtn"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:text="Book Now"
             android:textAllCaps="false"
             android:textSize="18sp"
-            android:layout_marginBottom="30dp"
+            android:layout_gravity="center"
+            android:backgroundTint="#8e18c2" />
+
+        <!-- Back Button -->
+        <Button
+            android:id="@+id/backbtn"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:text="Back"
+            android:textAllCaps="false"
+            android:textSize="18sp"
             android:layout_gravity="center"
             android:backgroundTint="#8e18c2" />
 
