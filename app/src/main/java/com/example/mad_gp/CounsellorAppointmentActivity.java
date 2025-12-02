@@ -32,7 +32,7 @@ public class CounsellorAppointmentActivity extends AppCompatActivity {
         slotAfternoon = findViewById(R.id.slotAfternoon);
         slotEvening = findViewById(R.id.slotEvening);
 
-        btnBook = findViewById(R.id.btnBook);
+        btnBook = findViewById(R.id.bookbtn);
 
         setupDateClick(dateMon, "11");
         setupDateClick(dateTue, "12");
