@@ -140,6 +140,16 @@
             android:text="Fri"
             android:textColor="@color/text_secondary"
             android:textSize="12sp"/>
+
+
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        tools:layout_editor_absoluteX="170dp"
+        tools:layout_editor_absoluteY="427dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
