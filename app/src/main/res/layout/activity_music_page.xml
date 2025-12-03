@@ -70,7 +70,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="300dp"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/ic_music_placeholder_large" />
+                    android:src="@drawable/lofimusic" />
             </com.google.android.material.card.MaterialCardView>
 
             <TextView
@@ -80,7 +80,7 @@
                 android:layout_marginTop="32dp"
                 android:fontFamily="sans-serif-medium"
                 android:gravity="center"
-                android:text="Weightless"
+                android:text="Lofi-Music"
                 android:textColor="@color/text_main"
                 android:textSize="24sp" />
 
