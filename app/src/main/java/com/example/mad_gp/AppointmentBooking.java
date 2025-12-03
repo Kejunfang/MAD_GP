@@ -1,8 +1,6 @@
 package com.example.mad_gp;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -21,7 +19,7 @@ public class AppointmentBooking extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_appointment_booking);
+        setContentView(R.layout.activity_appointment_booking1);
 
         // Initialize Date TextViews
         dateMon = findViewById(R.id.dateMon);

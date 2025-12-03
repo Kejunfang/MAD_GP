@@ -42,7 +42,7 @@ public class Event extends AppCompatActivity {
 
         // Workshop Card
         cardWorkshop.setOnClickListener(v -> {
-            Intent intent = new Intent(Event.this, Workshop.class);
+            Intent intent = new Intent(Event.this, WorkshopList.class);
             startActivity(intent);
         });
 

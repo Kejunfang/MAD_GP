@@ -10,7 +10,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-public class Workshop extends AppCompatActivity {
+public class WorkshopList extends AppCompatActivity {
 
     ImageView btnBack;
     EditText etSearch;
