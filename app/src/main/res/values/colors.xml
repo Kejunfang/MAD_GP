@@ -8,4 +8,4 @@
     <color name="black">#2D3142</color>
     <color name="white">#FFFFFF</color>
 
-    <color name="minimal_bg">#F8F9FA</color>       <color name="sage_green">#8FB396</color>       <color name="text_main">#2D3142</color>        <color name="text_secondary">#90949C</color>   <color name="icon_inactive">#E0E0E0</color>    </resources>
+    <color name="minimal_bg">#F8F9FA</color>       <color name="sage_green">#8FB396</color>       <color name="text_main">#2D3142</color>        <color name="text_secondary">#90949C</color>   <color name="card_bg">#FFFFFF</color>          <color name="icon_tint">#546E7A</color>        </resources>
