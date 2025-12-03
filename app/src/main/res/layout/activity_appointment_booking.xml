@@ -1,300 +1,296 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F5F5">
+    android:background="#E9F1F7">
 
     <LinearLayout
-        android:orientation="vertical"
-        android:padding="16dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-        <!-- Search Bar -->
-        <LinearLayout
-            android:id="@+id/searchBox"
-            android:background="@drawable/search_bg"
-            android:padding="12dp"
-            android:gravity="center_vertical"
+        <!-- Top Header -->
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="50dp">
+            android:layout_height="180dp"
+            android:background="#00897B"
+            android:padding="20dp">
 
             <ImageView
-                android:src="@android:drawable/ic_menu_search"
-                android:layout_width="22dp"
-                android:layout_height="22dp"
-                app:tint="#7D8C9A" />
-
-            <EditText
-                android:id="@+id/etSearch"
-                android:hint="Find your councellor"
-                android:paddingLeft="10dp"
-                android:background="@android:color/transparent"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-        </LinearLayout>
-
-        <!-- CARD 1 -->
-        <LinearLayout
-            android:id="@+id/card1"
-            android:orientation="horizontal"
-            android:background="@drawable/councellor_card_bg"
-            android:padding="16dp"
-            android:layout_marginTop="18dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <ImageView
-                android:src="@drawable/pfp_councellor1_removebg_preview"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_marginEnd="16dp" />
+                android:id="@+id/counsellorImage"
+                android:layout_width="150dp"
+                android:layout_height="200dp"
+                android:src="@drawable/counsellor1"
+                android:layout_alignParentStart="true" />
 
             <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content">
+                android:layout_toEndOf="@id/counsellorImage"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="20dp" >
 
                 <TextView
-                    android:id="@+id/name1"
+                    android:id="@+id/counsellorName"
+                    android:layout_width="200dp"
+                    android:layout_height="30dp"
                     android:text="Mr. John Lee"
-                    android:textStyle="bold"
-                    android:textSize="18sp"
-                    android:textColor="#333333"
-                    android:layout_height="24dp"
-                    android:layout_width="250dp" />
+                    android:textColor="#FFFFFF"
+                    android:textSize="22sp"
+                    android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/spec1"
+                    android:id="@+id/counsellorTitle"
                     android:text="Mental Health Counsellor"
-                    android:textSize="14sp"
-                    android:textColor="#777777"
-                    android:layout_height="24dp"
-                    android:layout_width="250dp" />
+                    android:textColor="#FFFFFF"
+                    android:textSize="16sp"
+                    android:layout_marginTop="4dp"
+                    android:layout_height="30dp"
+                    android:layout_width="200dp"  />
 
                 <TextView
-                    android:id="@+id/loc1"
+                    android:id="@+id/counsellorLocation"
                     android:text="Kuala Lumpur, Malaysia"
-                    android:textSize="12sp"
-                    android:textColor="#777777"
-                    android:layout_marginTop="3dp"
-                    android:layout_height="24dp"
-                    android:layout_width="250dp" />
+                    android:textColor="#FFFFFF"
+                    android:textSize="14sp"
+                    android:layout_marginTop="4dp"
+                    android:layout_height="30dp"
+                    android:layout_width="200dp"  />
             </LinearLayout>
-        </LinearLayout>
 
-        <!-- CARD 2 -->
+        </RelativeLayout>
+
+        <!-- Choose Date -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Choose Date"
+            android:textColor="#1A1A1A"
+            android:textSize="18sp"
+            android:layout_margin="16dp"
+            android:textStyle="bold" />
+
+        <!-- Dates Row -->
         <LinearLayout
-            android:id="@+id/card2"
-            android:orientation="horizontal"
-            android:background="@drawable/councellor_card_bg"
-            android:padding="16dp"
-            android:layout_marginTop="14dp"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginBottom="8dp">
 
-            <ImageView
-                android:src="@drawable/pfp_councellor2"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_marginEnd="16dp" />
-
+            <!-- Monday -->
             <LinearLayout
                 android:orientation="vertical"
+                android:gravity="center"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content">
 
                 <TextView
-                    android:id="@+id/name2"
-                    android:text="Dr. Sarah Tan"
-                    android:textStyle="bold"
-                    android:textSize="18sp"
-                    android:textColor="#333333"
-                    android:layout_height="24dp"
-                    android:layout_width="250dp" />
-
-                <TextView
-                    android:id="@+id/spec2"
-                    android:text="Psychologist"
+                    android:text="Mon"
                     android:textSize="14sp"
-                    android:textColor="#777777"
+                    android:textColor="#444"
+                    android:textAlignment="center"
                     android:layout_height="24dp"
-                    android:layout_width="250dp" />
+                    android:layout_width="50dp"  />
 
                 <TextView
-                    android:id="@+id/loc2"
-                    android:text="Penang, Malaysia"
-                    android:textSize="12sp"
-                    android:textColor="#777777"
-                    android:layout_marginTop="3dp"
-                    android:layout_height="24dp"
-                    android:layout_width="250dp" />
+                    android:id="@+id/dateMon"
+                    android:text="11"
+                    android:layout_marginTop="6dp"
+                    android:padding="10dp"
+                    android:gravity="center"
+                    android:textColor="#444"
+                    android:background="@drawable/date_circle"
+                    android:layout_height="50dp"
+                    android:layout_width="50dp"  />
             </LinearLayout>
-        </LinearLayout>
 
-        <!-- CARD 3 -->
-        <LinearLayout
-            android:id="@+id/card3"
-            android:orientation="horizontal"
-            android:background="@drawable/councellor_card_bg"
-            android:padding="16dp"
-            android:layout_marginTop="14dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <ImageView
-                android:src="@drawable/pfp_councellor3"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_marginEnd="16dp" />
-
+            <!-- Tuesday -->
             <LinearLayout
                 android:orientation="vertical"
+                android:gravity="center"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content">
 
                 <TextView
-                    android:id="@+id/name3"
-                    android:text="Dr. Amir Rahman"
-                    android:textStyle="bold"
-                    android:textSize="18sp"
-                    android:textColor="#333333"
-                    android:layout_height="24dp"
-                    android:layout_width="250dp" />
-
-                <TextView
-                    android:id="@+id/spec3"
-                    android:text="Psychologist"
+                    android:text="Tue"
                     android:textSize="14sp"
-                    android:textColor="#777777"
+                    android:textColor="#444"
+                    android:textAlignment="center"
                     android:layout_height="24dp"
-                    android:layout_width="250dp" />
+                    android:layout_width="50dp"  />
 
                 <TextView
-                    android:id="@+id/loc3"
-                    android:text="Johor, Malaysia"
-                    android:textSize="12sp"
-                    android:textColor="#777777"
-                    android:layout_marginTop="3dp"
-                    android:layout_height="24dp"
-                    android:layout_width="250dp" />
+                    android:id="@+id/dateTue"
+                    android:text="12"
+                    android:layout_marginTop="6dp"
+                    android:padding="10dp"
+                    android:gravity="center"
+                    android:textColor="#444"
+                    android:background="@drawable/date_circle"
+                    android:layout_height="50dp"
+                    android:layout_width="50dp"  />
             </LinearLayout>
-        </LinearLayout>
 
-        <!-- CARD 4 -->
-        <LinearLayout
-            android:id="@+id/card4"
-            android:orientation="horizontal"
-            android:background="@drawable/councellor_card_bg"
-            android:padding="16dp"
-            android:layout_marginTop="14dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <ImageView
-                android:src="@drawable/pfp_councellor4"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_marginEnd="16dp" />
-
+            <!-- Wednesday (selected) -->
             <LinearLayout
                 android:orientation="vertical"
+                android:gravity="center"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content">
 
                 <TextView
-                    android:id="@+id/name4"
-                    android:text="Ms. Nicole Tan"
-                    android:textStyle="bold"
-                    android:textSize="18sp"
-                    android:textColor="#333333"
-                    android:layout_height="24dp"
-                    android:layout_width="250dp" />
-
-                <TextView
-                    android:id="@+id/spec4"
-                    android:text="Mental Health Counsellor"
+                    android:text="Wed"
                     android:textSize="14sp"
-                    android:textColor="#777777"
+                    android:textColor="#444"
+                    android:textAlignment="center"
                     android:layout_height="24dp"
-                    android:layout_width="250dp" />
+                    android:layout_width="50dp"  />
 
                 <TextView
-                    android:id="@+id/loc4"
-                    android:text="Pahang, Malaysia"
-                    android:textSize="12sp"
-                    android:textColor="#777777"
-                    android:layout_marginTop="3dp"
-                    android:layout_height="24dp"
-                    android:layout_width="250dp" />
+                    android:id="@+id/dateWed"
+                    android:text="13"
+                    android:layout_marginTop="6dp"
+                    android:padding="10dp"
+                    android:gravity="center"
+                    android:textColor="#FFFFFF"
+                    android:background="@drawable/date_selected_circle"
+                    android:layout_height="50dp"
+                    android:layout_width="50dp"  />
             </LinearLayout>
-        </LinearLayout>
 
-        <!-- CARD 5 -->
-        <LinearLayout
-            android:id="@+id/card5"
-            android:orientation="horizontal"
-            android:background="@drawable/councellor_card_bg"
-            android:padding="16dp"
-            android:layout_marginTop="14dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <ImageView
-                android:src="@drawable/pfp_councellor5"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_marginEnd="16dp" />
-
+            <!-- Thursday -->
             <LinearLayout
                 android:orientation="vertical"
+                android:gravity="center"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content">
 
                 <TextView
-                    android:id="@+id/name5"
-                    android:text="Mr. Daniel Lim"
-                    android:textStyle="bold"
-                    android:textSize="18sp"
-                    android:textColor="#333333"
-                    android:layout_height="24dp"
-                    android:layout_width="250dp" />
-
-                <TextView
-                    android:id="@+id/spec5"
-                    android:text="Mental Health Counsellor"
+                    android:text="Thu"
                     android:textSize="14sp"
-                    android:textColor="#777777"
+                    android:textColor="#444"
+                    android:textAlignment="center"
                     android:layout_height="24dp"
-                    android:layout_width="250dp" />
+                    android:layout_width="50dp"  />
 
                 <TextView
-                    android:id="@+id/loc5"
-                    android:text="Perak, Malaysia"
-                    android:textSize="12sp"
-                    android:textColor="#777777"
-                    android:layout_marginTop="3dp"
+                    android:id="@+id/dateThu"
+                    android:text="14"
+                    android:layout_marginTop="6dp"
+                    android:padding="10dp"
+                    android:gravity="center"
+                    android:textColor="#444"
+                    android:background="@drawable/date_circle"
+                    android:layout_height="50dp"
+                    android:layout_width="50dp"  />
+            </LinearLayout>
+
+            <!-- Friday -->
+            <LinearLayout
+                android:orientation="vertical"
+                android:gravity="center"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:text="Fri"
+                    android:textSize="14sp"
+                    android:textColor="#444"
+                    android:textAlignment="center"
                     android:layout_height="24dp"
-                    android:layout_width="250dp" />
+                    android:layout_width="50dp"  />
+
+                <TextView
+                    android:id="@+id/dateFri"
+                    android:text="15"
+                    android:layout_marginTop="6dp"
+                    android:padding="10dp"
+                    android:gravity="center"
+                    android:textColor="#444"
+                    android:background="@drawable/date_circle"
+                    android:layout_height="50dp"
+                    android:layout_width="50dp"  />
             </LinearLayout>
         </LinearLayout>
+
+        <!-- Time Slots -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <!-- Time Slot 1 -->
+            <TextView
+                android:id="@+id/slotMorning"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="18dp"
+                android:gravity="center"
+                android:text="9 - 12 AM\nHospital name"
+                android:textAlignment="center"
+                android:textSize="18sp"
+                android:textColor="#FFFFFF"
+                android:background="@drawable/time_selected" />
+
+            <!-- Time Slot 2 -->
+            <TextView
+                android:id="@+id/slotAfternoon"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="18dp"
+                android:gravity="center"
+                android:text="3 - 5 PM\nHospital name"
+                android:textAlignment="center"
+                android:textSize="18sp"
+                android:layout_marginTop="10dp"
+                android:textColor="#000000"
+                android:background="@drawable/time_unselected" />
+
+            <!-- Time Slot 3 -->
+            <TextView
+                android:id="@+id/slotEvening"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="18dp"
+                android:gravity="center"
+                android:text="6 - 8 PM\nHospital name"
+                android:textAlignment="center"
+                android:textSize="18sp"
+                android:layout_marginTop="10dp"
+                android:textColor="#000000"
+                android:background="@drawable/time_unselected" />
+
+        </LinearLayout>
+
+        <!-- Book Now Button -->
+        <Button
+            android:id="@+id/bookbtn"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:text="Book Now"
+            android:textAllCaps="false"
+            android:textSize="18sp"
+            android:layout_gravity="center"
+            android:backgroundTint="#00897B" />
 
         <!-- Back Button -->
         <Button
             android:id="@+id/backbtn"
-            android:layout_width="100dp"
+            android:layout_width="200dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="280dp"
-            android:backgroundTint="#00897B"
-            android:text="Back" />
+            android:text="Back"
+            android:textAllCaps="false"
+            android:textSize="18sp"
+            android:layout_gravity="center"
+            android:backgroundTint="#00897B" />
 
     </LinearLayout>
-
 </ScrollView>

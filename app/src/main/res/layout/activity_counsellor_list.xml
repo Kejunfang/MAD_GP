@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F5F5">
+    android:background="#FFFFFF">
 
     <LinearLayout
         android:orientation="vertical"
@@ -41,16 +41,17 @@
 
             <EditText
                 android:id="@+id/etSearch"
-                android:hint="Find a workshop"
+                android:hint="Find your counsellor"
                 android:paddingLeft="10dp"
                 android:background="@android:color/transparent"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
+
         </LinearLayout>
 
-        <!-- WORKSHOP CARD 1 -->
+        <!-- CARD 1 -->
         <LinearLayout
-            android:id="@+id/workshop1"
+            android:id="@+id/card1"
             android:orientation="horizontal"
             android:background="@drawable/counsellor_card_bg"
             android:padding="16dp"
@@ -59,10 +60,10 @@
             android:layout_height="wrap_content">
 
             <ImageView
-                android:src="@drawable/stress"
+                android:src="@drawable/counsellor1"
                 android:layout_width="90dp"
                 android:layout_height="90dp"
-                android:layout_marginEnd="16dp" />
+                android:layout_marginLeft="16dp" />
 
             <LinearLayout
                 android:orientation="vertical"
@@ -71,88 +72,40 @@
                 android:layout_height="wrap_content">
 
                 <TextView
-                    android:id="@+id/title1"
-                    android:text="Stress &amp; Anxiety Management"
+                    android:id="@+id/name1"
+                    android:text="Mr. John Lee"
                     android:textStyle="bold"
                     android:textSize="18sp"
                     android:textColor="#FFFFFF"
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginTop="10dp"
                     android:layout_height="24dp"
                     android:layout_width="250dp" />
 
                 <TextView
-                    android:id="@+id/desc1"
-                    android:text="Learn practical tools to reduce anxiety &amp; calm the mind."
+                    android:id="@+id/spec1"
+                    android:text="Mental Health Counsellor"
                     android:textSize="14sp"
                     android:textColor="#FFFFFF"
-                    android:layout_marginTop="4dp"
-                    android:layout_height="50dp"
-                    android:layout_width="250dp" />
-
-                <TextView
-                    android:id="@+id/location1"
-                    android:text="Online Workshop"
-                    android:textSize="12sp"
-                    android:textColor="#FFFFFF"
-                    android:layout_marginTop="3dp"
-                    android:layout_height="24dp"
-                    android:layout_width="250dp" />
-            </LinearLayout>
-        </LinearLayout>
-
-        <!-- WORKSHOP CARD 2 -->
-        <LinearLayout
-            android:id="@+id/workshop2"
-            android:orientation="horizontal"
-            android:background="@drawable/counsellor_card_bg"
-            android:padding="16dp"
-            android:layout_marginTop="14dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <ImageView
-                android:src="@drawable/emotional"
-                android:layout_width="90dp"
-                android:layout_height="90dp"
-                android:layout_marginEnd="16dp" />
-
-            <LinearLayout
-                android:orientation="vertical"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:id="@+id/title2"
-                    android:text="Emotional Regulation Workshop"
-                    android:textStyle="bold"
-                    android:textSize="18sp"
-                    android:textColor="#FFFFFF"
+                    android:layout_marginLeft="30dp"
                     android:layout_height="24dp"
                     android:layout_width="250dp" />
 
                 <TextView
-                    android:id="@+id/desc2"
-                    android:text="Learn to manage overwhelming emotions with DBT skills."
-                    android:textSize="14sp"
-                    android:textColor="#FFFFFF"
-                    android:layout_marginTop="4dp"
-                    android:layout_height="50dp"
-                    android:layout_width="250dp" />
-
-                <TextView
-                    android:id="@+id/location2"
+                    android:id="@+id/loc1"
                     android:text="Kuala Lumpur, Malaysia"
                     android:textSize="12sp"
                     android:textColor="#FFFFFF"
                     android:layout_marginTop="3dp"
+                    android:layout_marginLeft="30dp"
                     android:layout_height="24dp"
                     android:layout_width="250dp" />
             </LinearLayout>
         </LinearLayout>
 
-        <!-- WORKSHOP CARD 3 -->
+        <!-- CARD 2 -->
         <LinearLayout
-            android:id="@+id/workshop3"
+            android:id="@+id/card2"
             android:orientation="horizontal"
             android:background="@drawable/counsellor_card_bg"
             android:padding="16dp"
@@ -161,10 +114,10 @@
             android:layout_height="wrap_content">
 
             <ImageView
-                android:src="@drawable/overthinking"
+                android:src="@drawable/counsellor2"
                 android:layout_width="90dp"
                 android:layout_height="90dp"
-                android:layout_marginEnd="16dp" />
+                android:layout_marginLeft="16dp" />
 
             <LinearLayout
                 android:orientation="vertical"
@@ -173,37 +126,40 @@
                 android:layout_height="wrap_content">
 
                 <TextView
-                    android:id="@+id/title3"
-                    android:text="Overthinking Control"
+                    android:id="@+id/name2"
+                    android:text="Dr. Sarah Tan"
                     android:textStyle="bold"
                     android:textSize="18sp"
                     android:textColor="#FFFFFF"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginLeft="30dp"
                     android:layout_height="24dp"
                     android:layout_width="250dp" />
 
                 <TextView
-                    android:id="@+id/desc3"
-                    android:text="Use CBT techniques to break negative thought loops."
+                    android:id="@+id/spec2"
+                    android:text="Psychologist"
                     android:textSize="14sp"
                     android:textColor="#FFFFFF"
-                    android:layout_marginTop="4dp"
-                    android:layout_height="50dp"
+                    android:layout_marginLeft="30dp"
+                    android:layout_height="24dp"
                     android:layout_width="250dp" />
 
                 <TextView
-                    android:id="@+id/location3"
+                    android:id="@+id/loc2"
                     android:text="Penang, Malaysia"
                     android:textSize="12sp"
                     android:textColor="#FFFFFF"
                     android:layout_marginTop="3dp"
+                    android:layout_marginLeft="30dp"
                     android:layout_height="24dp"
                     android:layout_width="250dp" />
             </LinearLayout>
         </LinearLayout>
 
-        <!-- WORKSHOP CARD 4 -->
+        <!-- CARD 3 -->
         <LinearLayout
-            android:id="@+id/workshop4"
+            android:id="@+id/card3"
             android:orientation="horizontal"
             android:background="@drawable/counsellor_card_bg"
             android:padding="16dp"
@@ -212,10 +168,10 @@
             android:layout_height="wrap_content">
 
             <ImageView
-                android:src="@drawable/meditation"
+                android:src="@drawable/counsellor3"
                 android:layout_width="90dp"
                 android:layout_height="90dp"
-                android:layout_marginEnd="16dp" />
+                android:layout_marginLeft="16dp" />
 
             <LinearLayout
                 android:orientation="vertical"
@@ -224,33 +180,145 @@
                 android:layout_height="wrap_content">
 
                 <TextView
-                    android:id="@+id/title4"
-                    android:text="Mindfulness &amp; Meditation"
+                    android:id="@+id/name3"
+                    android:text="Dr. Amir Rahman"
                     android:textStyle="bold"
                     android:textSize="18sp"
                     android:textColor="#FFFFFF"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginLeft="30dp"
                     android:layout_height="24dp"
                     android:layout_width="250dp" />
 
                 <TextView
-                    android:id="@+id/desc4"
-                    android:text="Experience guided meditation &amp; breathing practices."
+                    android:id="@+id/spec3"
+                    android:text="Psychologist"
                     android:textSize="14sp"
                     android:textColor="#FFFFFF"
-                    android:layout_marginTop="4dp"
-                    android:layout_height="50dp"
+                    android:layout_marginLeft="30dp"
+                    android:layout_height="24dp"
                     android:layout_width="250dp" />
 
                 <TextView
-                    android:id="@+id/location4"
-                    android:text="Online Session"
+                    android:id="@+id/loc3"
+                    android:text="Johor, Malaysia"
                     android:textSize="12sp"
                     android:textColor="#FFFFFF"
                     android:layout_marginTop="3dp"
+                    android:layout_marginLeft="30dp"
                     android:layout_height="24dp"
                     android:layout_width="250dp" />
             </LinearLayout>
         </LinearLayout>
+
+        <!-- CARD 4 -->
+        <LinearLayout
+            android:id="@+id/card4"
+            android:orientation="horizontal"
+            android:background="@drawable/counsellor_card_bg"
+            android:padding="16dp"
+            android:layout_marginTop="14dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:src="@drawable/counsellor4"
+                android:layout_width="90dp"
+                android:layout_height="90dp"
+                android:layout_marginLeft="16dp" />
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/name4"
+                    android:text="Ms. Nicole Tan"
+                    android:textStyle="bold"
+                    android:textSize="18sp"
+                    android:textColor="#FFFFFF"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginLeft="30dp"
+                    android:layout_height="24dp"
+                    android:layout_width="250dp" />
+
+                <TextView
+                    android:id="@+id/spec4"
+                    android:text="Mental Health Counsellor"
+                    android:textSize="14sp"
+                    android:textColor="#FFFFFF"
+                    android:layout_marginLeft="30dp"
+                    android:layout_height="24dp"
+                    android:layout_width="250dp" />
+
+                <TextView
+                    android:id="@+id/loc4"
+                    android:text="Pahang, Malaysia"
+                    android:textSize="12sp"
+                    android:textColor="#FFFFFF"
+                    android:layout_marginTop="3dp"
+                    android:layout_marginLeft="30dp"
+                    android:layout_height="24dp"
+                    android:layout_width="250dp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- CARD 5 -->
+        <LinearLayout
+            android:id="@+id/card5"
+            android:orientation="horizontal"
+            android:background="@drawable/counsellor_card_bg"
+            android:padding="16dp"
+            android:layout_marginTop="14dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:src="@drawable/counsellor5"
+                android:layout_width="90dp"
+                android:layout_height="90dp"
+                android:layout_marginLeft="16dp" />
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/name5"
+                    android:text="Mr. Daniel Lim"
+                    android:textStyle="bold"
+                    android:textSize="18sp"
+                    android:textColor="#FFFFFF"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginLeft="30dp"
+                    android:layout_height="24dp"
+                    android:layout_width="250dp" />
+
+                <TextView
+                    android:id="@+id/spec5"
+                    android:text="Mental Health Counsellor"
+                    android:textSize="14sp"
+                    android:textColor="#FFFFFF"
+                    android:layout_marginLeft="30dp"
+                    android:layout_height="24dp"
+                    android:layout_width="250dp" />
+
+                <TextView
+                    android:id="@+id/loc5"
+                    android:text="Perak, Malaysia"
+                    android:textSize="12sp"
+                    android:textColor="#FFFFFF"
+                    android:layout_marginTop="3dp"
+                    android:layout_marginLeft="30dp"
+                    android:layout_height="24dp"
+                    android:layout_width="250dp" />
+            </LinearLayout>
+        </LinearLayout>
+
     </LinearLayout>
 
 </ScrollView>

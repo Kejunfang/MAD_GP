@@ -12,7 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MAD_GP">
         <activity
-            android:name=".AppointmentBooking"
+            android:name=".CounsellorList"
             android:exported="false" />
         <activity
             android:name=".MindfulnessPlayer"
