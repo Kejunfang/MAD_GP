@@ -13,7 +13,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="180dp"
-            android:background="#A6DEBE"
+            android:background="#00897B"
             android:padding="20dp">
 
             <ImageView
@@ -279,7 +279,7 @@
             android:textAllCaps="false"
             android:textSize="18sp"
             android:layout_gravity="center"
-            android:backgroundTint="#8e18c2" />
+            android:backgroundTint="#00897B" />
 
         <!-- Back Button -->
         <Button
@@ -290,7 +290,7 @@
             android:textAllCaps="false"
             android:textSize="18sp"
             android:layout_gravity="center"
-            android:backgroundTint="#8e18c2" />
+            android:backgroundTint="#00897B" />
 
     </LinearLayout>
 </ScrollView>
