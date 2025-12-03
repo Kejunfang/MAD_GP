@@ -12,6 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MAD_GP">
         <activity
+            android:name=".BrathingExercise"
+            android:exported="false" />
+        <activity
             android:name=".AppointmentBooking"
             android:exported="false" />
         <activity
