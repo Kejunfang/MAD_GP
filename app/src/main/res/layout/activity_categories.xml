@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F5F5F5">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <!-- TITLE -->
+        <TextView
+            android:id="@+id/tvTitle"
+            android:text="Categories"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="#333333"
+            android:layout_marginBottom="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <!-- CARD 1 -->
+        <LinearLayout
+            android:id="@+id/card1"
+            android:orientation="horizontal"
+            android:background="@drawable/councellor_card_bg"
+            android:padding="16dp"
+            android:layout_marginTop="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="200dp">
+
+            <ImageView
+                android:src="@drawable/pfp_councellor1_removebg_preview"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_marginEnd="16dp" />
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/name1"
+                    android:text="Mr. John Lee"
+                    android:textStyle="bold"
+                    android:textSize="18sp"
+                    android:textColor="#333333"
+                    android:layout_height=""
+                    android:layout_width=""/>
+
+                <TextView
+                    android:id="@+id/spec1"
+                    android:text="Mental Health Counsellor"
+                    android:textSize="14sp"
+                    android:textColor="#777777" />
+
+                <TextView
+                    android:id="@+id/loc1"
+                    android:text="Kuala Lumpur, Malaysia"
+                    android:textSize="12sp"
+                    android:textColor="#777777"
+                    android:layout_marginTop="3dp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- CARD 2 -->
+        <LinearLayout
+            android:id="@+id/card2"
+            android:orientation="horizontal"
+            android:background="@drawable/councellor_card_bg"
+            android:padding="16dp"
+            android:layout_marginTop="14dp"
+            android:layout_width="match_parent"
+            android:layout_height="200dp">
+
+            <ImageView
+                android:src="@drawable/pfp_councellor2"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_marginEnd="16dp" />
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/name2"
+                    android:text="Dr. Sarah Tan"
+                    android:textStyle="bold"
+                    android:textSize="18sp"
+                    android:textColor="#333333" />
+
+                <TextView
+                    android:id="@+id/spec2"
+                    android:text="Psychologist"
+                    android:textSize="14sp"
+                    android:textColor="#777777" />
+
+                <TextView
+                    android:id="@+id/loc2"
+                    android:text="Penang, Malaysia"
+                    android:textSize="12sp"
+                    android:textColor="#777777"
+                    android:layout_marginTop="3dp" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- Back Button -->
+        <Button
+            android:id="@+id/backbtn"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="280dp"
+            android:backgroundTint="#00897B"
+            android:text="Back" />
+
+    </LinearLayout>
+
+</ScrollView>
