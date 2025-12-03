@@ -47,7 +47,7 @@
             android:layout_height="wrap_content">
 
             <ImageView
-                android:src="@drawable/pfp_councellor1"
+                android:src="@drawable/pfp_councellor1_removebg_preview"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
                 android:layout_marginEnd="16dp" />
@@ -292,7 +292,7 @@
             android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="280dp"
-            android:backgroundTint="#8e18c2"
+            android:backgroundTint="#00897B"
             android:text="Back" />
 
     </LinearLayout>

@@ -245,7 +245,7 @@
             android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="280dp"
-            android:backgroundTint="#8e18c2"
+            android:backgroundTint="#00897B"
             android:text="Back" />
     </LinearLayout>
 
