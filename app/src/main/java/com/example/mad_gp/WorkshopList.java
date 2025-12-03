@@ -20,7 +20,7 @@ public class WorkshopList extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_workshop);
+        setContentView(R.layout.activity_workshop_list);
 
         // ----------- FIND VIEWS -----------
         btnBack = findViewById(R.id.btnBack);
