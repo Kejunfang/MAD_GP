@@ -98,6 +98,28 @@
             </LinearLayout>
 
             <TextView
+                android:id="@+id/tvChartHeader"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:fontFamily="sans-serif-medium"
+                android:text="Weekly Mood Trend"
+                android:textColor="@color/text_main"
+                android:textSize="18sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/layoutEmojis" />
+
+            <ImageView
+                android:id="@+id/chartPlaceholder"
+                android:layout_width="match_parent"
+                android:layout_height="180dp"
+                android:layout_marginTop="16dp"
+                android:scaleType="fitXY"
+                android:src="@drawable/ic_dashboard_chart_placeholder"
+                app:layout_constraintTop_toBottomOf="@id/tvChartHeader" />
+
+
+            <TextView
                 android:id="@+id/titleMindfulness"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -107,7 +129,7 @@
                 android:textColor="@color/text_main"
                 android:textSize="20sp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/layoutEmojis" />
+                app:layout_constraintTop_toBottomOf="@id/chartPlaceholder" />
 
             <LinearLayout
                 android:id="@+id/layoutMindfulnessCards"
@@ -146,7 +168,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
                             android:fontFamily="sans-serif-medium"
-                            android:text="Deep Breathe"
+                            android:text="Breathing Exercise"
                             android:textColor="@color/text_main"
                             android:textSize="14sp" />
                     </LinearLayout>
@@ -180,7 +202,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
                             android:fontFamily="sans-serif-medium"
-                            android:text="Relax Music"
+                            android:text="Relaxation Music"
                             android:textColor="@color/text_main"
                             android:textSize="14sp" />
                     </LinearLayout>
@@ -258,7 +280,8 @@
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:background="@color/white"
-        android:elevation="8dp"
+        android:elevation="0dp"
+        android:layout_marginBottom="16dp"
         android:orientation="horizontal"
         android:paddingVertical="4dp"
         app:layout_constraintBottom_toBottomOf="parent"
