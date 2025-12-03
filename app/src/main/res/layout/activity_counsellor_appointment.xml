@@ -13,14 +13,14 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="180dp"
-            android:background="#8e18c2"
+            android:background="#A6DEBE"
             android:padding="20dp">
 
             <ImageView
                 android:id="@+id/counsellorImage"
                 android:layout_width="150dp"
                 android:layout_height="200dp"
-                android:src="@drawable/pfp_councellor1"
+                android:src="@drawable/pfp_councellor1_removebg_preview"
                 android:layout_alignParentStart="true" />
 
             <LinearLayout
