@@ -10,25 +10,35 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.MAD_GP">
-        <activity
-            android:name=".CounsellorList"
-            android:exported="false" />
-        <activity
-            android:name=".MindfulnessPlayer"
-            android:exported="false" />
-        <activity
-            android:name=".CommunityFeed"
-            android:exported="false" />
+        android:theme="@style/Theme.MAD_GP"
+        tools:targetApi="31">
+
         <activity
             android:name=".HomePage"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+            android:exported="false" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+        <activity
+            android:name=".Login"
+            android:exported="true"> <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
         </activity>
+
+        <activity android:name=".SignUp" android:exported="false" />
+
+        <activity android:name=".MindfulnessPlayer" android:exported="false" />
+        <activity android:name=".CommunityFeed" android:exported="false" />
+        <activity android:name=".AppointmentBooking" android:exported="false" />
+        <activity android:name=".CounsellorList" android:exported="false" />
+        <activity android:name=".WorkshopList" android:exported="false" />
+        <activity android:name=".Workshop1Detail" android:exported="false" />
+        <activity android:name=".WorkshopRegistration" android:exported="false" />
+        <activity android:name=".Event" android:exported="false" />
+
+
+
+
     </application>
 
 </manifest>

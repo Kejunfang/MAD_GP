@@ -19,9 +19,7 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:clickable="true"
-            android:focusable="true"
-            android:layout_constraintStart_toStartOf="parent"
-            android:layout_constraintTop_toTopOf="parent"/>
+            android:focusable="true" />
 
         <!-- TITLE -->
         <TextView
