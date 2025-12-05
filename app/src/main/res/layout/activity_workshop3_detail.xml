@@ -51,7 +51,7 @@
                 android:layout_height="90dp"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="20dp"
-                android:src="@drawable/stress" />
+                android:src="@drawable/overthinking" />
 
             <!-- Title -->
             <TextView
@@ -61,7 +61,7 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="16dp"
                 android:gravity="center"
-                android:text="Stress &amp; Anxiety Management"
+                android:text="Overthinking Control"
                 android:textColor="#000000"
                 android:textSize="22sp"
                 android:textStyle="bold" />
@@ -73,7 +73,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:gravity="center"
-                android:text="Online"
+                android:text="Penang, Malaysia"
                 android:textColor="#6B7280"
                 android:textSize="14sp" />
 
@@ -118,7 +118,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
-                android:text="Learn practical tools to reduce anxiety and calm the mind through mindful habits, breathing exercises, and simple mental resets you can use anytime."
+                android:text="Use CBT techniques to break negative thought loops. Learn to recognize harmful thinking patterns and replace them with practical, positive alternatives."
                 android:textColor="#4B5563"
                 android:textSize="15sp" />
 
@@ -143,7 +143,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="6dp"
-                    android:text="• Understanding the root causes of stress and anxiety"
+                    android:text="• Identifying common negative thought patterns"
                     android:textColor="#4B5563"
                     android:textSize="15sp" />
 
@@ -151,7 +151,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="6dp"
-                    android:text="• Guided breathing techniques for instant calm"
+                    android:text="• Using CBT strategies to challenge unhelpful thoughts"
                     android:textColor="#4B5563"
                     android:textSize="15sp" />
 
@@ -159,7 +159,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="6dp"
-                    android:text="• Building healthy coping strategies for daily life"
+                    android:text="• Practicing mindfulness to reduce rumination"
                     android:textColor="#4B5563"
                     android:textSize="15sp" />
 
@@ -167,7 +167,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="6dp"
-                    android:text="• Identifying negative thinking patterns &amp; reframing"
+                    android:text="• Building a daily routine to reinforce positive thinking"
                     android:textColor="#4B5563"
                     android:textSize="15sp" />
 
@@ -175,15 +175,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="6dp"
-                    android:text="• Practicing mindfulness to stay present and focused"
-                    android:textColor="#4B5563"
-                    android:textSize="15sp" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="6dp"
-                    android:text="• Creating a personalized stress-management plan"
+                    android:text="• Creating a personalized plan to prevent overthinking"
                     android:textColor="#4B5563"
                     android:textSize="15sp" />
 

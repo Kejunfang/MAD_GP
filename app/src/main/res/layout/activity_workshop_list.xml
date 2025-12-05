@@ -243,7 +243,7 @@
 
                 <TextView
                     android:id="@+id/location4"
-                    android:text="Online Session"
+                    android:text="Online Workshop"
                     android:textSize="12sp"
                     android:textColor="#FFFFFF"
                     android:layout_marginTop="3dp"

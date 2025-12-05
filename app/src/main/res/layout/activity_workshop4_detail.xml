@@ -51,7 +51,7 @@
                 android:layout_height="90dp"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="20dp"
-                android:src="@drawable/stress" />
+                android:src="@drawable/meditation" />
 
             <!-- Title -->
             <TextView
@@ -61,7 +61,7 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="16dp"
                 android:gravity="center"
-                android:text="Stress &amp; Anxiety Management"
+                android:text="Mindfulness & Meditation"
                 android:textColor="#000000"
                 android:textSize="22sp"
                 android:textStyle="bold" />
@@ -118,7 +118,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
-                android:text="Learn practical tools to reduce anxiety and calm the mind through mindful habits, breathing exercises, and simple mental resets you can use anytime."
+                android:text="Experience guided meditation and breathing practices. Learn techniques to stay present, reduce stress, and cultivate inner calm in your daily life."
                 android:textColor="#4B5563"
                 android:textSize="15sp" />
 
@@ -143,7 +143,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="6dp"
-                    android:text="• Understanding the root causes of stress and anxiety"
+                    android:text="• Guided meditation sessions for beginners and advanced learners"
                     android:textColor="#4B5563"
                     android:textSize="15sp" />
 
@@ -151,7 +151,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="6dp"
-                    android:text="• Guided breathing techniques for instant calm"
+                    android:text="• Breathing exercises to manage stress and anxiety"
                     android:textColor="#4B5563"
                     android:textSize="15sp" />
 
@@ -159,7 +159,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="6dp"
-                    android:text="• Building healthy coping strategies for daily life"
+                    android:text="• Mindfulness practices for daily activities"
                     android:textColor="#4B5563"
                     android:textSize="15sp" />
 
@@ -167,7 +167,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="6dp"
-                    android:text="• Identifying negative thinking patterns &amp; reframing"
+                    android:text="• Creating a personal meditation routine"
                     android:textColor="#4B5563"
                     android:textSize="15sp" />
 
@@ -175,15 +175,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="6dp"
-                    android:text="• Practicing mindfulness to stay present and focused"
-                    android:textColor="#4B5563"
-                    android:textSize="15sp" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="6dp"
-                    android:text="• Creating a personalized stress-management plan"
+                    android:text="• Techniques to stay focused and present in daily life"
                     android:textColor="#4B5563"
                     android:textSize="15sp" />
 
