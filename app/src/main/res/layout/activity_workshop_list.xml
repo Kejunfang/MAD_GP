@@ -81,7 +81,7 @@
 
                 <TextView
                     android:id="@+id/desc1"
-                    android:text="Learn practical tools to reduce anxiety &amp; calm the mind."
+                    android:text="Learn practical tools to reduce anxiety and calm the mind."
                     android:textSize="14sp"
                     android:textColor="#FFFFFF"
                     android:layout_marginTop="4dp"
@@ -234,7 +234,7 @@
 
                 <TextView
                     android:id="@+id/desc4"
-                    android:text="Experience guided meditation &amp; breathing practices."
+                    android:text="Experience guided meditation and breathing practices."
                     android:textSize="14sp"
                     android:textColor="#FFFFFF"
                     android:layout_marginTop="4dp"
