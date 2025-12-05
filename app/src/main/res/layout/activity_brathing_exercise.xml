@@ -16,7 +16,8 @@
     android:src="@drawable/ic_close_white"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toTopOf="parent"
-    tools:ignore="ContentDescription" />
+    tools:ignore="ContentDescription"
+    android:fitsSystemWindows="true"/>
 
     <View
         android:id="@+id/breathingCircleView"
@@ -33,7 +34,7 @@
         android:id="@+id/tvBreathingStatus"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="64dp"
         android:fontFamily="sans-serif-light"
         android:letterSpacing="0.1"
         android:text="Breathe In"
