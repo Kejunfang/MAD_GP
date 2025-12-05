@@ -18,4 +18,5 @@
     <color name="teal_dark">#00564D</color>
     <color name="teal_light_alpha">#804DB6AC</color>
     <color name="text_on_teal">#FFFFFF</color>
+    <color name="text_body">#424242</color>
 </resources>
