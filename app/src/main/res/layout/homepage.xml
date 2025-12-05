@@ -69,32 +69,27 @@
                     android:layout_width="0dp"
                     android:layout_height="48dp"
                     android:layout_weight="1"
-                    android:src="@drawable/sad_face"
-                    app:tint="@color/text_secondary" />
+                    android:src="@drawable/shock" />
                 <ImageView
                     android:layout_width="0dp"
                     android:layout_height="48dp"
                     android:layout_weight="1"
-                    android:src="@drawable/stunned"
-                    app:tint="@color/text_secondary" />
+                    android:src="@drawable/disgusted" />
                 <ImageView
                     android:layout_width="0dp"
                     android:layout_height="56dp"
                     android:layout_weight="1"
-                    android:src="@drawable/surprised"
-                    app:tint="@color/text_secondary" />
+                    android:src="@drawable/cute" />
                 <ImageView
                     android:layout_width="0dp"
                     android:layout_height="48dp"
                     android:layout_weight="1"
-                    android:src="@drawable/happiness"
-                    app:tint="@color/text_secondary" />
+                    android:src="@drawable/smile" />
                 <ImageView
                     android:layout_width="0dp"
                     android:layout_height="48dp"
                     android:layout_weight="1"
-                    android:src="@drawable/happy"
-                    app:tint="@color/text_secondary" />
+                    android:src="@drawable/happy" />
             </LinearLayout>
 
             <TextView
@@ -112,10 +107,10 @@
             <ImageView
                 android:id="@+id/chartPlaceholder"
                 android:layout_width="match_parent"
-                android:layout_height="180dp"
+                android:layout_height="290dp"
                 android:layout_marginTop="16dp"
                 android:scaleType="fitXY"
-                android:src="@drawable/ic_dashboard_chart_placeholder"
+                android:src="@drawable/sampletrend"
                 app:layout_constraintTop_toBottomOf="@id/tvChartHeader" />
 
 
