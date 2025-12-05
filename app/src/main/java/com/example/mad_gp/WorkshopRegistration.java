@@ -36,12 +36,9 @@ public class WorkshopRegistration extends AppCompatActivity {
         // Workshop Title List
         String[] workshopTitles = {
                 "Stress & Anxiety Management",
-                "Mindfulness for Beginners",
-                "Time Management Skills",
-                "Confidence Building Workshop",
-                "Emotional Intelligence Training",
-                "Public Speaking Mastery",
-                "Career Development Bootcamp"
+                "Emotional Regulation",
+                "Overthinking Control",
+                "Mindfulness &amp; Meditation"
         };
 
         ArrayAdapter<String> titleAdapter = new ArrayAdapter<>(
