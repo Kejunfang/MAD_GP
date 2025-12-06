@@ -12,6 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MAD_GP">
         <activity
+            android:name=".UserProfile"
+            android:exported="false" />
+        <activity
             android:name=".ChatRow"
             android:exported="false" />
         <activity

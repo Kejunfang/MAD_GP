@@ -70,14 +70,12 @@ public class HomePage extends AppCompatActivity {
         navHome.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(HomePage.this, "Home clicked!", Toast.LENGTH_SHORT).show();
             }
         });
 
         navEvent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(HomePage.this, "Event clicked! ", Toast.LENGTH_SHORT).show();
                 // 未来在这里添加跳转代码：
                 Intent intent = new Intent(HomePage.this, Event.class);
                 startActivity(intent);
@@ -88,7 +86,6 @@ public class HomePage extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // 跳转到社区页面 (Community Feed)
-                Toast.makeText(HomePage.this, "Social clicked!", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(HomePage.this, CommunityFeed.class);
                 startActivity(intent);
             }
@@ -100,7 +97,6 @@ public class HomePage extends AppCompatActivity {
                 // 跳转到个人资料页面 (Profile)
                 // 假设你的 profile 页面目前可能叫 AppointmentBooking? 或者你可以新建一个 ProfileActivity
                 // 这里暂时用 Toast
-                Toast.makeText(HomePage.this, "Profile clicked!", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(HomePage.this, ProfilePage.class);
                 startActivity(intent);
             }
