@@ -63,7 +63,7 @@ public class Event extends AppCompatActivity {
 
         // Profile
         navProfile.setOnClickListener(v -> {
-            Intent intent = new Intent(Event.this, Profile.class);
+            Intent intent = new Intent(Event.this, ProfilePage.class);
             startActivity(intent);
         });
     }
