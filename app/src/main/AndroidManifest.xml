@@ -12,6 +12,21 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MAD_GP">
         <activity
+            android:name=".ChatRow"
+            android:exported="false" />
+        <activity
+            android:name=".ChatList"
+            android:exported="false" />
+        <activity
+            android:name=".Chat"
+            android:exported="false" />
+        <activity
+            android:name=".CreatePost"
+            android:exported="false" />
+        <activity
+            android:name=".CommunityFeed"
+            android:exported="false" />
+        <activity
             android:name=".ProfilePage"
             android:exported="false" />
         <activity
@@ -42,14 +57,8 @@
             android:name=".MindfulnessPlayer"
             android:exported="false" />
         <activity
-            android:name=".CommunityFeed"
-            android:exported="false" />
-        <activity
-            android:name=".CommunityFeed"
-            android:exported="false" />
-        <activity
             android:name=".HomePage"
-            android:exported="true"></activity>
+            android:exported="true" />
         <activity
             android:name=".Login"
             android:exported="true">

@@ -89,8 +89,8 @@ public class HomePage extends AppCompatActivity {
             public void onClick(View v) {
                 // 跳转到社区页面 (Community Feed)
                 Toast.makeText(HomePage.this, "Social clicked!", Toast.LENGTH_SHORT).show();
-                //Intent intent = new Intent(HomePage.this, CommunityFeedActivity.class);
-                //startActivity(intent);
+                Intent intent = new Intent(HomePage.this, CommunityFeed.class);
+                startActivity(intent);
             }
         });
 

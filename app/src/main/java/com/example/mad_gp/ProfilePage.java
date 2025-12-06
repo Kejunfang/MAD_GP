@@ -52,8 +52,8 @@ public class ProfilePage extends AppCompatActivity {
             public void onClick(View v) {
                 // 假设你的社交页面叫 CommunityFeed (根据你的文件结构)
                 // 如果你的社交页面叫 Social.java，请把 CommunityFeed.class 改成 Social.class
-                //Intent intent = new Intent(Profile.this, CommunityFeed.class);
-                //startActivity(intent);
+                Intent intent = new Intent(ProfilePage.this, CommunityFeed.class);
+                startActivity(intent);
             }
         });
 
