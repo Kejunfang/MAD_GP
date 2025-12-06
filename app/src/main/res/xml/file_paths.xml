@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <?xml version="1.0" encoding="utf-8"?>
+    <paths>
+        <!-- 外部文件路径：用于存储拍照的头像 -->
+        <external-files-path name="avatar_images" path="Pictures/Avatar" />
+        <!-- 缓存路径：用于临时图片 -->
+        <external-cache-path name="temp_images" path="Pictures/Temp" />
+    </paths>
+</PreferenceScreen>
