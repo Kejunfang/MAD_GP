@@ -57,8 +57,8 @@ public class Event extends AppCompatActivity {
 
         // Social
         navSocial.setOnClickListener(v -> {
-            Intent intent = new Intent(Event.this, Social.class);
-            startActivity(intent);
+            //Intent intent = new Intent(Event.this, Social.class);
+            //startActivity(intent);
         });
 
         // Profile
