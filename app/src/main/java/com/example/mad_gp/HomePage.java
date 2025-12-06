@@ -9,7 +9,6 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import com.google.android.material.card.MaterialCardView;
 
 public class HomePage extends AppCompatActivity {
 

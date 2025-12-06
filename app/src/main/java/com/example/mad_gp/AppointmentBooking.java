@@ -1,48 +1,118 @@
 package com.example.mad_gp;
 
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.view.View;
-import android.widget.EditText;
-import android.widget.LinearLayout;
+import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 public class AppointmentBooking extends AppCompatActivity {
-    EditText etSearch;
-    LinearLayout card1, card2, card3, card4, card5;
+
+    TextView dateMon, dateTue, dateWed, dateThu, dateFri;
+    TextView slotMorning, slotAfternoon, slotEvening;
+    Button bookBtn, backBtn;
+
+    String selectedDate = "13"; // default selected (Wed)
+    String selectedTime = "9 - 12 AM";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_appointment_booking);
+        setContentView(R.layout.activity_appointment_booking1);
 
-        etSearch = findViewById(R.id.etSearch);
-        card1 = findViewById(R.id.card1);
-        card2 = findViewById(R.id.card2);
-        card3 = findViewById(R.id.card3);
-        card4 = findViewById(R.id.card4);
-        card5 = findViewById(R.id.card5);
+        // Initialize Date TextViews
+        dateMon = findViewById(R.id.dateMon);
+        dateTue = findViewById(R.id.dateTue);
+        dateWed = findViewById(R.id.dateWed);
+        dateThu = findViewById(R.id.dateThu);
+        dateFri = findViewById(R.id.dateFri);
 
-        etSearch.addTextChangedListener(new TextWatcher() {
-            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+        // Time slots
+        slotMorning = findViewById(R.id.slotMorning);
+        slotAfternoon = findViewById(R.id.slotAfternoon);
+        slotEvening = findViewById(R.id.slotEvening);
 
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                filterCards(s.toString());
-            }
+        // Buttons
+        bookBtn = findViewById(R.id.bookbtn);
+        backBtn = findViewById(R.id.backbtn);
 
-            @Override public void afterTextChanged(Editable s) {}
+        // --- DATE CLICK LISTENERS ---
+        setDateClick(dateMon, "11");
+        setDateClick(dateTue, "12");
+        setDateClick(dateWed, "13");
+        setDateClick(dateThu, "14");
+        setDateClick(dateFri, "15");
+
+        // --- TIME SLOT CLICK LISTENERS ---
+        setTimeClick(slotMorning, "9 - 12 AM");
+        setTimeClick(slotAfternoon, "3 - 5 PM");
+        setTimeClick(slotEvening, "6 - 8 PM");
+
+        // --- BOOK NOW BUTTON ---
+        bookBtn.setOnClickListener(v -> {
+            Toast.makeText(this,
+                    "Booked on " + selectedDate + " at " + selectedTime,
+                    Toast.LENGTH_LONG).show();
+
+            // If you want to open another page:
+            // Intent i = new Intent(Event.this, Confirmation.class);
+            // startActivity(i);
+        });
+
+        // --- BACK BUTTON ---
+        backBtn.setOnClickListener(v -> finish());
+    }
+
+    // ----------- HELPER FUNCTIONS -----------
+
+    private void setDateClick(TextView dateView, String dateValue) {
+        dateView.setOnClickListener(v -> {
+            selectedDate = dateValue;
+
+            // Reset all dates to unselected
+            resetAllDates();
+
+            // Set selected style
+            dateView.setBackgroundResource(R.drawable.date_selected_circle);
+            dateView.setTextColor(getResources().getColor(android.R.color.white));
         });
     }
 
-    private void filterCards(String text) {
-        text = text.toLowerCase();
+    private void resetAllDates() {
+        resetDateStyle(dateMon);
+        resetDateStyle(dateTue);
+        resetDateStyle(dateWed);
+        resetDateStyle(dateThu);
+        resetDateStyle(dateFri);
+    }
 
-        card1.setVisibility(text.isEmpty() || "mr. john lee mental health counsellor".toLowerCase().contains(text) ? View.VISIBLE : View.GONE);
-        card2.setVisibility(text.isEmpty() || "dr. sarah tan psychologist".toLowerCase().contains(text) ? View.VISIBLE : View.GONE);
-        card3.setVisibility(text.isEmpty() || "dr. amir rahman psychologist".toLowerCase().contains(text) ? View.VISIBLE : View.GONE);
-        card4.setVisibility(text.isEmpty() || "ms. nicole tan mental health counsellor".toLowerCase().contains(text) ? View.VISIBLE : View.GONE);
-        card5.setVisibility(text.isEmpty() || "mr. daniel lim mental health counsellor".toLowerCase().contains(text) ? View.VISIBLE : View.GONE);
+    private void resetDateStyle(TextView v) {
+        v.setBackgroundResource(R.drawable.date_circle);
+        v.setTextColor(getResources().getColor(android.R.color.black));
+    }
+
+    private void setTimeClick(TextView slotView, String timeValue) {
+        slotView.setOnClickListener(v -> {
+            selectedTime = timeValue;
+
+            // Reset all slots
+            resetAllSlots();
+
+            // Set selected slot design
+            slotView.setBackgroundResource(R.drawable.time_selected);
+            slotView.setTextColor(getResources().getColor(android.R.color.white));
+        });
+    }
+
+    private void resetAllSlots() {
+        resetSlotStyle(slotMorning);
+        resetSlotStyle(slotAfternoon);
+        resetSlotStyle(slotEvening);
+    }
+
+    private void resetSlotStyle(TextView slot) {
+        slot.setBackgroundResource(R.drawable.time_unselected);
+        slot.setTextColor(getResources().getColor(android.R.color.black));
     }
 }
