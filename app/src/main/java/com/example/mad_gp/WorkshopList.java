@@ -1,5 +1,6 @@
 package com.example.mad_gp;
 
+import android.content.Intent; // 记得导入这个
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
@@ -26,6 +27,7 @@ public class WorkshopList extends AppCompatActivity {
         btnBack = findViewById(R.id.btnBack);
         etSearch = findViewById(R.id.etSearch);
 
+        // 你的 ID 是 workshop1, workshop2... 我这里保持不变
         workshop1 = findViewById(R.id.workshop1);
         workshop2 = findViewById(R.id.workshop2);
         workshop3 = findViewById(R.id.workshop3);
@@ -38,10 +40,17 @@ public class WorkshopList extends AppCompatActivity {
 
         // ----------- WORKSHOP CLICK EVENTS -----------
 
-        workshop1.setOnClickListener(v ->
-                Toast.makeText(this, "Opening Stress & Anxiety Workshop", Toast.LENGTH_SHORT).show()
-        );
+        // 【修改点】Workshop 1: 点击跳转到 Workshop1Detail
+        workshop1.setOnClickListener(v -> {
+            // 你原来的 Toast 可以留着测试，也可以注释掉
+            // Toast.makeText(this, "Opening Stress & Anxiety Workshop", Toast.LENGTH_SHORT).show();
 
+            // 添加跳转代码
+            Intent intent = new Intent(WorkshopList.this, Workshop1Detail.class);
+            startActivity(intent);
+        });
+
+        // 其他 Workshop 保持原来的 Toast，或者你以后也可以照样改成跳转
         workshop2.setOnClickListener(v ->
                 Toast.makeText(this, "Opening Emotional Regulation Workshop", Toast.LENGTH_SHORT).show()
         );
@@ -55,7 +64,7 @@ public class WorkshopList extends AppCompatActivity {
         );
 
 
-        // ----------- SEARCH FILTER FUNCTION -----------
+        // ----------- SEARCH FILTER FUNCTION (完全保留你的逻辑) -----------
         etSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
@@ -71,7 +80,7 @@ public class WorkshopList extends AppCompatActivity {
     }
 
 
-    // ----------- FILTERING LOGIC -----------
+    // ----------- FILTERING LOGIC (完全保留) -----------
     private void filterWorkshops(String text) {
         text = text.toLowerCase();
 

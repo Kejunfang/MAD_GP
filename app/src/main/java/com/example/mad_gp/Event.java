@@ -46,7 +46,7 @@ public class Event extends AppCompatActivity {
 
         // Home
         navHome.setOnClickListener(v -> {
-            Intent intent = new Intent(Event.this, Home.class);
+            Intent intent = new Intent(Event.this, HomePage.class);
             startActivity(intent);
         });
 
