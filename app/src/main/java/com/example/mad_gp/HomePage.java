@@ -101,8 +101,8 @@ public class HomePage extends AppCompatActivity {
                 // 假设你的 profile 页面目前可能叫 AppointmentBooking? 或者你可以新建一个 ProfileActivity
                 // 这里暂时用 Toast
                 Toast.makeText(HomePage.this, "Profile clicked!", Toast.LENGTH_SHORT).show();
-                // Intent intent = new Intent(HomepageActivity.this, ProfileActivity.class);
-                // startActivity(intent);
+                Intent intent = new Intent(HomePage.this, ProfilePage.class);
+                startActivity(intent);
             }
         });
     }
