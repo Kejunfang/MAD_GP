@@ -9,6 +9,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import com.google.android.material.card.MaterialCardView;
 
 public class HomePage extends AppCompatActivity {
 
@@ -76,10 +77,10 @@ public class HomePage extends AppCompatActivity {
         navEvent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(HomePage.this, "Event clicked! (Feature coming soon)", Toast.LENGTH_SHORT).show();
+                Toast.makeText(HomePage.this, "Event clicked! ", Toast.LENGTH_SHORT).show();
                 // 未来在这里添加跳转代码：
-                // Intent intent = new Intent(HomepageActivity.this, EventActivity.class);
-                // startActivity(intent);
+                Intent intent = new Intent(HomePage.this, Event.class);
+                startActivity(intent);
             }
         });
 
