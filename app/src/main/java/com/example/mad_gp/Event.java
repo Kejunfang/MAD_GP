@@ -17,8 +17,6 @@ public class Event extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event);
 
-        // ---------------- FIND VIEWS ----------------
-        btnBack = findViewById(R.id.btnBack);
         cardAppointment = findViewById(R.id.cardAppointment);
         cardWorkshop = findViewById(R.id.cardWorkshop);
 
@@ -27,9 +25,6 @@ public class Event extends AppCompatActivity {
         navSocial = findViewById(R.id.navSocial);
         navProfile = findViewById(R.id.navProfile);
 
-
-        // ---------------- BACK BUTTON ----------------
-        btnBack.setOnClickListener(v -> finish());
 
 
         // ---------------- CARD NAVIGATION ----------------

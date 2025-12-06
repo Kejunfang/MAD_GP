@@ -1,191 +1,199 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#E9F1F7"
     android:fitsSystemWindows="true">
 
-    <LinearLayout
-        android:orientation="vertical"
-        android:padding="20dp"
+    <!-- Scrollable Content -->
+    <ScrollView
+        android:id="@+id/scrollContent"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        android:layout_above="@+id/bottomNav">
 
-        <ImageView
-            android:id="@+id/btnBack"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@drawable/back"
-            android:contentDescription="Back"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
-            android:clickable="true"
-            android:focusable="true" />
-
-        <!-- TITLE -->
-        <TextView
-            android:id="@+id/tvTitle"
-            android:text="Categories"
-            android:textSize="30sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="20dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <!-- CARD 1: Book an Appointment -->
         <LinearLayout
-            android:id="@+id/cardAppointment"
-            android:orientation="horizontal"
-            android:padding="18dp"
-            android:background="@drawable/goal_card_bg"
-            android:layout_marginBottom="16dp"
+            android:orientation="vertical"
+            android:padding="20dp"
             android:layout_width="match_parent"
-            android:layout_height="200dp">
+            android:layout_height="wrap_content">
 
+
+
+            <!-- TITLE -->
             <TextView
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:text="Book an Appointment"
+                android:id="@+id/tvTitle"
+                android:text="Categories"
                 android:textSize="30sp"
-                android:textColor="#FFFFFF"
                 android:textStyle="bold"
-                android:layout_marginTop="40dp"
-                android:textAlignment="center"
+                android:layout_marginBottom="20dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
-            <ImageView
-                android:src="@drawable/appointment"
-                android:layout_marginTop="30dp"
-                android:layout_width="100dp"
-                android:layout_height="100dp" />
+            <!-- CARD 1: Book an Appointment -->
+            <LinearLayout
+                android:id="@+id/cardAppointment"
+                android:orientation="horizontal"
+                android:padding="18dp"
+                android:background="@drawable/goal_card_bg"
+                android:layout_marginBottom="16dp"
+                android:gravity="center_vertical"
+                android:layout_width="match_parent"
+                android:layout_height="180dp"
+                android:clickable="true"
+                android:focusable="true">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:text="Book an Appointment"
+                    android:textSize="28sp"
+                    android:textColor="#FFFFFF"
+                    android:textStyle="bold"
+                    android:layout_height="wrap_content" />
+
+                <ImageView
+                    android:src="@drawable/appointment"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp" />
+            </LinearLayout>
+
+            <!-- CARD 2: Workshop -->
+            <LinearLayout
+                android:id="@+id/cardWorkshop"
+                android:orientation="horizontal"
+                android:padding="18dp"
+                android:background="@drawable/goal_card_bg"
+                android:layout_marginBottom="16dp"
+                android:gravity="center_vertical"
+                android:layout_width="match_parent"
+                android:layout_height="180dp"
+                android:clickable="true"
+                android:focusable="true">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:text="Workshop"
+                    android:textSize="28sp"
+                    android:textColor="#FFFFFF"
+                    android:textStyle="bold"
+                    android:layout_height="wrap_content" />
+
+                <ImageView
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:src="@drawable/workshop" />
+            </LinearLayout>
+
         </LinearLayout>
 
-        <!-- CARD 2: Workshop -->
+    </ScrollView>
+
+    <!-- Fixed Navigation Bar at Bottom -->
+    <LinearLayout
+        android:id="@+id/bottomNav"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:orientation="horizontal"
+        android:background="#FFFFFF"
+        android:gravity="center"
+        android:padding="8dp"
+        android:elevation="8dp"
+        android:layout_alignParentBottom="true">
+
+        <!-- Home -->
         <LinearLayout
-            android:id="@+id/cardWorkshop"
-            android:orientation="horizontal"
-            android:padding="18dp"
-            android:background="@drawable/goal_card_bg"
-            android:layout_width="match_parent"
-            android:layout_height="200dp">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:text="Workshop"
-                android:textSize="30sp"
-                android:textColor="#FFFFFF"
-                android:textStyle="bold"
-                android:layout_marginTop="60dp"
-                android:textAlignment="center"
-                android:layout_height="wrap_content" />
-
-            <ImageView
-                android:layout_marginTop="30dp"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:src="@drawable/workshop" />
-        </LinearLayout>
-
-        <!-- Navigation Bar -->
-        <LinearLayout
-            android:id="@+id/bottomNav"
-            android:layout_width="match_parent"
-            android:layout_height="70dp"
-            android:layout_marginTop="100dp"
-            android:orientation="horizontal"
-            android:background="#FFFFFF"
+            android:id="@+id/navHome"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
             android:gravity="center"
-            android:padding="8dp"
-            android:elevation="8dp"
-            android:layout_alignParentBottom="true">
+            android:clickable="true"
+            android:focusable="true">
 
-            <!-- Home -->
-            <LinearLayout
-                android:id="@+id/navHome"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:gravity="center">
+            <ImageView
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:src="@drawable/home" />
 
-                <ImageView
-                    android:layout_width="28dp"
-                    android:layout_height="28dp"
-                    android:src="@drawable/home" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Home"
+                android:textSize="12sp"/>
+        </LinearLayout>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Home"
-                    android:textSize="12sp"/>
-            </LinearLayout>
+        <!-- Event -->
+        <LinearLayout
+            android:id="@+id/navEvent"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:clickable="true"
+            android:focusable="true">
 
-            <!-- Event -->
-            <LinearLayout
-                android:id="@+id/navEvent"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:gravity="center">
+            <ImageView
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:src="@drawable/event" />
 
-                <ImageView
-                    android:layout_width="28dp"
-                    android:layout_height="28dp"
-                    android:src="@drawable/event" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Event"
+                android:textSize="12sp"/>
+        </LinearLayout>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Event"
-                    android:textSize="12sp"/>
-            </LinearLayout>
+        <!-- Social -->
+        <LinearLayout
+            android:id="@+id/navSocial"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:clickable="true"
+            android:focusable="true">
 
-            <!-- Social -->
-            <LinearLayout
-                android:id="@+id/navSocial"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:gravity="center">
+            <ImageView
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:src="@drawable/social" />
 
-                <ImageView
-                    android:layout_width="28dp"
-                    android:layout_height="28dp"
-                    android:src="@drawable/social" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Social"
+                android:textSize="12sp"/>
+        </LinearLayout>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Social"
-                    android:textSize="12sp"/>
-            </LinearLayout>
+        <!-- Profile -->
+        <LinearLayout
+            android:id="@+id/navProfile"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:clickable="true"
+            android:focusable="true">
 
-            <!-- Profile -->
-            <LinearLayout
-                android:id="@+id/navProfile"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:gravity="center">
+            <ImageView
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:src="@drawable/profile" />
 
-                <ImageView
-                    android:layout_width="28dp"
-                    android:layout_height="28dp"
-                    android:src="@drawable/profile" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Profile"
-                    android:textSize="12sp"/>
-            </LinearLayout>
-
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Profile"
+                android:textSize="12sp"/>
         </LinearLayout>
 
     </LinearLayout>
 
-</ScrollView>
+</RelativeLayout>
