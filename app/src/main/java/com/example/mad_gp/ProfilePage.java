@@ -10,8 +10,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy; // 导入缓存策略
+import com.bumptech.glide.Glide; // 如果未来用网络图片，这个还是需要的
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -75,13 +74,11 @@ public class ProfilePage extends AppCompatActivity {
         });
     }
 
-    // --- 利用 onResume 生命周期 ---
-    // 这个方法非常重要：当你从 EditProfile 页面按返回键回来时，onCreate 不会运行，但 onResume 会运行。
-    // 所以我们需要在这里刷新数据。
+    // --- 关键生命周期：onResume ---
+    // 当从 EditProfile 页面返回时，这个方法会自动运行，刷新数据
     @Override
     protected void onResume() {
         super.onResume();
-        // 每次页面显示出来，都重新拉取数据
         loadUserProfile();
     }
 
@@ -107,28 +104,32 @@ public class ProfilePage extends AppCompatActivity {
                                 tvUserBio.setText("This user hasn't written a bio yet.");
                             }
 
-                            // 3. 处理头像逻辑
-                            String profileImageUrl = documentSnapshot.getString("profileImageUrl");
+                            // 3. --- 处理头像 (无 Storage 版) ---
+                            // 我们读取的是字符串代号，例如 "counsellor1"
+                            String avatarTag = documentSnapshot.getString("profileImageUrl");
 
-                            if (profileImageUrl != null && !profileImageUrl.isEmpty()) {
-                                // 使用 Glide 加载
-                                Glide.with(ProfilePage.this)
-                                        .load(profileImageUrl)
-                                        .placeholder(R.drawable.ic_person_add) // 加载中显示的图
-                                        .error(R.drawable.ic_person_add)       // 错误时显示的图
-                                        .centerCrop()
-                                        // --- 关键修改：强制跳过缓存 ---
-                                        // 这样每次回到页面，Glide 都会认为图片可能变了，从而重新下载
-                                        .diskCacheStrategy(DiskCacheStrategy.NONE)
-                                        .skipMemoryCache(true)
-                                        .into(ivProfileImage);
+                            if (avatarTag != null && !avatarTag.isEmpty()) {
+                                // 兼容性检查：如果是 http 开头的链接 (以防万一以后用了网络图)，用 Glide
+                                if (avatarTag.startsWith("http")) {
+                                    Glide.with(ProfilePage.this)
+                                            .load(avatarTag)
+                                            .placeholder(R.drawable.ic_default_avatar)
+                                            .centerCrop()
+                                            .into(ivProfileImage);
+                                } else {
+                                    // 核心逻辑：如果是代号，直接查找本地资源 ID 并设置
+                                    // 这里调用了 EditProfile 里我们写好的静态方法
+                                    int resId = EditProfile.getAvatarResourceId(avatarTag);
+                                    ivProfileImage.setImageResource(resId);
+                                }
                             } else {
-                                ivProfileImage.setImageResource(R.drawable.ic_person_add);
+                                // 如果没数据，显示默认图
+                                ivProfileImage.setImageResource(R.drawable.ic_default_avatar);
                             }
                         }
                     })
                     .addOnFailureListener(e -> {
-                        // 加载失败的处理，通常不需要弹窗打扰用户，除非调试
+                        // 加载失败 (通常不用弹窗打扰用户，除非调试)
                         // Toast.makeText(ProfilePage.this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                     });
         } else {
