@@ -15,7 +15,10 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class AppointmentBooking extends AppCompatActivity {
@@ -45,7 +48,7 @@ public class AppointmentBooking extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // 请确保这里的布局文件名和你 XML 的名字一致 (例如 activity_appointment_booking1)
+        // 确保这里的布局文件名和你 XML 的名字一致
         setContentView(R.layout.activity_appointment_booking);
 
         // 初始化 Firebase
@@ -56,21 +59,21 @@ public class AppointmentBooking extends AppCompatActivity {
         initViews();
 
         // --- 2. 接收上一页传来的咨询师数据 ---
-        // 这一步非常重要，不然页面不知道你是要预约谁
         currentCounsellor = (Counsellor) getIntent().getSerializableExtra("COUNSELLOR_DATA");
         if (currentCounsellor != null) {
             setupCounsellorInfo();
         }
 
-        // --- 3. 设置日期点击事件 ---
-        setupDateClickListeners();
+        // --- 3. 设置真实的日期数据 (新增功能) ---
+        setupRealDates();
 
-        // --- 4. 设置时间点击事件 ---
+        // --- 4. 设置点击事件 ---
+        setupDateClickListeners();
         setupTimeClickListeners();
 
         // --- 5. 按钮逻辑 ---
         backbtn.setOnClickListener(v -> finish());
-        btnBack.setOnClickListener(v -> finish()); // 顶部的返回箭头
+        btnBack.setOnClickListener(v -> finish());
 
         bookbtn.setOnClickListener(v -> handleBooking());
     }
@@ -100,7 +103,6 @@ public class AppointmentBooking extends AppCompatActivity {
     }
 
     private void setupCounsellorInfo() {
-        // 把传过来的数据显示在界面上
         counsellorName.setText(currentCounsellor.getName());
         counsellorTitle.setText(currentCounsellor.getTitle());
         counsellorLocation.setText(currentCounsellor.getLocation());
@@ -109,6 +111,34 @@ public class AppointmentBooking extends AppCompatActivity {
         if (imgName != null && !imgName.isEmpty()) {
             int resId = getResources().getIdentifier(imgName, "drawable", getPackageName());
             if (resId != 0) counsellorImage.setImageResource(resId);
+        }
+    }
+
+    // --- 新增：计算并显示本周日期 ---
+    private void setupRealDates() {
+        Calendar calendar = Calendar.getInstance();
+
+        // 设置为本周一 (这样 Mon 对应周一，Tue 对应周二...)
+        // 注意：如果你希望显示的是“未来5天”而不是“本周一到周五”，可以把下面这一行删掉
+        calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+
+        // 日期格式化工具
+        SimpleDateFormat dayNumberFormat = new SimpleDateFormat("d", Locale.getDefault()); // 只获取数字 "12"
+        SimpleDateFormat fullDateFormat = new SimpleDateFormat("EEE, d MMM", Locale.getDefault()); // 获取完整 "Mon, 12 Oct"
+
+        // 循环填充5个格子
+        for (TextView dateView : dateViews) {
+            // 1. 设置显示的数字 (例如 "12")
+            dateView.setText(dayNumberFormat.format(calendar.getTime()));
+
+            // 2. 把完整日期 (例如 "Mon, 12 Oct") 藏在 tag 里，方便点击时获取
+            dateView.setTag(fullDateFormat.format(calendar.getTime()));
+
+            // 3. 如果这一天是“今天”，可以给个默认高亮 (可选)
+            // 这里我们暂时不默认高亮，保持清爽，让用户自己点
+
+            // 天数加 1，准备处理下一个格子
+            calendar.add(Calendar.DAY_OF_MONTH, 1);
         }
     }
 
@@ -126,12 +156,10 @@ public class AppointmentBooking extends AppCompatActivity {
             clickedView.setBackgroundResource(R.drawable.date_selected_circle);
             clickedView.setTextColor(Color.WHITE);
 
-            // 3. 记录选择
-            if (v == dateMon) selectedDate = "Mon, 11th";
-            else if (v == dateTue) selectedDate = "Tue, 12th";
-            else if (v == dateWed) selectedDate = "Wed, 13th";
-            else if (v == dateThu) selectedDate = "Thu, 14th";
-            else if (v == dateFri) selectedDate = "Fri, 15th";
+            // 3. 记录选择 (从 Tag 里取出我们刚才存的真实日期)
+            if (v.getTag() != null) {
+                selectedDate = v.getTag().toString();
+            }
         };
 
         for (TextView view : dateViews) {
@@ -173,7 +201,6 @@ public class AppointmentBooking extends AppCompatActivity {
 
     // --- 提交预约到 Firebase ---
     private void handleBooking() {
-        // 1. 验证是否都选了
         if (selectedDate.isEmpty()) {
             Toast.makeText(this, "Please select a date", Toast.LENGTH_SHORT).show();
             return;
@@ -187,7 +214,6 @@ public class AppointmentBooking extends AppCompatActivity {
             return;
         }
 
-        // 2. 准备数据
         bookbtn.setEnabled(false);
         bookbtn.setText("Booking...");
 
@@ -198,13 +224,12 @@ public class AppointmentBooking extends AppCompatActivity {
         appointment.put("counsellorId", currentCounsellor.getId());
         appointment.put("counsellorName", currentCounsellor.getName());
         appointment.put("counsellorImage", currentCounsellor.getImageName());
-        appointment.put("date", selectedDate);
+        appointment.put("date", selectedDate); // 这里现在存的是真实日期
         appointment.put("time", selectedTime);
         appointment.put("location", selectedLocation);
         appointment.put("status", "upcoming");
         appointment.put("timestamp", FieldValue.serverTimestamp());
 
-        // 3. 写入 Firestore
         db.collection("appointments")
                 .add(appointment)
                 .addOnSuccessListener(documentReference -> {
