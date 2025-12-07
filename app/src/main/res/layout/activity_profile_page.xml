@@ -57,6 +57,7 @@
                     app:strokeWidth="2dp">
 
                     <ImageView
+                        android:id="@+id/ivProfileImage"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:scaleType="centerCrop"
@@ -64,21 +65,23 @@
                 </com.google.android.material.card.MaterialCardView>
 
                 <TextView
+                    android:id="@+id/tvUserName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     android:fontFamily="sans-serif-medium"
-                    android:text="JunYi"
+                    android:text="Loading..."
                     android:textColor="@color/text_main"
                     android:textSize="22sp" />
 
                 <TextView
+                    android:id="@+id/tvUserBio"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="40dp"
                     android:layout_marginTop="8dp"
                     android:gravity="center"
-                    android:text="Mindfulness enthusiast. Love listening to Lo-Fi music and attending workshops to find inner peace."
+                    android:text="Loading bio..."
                     android:textColor="@color/text_secondary"
                     android:textSize="14sp" />
 
@@ -97,10 +100,11 @@
                         android:orientation="vertical">
 
                         <TextView
+                            android:id="@+id/tvEventCount"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="sans-serif-bold"
-                            android:text="12"
+                            android:text="0"
                             android:textColor="@color/text_main"
                             android:textSize="18sp" />
 
@@ -119,10 +123,11 @@
                         android:orientation="vertical">
 
                         <TextView
+                            android:id="@+id/tvPostCount"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="sans-serif-bold"
-                            android:text="28"
+                            android:text="0"
                             android:textColor="@color/text_main"
                             android:textSize="18sp" />
 
