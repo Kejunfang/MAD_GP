@@ -12,6 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MAD_GP">
         <activity
+            android:name=".ItemCounsellor"
+            android:exported="false" />
+        <activity
             android:name=".ItemDailyTip"
             android:exported="false" />
         <activity
@@ -19,9 +22,6 @@
             android:exported="false" />
         <activity
             android:name=".EditProfile"
-            android:exported="false" />
-        <activity
-            android:name=".ItemMusic"
             android:exported="false" />
         <activity
             android:name=".UserProfile"
@@ -48,9 +48,6 @@
             android:name=".DailyTipsDetails"
             android:exported="false" />
         <activity
-            android:name=".BlogDetail"
-            android:exported="false" />
-        <activity
             android:name=".MusicPage"
             android:exported="false" />
         <activity
@@ -61,15 +58,6 @@
             android:exported="false" />
         <activity
             android:name=".AppointmentBooking"
-            android:exported="false" />
-        <activity
-            android:name=".AppointmentBooking"
-            android:exported="false" />
-        <activity
-            android:name=".MindfulnessPlayer"
-            android:exported="false" />
-        <activity
-            android:name=".MindfulnessPlayer"
             android:exported="false" />
         <activity
             android:name=".HomePage"
