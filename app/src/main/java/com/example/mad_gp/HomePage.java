@@ -16,11 +16,14 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.text.SimpleDateFormat; // 导入日期格式化工具
 import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 public class HomePage extends AppCompatActivity {
 
-    private TextView tvGreeting;
+    private TextView tvGreeting, tvDate; // 新增 tvDate
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
 
@@ -34,7 +37,9 @@ public class HomePage extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
 
         // --- 2. 初始化控件 ---
-        tvGreeting = findViewById(R.id.tvGreeting); // 绑定问候语的 TextView
+        tvGreeting = findViewById(R.id.tvGreeting);
+        tvDate = findViewById(R.id.tvDate); // 绑定日期控件
+
         FrameLayout cardBreathe = findViewById(R.id.cardBreathe);
         FrameLayout cardMusic = findViewById(R.id.cardMusic);
         MaterialCardView cardFeaturedArticle = findViewById(R.id.cardFeaturedArticle);
@@ -45,8 +50,9 @@ public class HomePage extends AppCompatActivity {
         LinearLayout navSocial = findViewById(R.id.navSocial);
         LinearLayout navProfile = findViewById(R.id.navProfile);
 
-        // --- 3. 更新问候语和名字 ---
+        // --- 3. 更新界面数据 (问候语 + 日期) ---
         updateGreetingUI();
+        updateDate(); // 新增：更新日期
 
         // --- 4. 设置点击事件 ---
 
@@ -85,7 +91,7 @@ public class HomePage extends AppCompatActivity {
         navHome.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // 当前就在 HomePage，不需要跳转
+                // 当前页，无需跳转
             }
         });
 
@@ -114,42 +120,44 @@ public class HomePage extends AppCompatActivity {
         });
     }
 
-    // --- 新增方法：更新问候语逻辑 ---
-    private void updateGreetingUI() {
-        // 1. 获取当前时间段的问候语
-        String timeGreeting = getTimeBasedGreeting();
+    // --- 新增方法：获取并显示今天日期 ---
+    private void updateDate() {
+        // 格式示例: "October 26, Thursday"
+        // MMMM = 全写月份, dd = 日, EEEE = 全写星期
+        SimpleDateFormat sdf = new SimpleDateFormat("MMMM dd, EEEE", Locale.getDefault());
+        String currentDate = sdf.format(new Date());
 
-        // 2. 获取当前用户
+        tvDate.setText(currentDate);
+    }
+
+    // --- 更新问候语逻辑 ---
+    private void updateGreetingUI() {
+        String timeGreeting = getTimeBasedGreeting();
         FirebaseUser currentUser = mAuth.getCurrentUser();
 
         if (currentUser != null) {
             String uid = currentUser.getUid();
-            // 3. 从 Firestore 读取名字
             db.collection("users").document(uid).get()
                     .addOnSuccessListener(documentSnapshot -> {
                         if (documentSnapshot.exists()) {
-                            // 获取数据库里的名字
                             String name = documentSnapshot.getString("name");
                             if (name == null || name.isEmpty()) {
-                                name = "Friend"; // 如果没名字，默认叫 Friend
+                                name = "Friend";
                             }
-                            // 组合文字：例如 "Good Morning,\nJunYi."
                             tvGreeting.setText(timeGreeting + ",\n" + name + ".");
                         } else {
                             tvGreeting.setText(timeGreeting + ",\nFriend.");
                         }
                     })
                     .addOnFailureListener(e -> {
-                        // 如果读取失败，至少显示个问候
                         tvGreeting.setText(timeGreeting + ".");
                     });
         } else {
-            // 如果没登录
             tvGreeting.setText(timeGreeting + ".");
         }
     }
 
-    // --- 辅助方法：判断时间 ---
+    // --- 辅助方法：判断时间段 ---
     private String getTimeBasedGreeting() {
         Calendar c = Calendar.getInstance();
         int timeOfDay = c.get(Calendar.HOUR_OF_DAY);
