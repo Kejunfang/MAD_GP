@@ -91,7 +91,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="sans-serif-medium"
-                    android:text="5 Ways to De-stress at Your Desk"
+                    android:text="Loading..."
                     android:textColor="@color/text_main"
                     android:textSize="24sp" />
 
@@ -100,18 +100,22 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:orientation="horizontal">
+
                     <TextView
+                        android:id="@+id/tvArticleAuthor"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="MentaLeaf Team"
+                        android:text="Loading..."
                         android:textColor="@color/sage_green"
                         android:fontFamily="sans-serif-medium"
                         android:textSize="14sp"/>
+
                     <TextView
+                        android:id="@+id/tvArticleDate"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
-                        android:text="•  Oct 26, 2023"
+                        android:text=""
                         android:textColor="@color/text_secondary"
                         android:textSize="14sp"/>
                 </LinearLayout>
@@ -128,7 +132,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:lineSpacingMultiplier="1.5"
-                    android:text="Feeling overwhelmed at work? You're not alone. Here are 5 simple, actionable mindfulness techniques you can do right at your desk to reset your mind and reduce stress.\n\n1. The 4-7-8 Breathing Technique\nInhale quietly through your nose for 4 seconds. Hold your breath for 7 seconds. Exhale completely through your mouth for 8 seconds. Repeat this cycle 4 times. This ancient technique acts as a natural tranquilizer for the nervous system.\n\n2. The 'Desk Scan'\nClose your eyes for a minute. Focus on the physical sensations of sitting at your desk. Feel the contact of your feet on the floor, your back against the chair. Notice any tension in your shoulders or jaw. Acknowledging these sensations without judgment can help ground you in the present moment.\n\n3. Mindful Hydration\nDon't just gulp down your water. Take a moment to truly notice it. Feel the cool temperature of the glass, observe the clarity of the water. Take a slow, deliberate sip, paying attention to the sensation of swallowing. This simple act can bring you back to your senses.\n\n4. The 'One-Minute Vacation'\nFind a picture on your desk or phone—a landscape, a loved one, a pet. Spend one full minute looking at it. Notice the colors, the textures, the memories associated with it. Allow yourself to be fully absorbed in the image, leaving your work worries behind for just 60 seconds.\n\n5. Gratitude Pause\nBefore you dive back into your tasks, take a moment to identify one thing you're grateful for today. It could be as simple as a warm cup of coffee or a supportive colleague. Shifting your focus to gratitude can instantly boost your mood and perspective.\n\nRemember, consistency is key. Try incorporating one of these techniques into your daily routine, and notice the difference it makes in your stress levels."
+                    android:text="Loading content..."
                     android:textColor="@color/text_body"
                     android:textSize="16sp" />
 
