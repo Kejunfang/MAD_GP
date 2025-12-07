@@ -95,4 +95,17 @@ public class Music implements Parcelable {
         dest.writeString(coverUrl);
         dest.writeString(audioUrl);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Music music = (Music) o;
+        return id != null && id.equals(music.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : 0;
+    }
 }

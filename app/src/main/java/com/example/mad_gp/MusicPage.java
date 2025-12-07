@@ -279,7 +279,8 @@ public class MusicPage extends AppCompatActivity {
 
         try {
             mediaPlayer = new MediaPlayer();
-            mediaPlayer.setDataSource(audioUrl);
+            // .trim() 会自动删掉链接前后的空格
+            mediaPlayer.setDataSource(audioUrl.trim());
             mediaPlayer.prepareAsync();
 
             mediaPlayer.setOnPreparedListener(mp -> {
