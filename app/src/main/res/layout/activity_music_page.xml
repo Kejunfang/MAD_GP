@@ -169,7 +169,9 @@
                     tools:ignore="ContentDescription" />
             </LinearLayout>
 
+            <!-- Up Next 标题 -->
             <TextView
+                android:id="@+id/tvUpNextTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="40dp"
@@ -179,16 +181,12 @@
                 android:textColor="@color/text_main"
                 android:textSize="18sp" />
 
-            <LinearLayout
+            <!-- Up Next 列表 -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewUpNext"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <include layout="@layout/activity_music_list" />
-                <include layout="@layout/activity_music_list" />
-                <include layout="@layout/activity_music_list" />
-
-            </LinearLayout>
+                android:nestedScrollingEnabled="false" />
 
         </LinearLayout>
     </ScrollView>

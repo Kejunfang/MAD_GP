@@ -42,7 +42,7 @@ public class HomePage extends AppCompatActivity {
         cardMusic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(HomePage.this, MusicPage.class);
+                Intent intent = new Intent(HomePage.this, MusicList.class);
                 startActivity(intent);
             }
         });
