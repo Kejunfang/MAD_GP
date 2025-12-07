@@ -36,8 +36,24 @@
                     android:text="My Profile"
                     android:textColor="@color/text_main"
                     android:textSize="24sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageView
+                    android:id="@+id/btnEditProfile"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:padding="4dp"
+                    android:src="@drawable/ic_editprofile"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:tint="@color/text_main"
+                    tools:ignore="ContentDescription" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -295,7 +311,8 @@
                             android:layout_height="60dp"
                             android:scaleType="centerCrop"
                             android:src="@drawable/studydesk"
-                            app:shapeAppearanceOverlay="@style/ShapeAppearance.MaterialComponents.MediumComponent"/>
+                            app:shapeAppearanceOverlay="@style/ShapeAppearance.MaterialComponents.MediumComponent" />
+
                         <LinearLayout
                             android:layout_width="0dp"
                             android:layout_weight="1"
@@ -307,8 +324,8 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="5 Tips for better sleep"
                                 android:fontFamily="sans-serif-medium"
+                                android:text="5 Tips for better sleep"
                                 android:textColor="@color/text_main"
                                 android:textSize="16sp" />
 
@@ -324,9 +341,9 @@
                         <ImageView
                             android:layout_width="20dp"
                             android:layout_height="20dp"
+                            android:layout_gravity="center_vertical"
                             android:src="@drawable/favourite_filled"
-                            app:tint="#F44336"
-                            android:layout_gravity="center_vertical"/>
+                            app:tint="#F44336" />
 
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
@@ -351,7 +368,7 @@
                             android:layout_height="60dp"
                             android:scaleType="centerCrop"
                             android:src="@drawable/lofimusic"
-                            app:shapeAppearanceOverlay="@style/ShapeAppearance.MaterialComponents.MediumComponent"/>
+                            app:shapeAppearanceOverlay="@style/ShapeAppearance.MaterialComponents.MediumComponent" />
 
                         <LinearLayout
                             android:layout_width="0dp"
@@ -364,8 +381,8 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="My meditation journey"
                                 android:fontFamily="sans-serif-medium"
+                                android:text="My meditation journey"
                                 android:textColor="@color/text_main"
                                 android:textSize="16sp" />
 
@@ -381,9 +398,9 @@
                         <ImageView
                             android:layout_width="20dp"
                             android:layout_height="20dp"
+                            android:layout_gravity="center_vertical"
                             android:src="@drawable/favourite_filled"
-                            app:tint="#F44336"
-                            android:layout_gravity="center_vertical"/>
+                            app:tint="#F44336" />
 
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
@@ -397,9 +414,9 @@
         android:id="@+id/bottomNavigationContainer"
         android:layout_width="match_parent"
         android:layout_height="60dp"
+        android:layout_marginBottom="16dp"
         android:background="@color/white"
         android:elevation="0dp"
-        android:layout_marginBottom="16dp"
         android:orientation="horizontal"
         android:paddingVertical="4dp"
         app:layout_constraintBottom_toBottomOf="parent"

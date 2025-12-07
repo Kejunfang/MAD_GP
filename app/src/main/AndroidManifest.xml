@@ -12,6 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MAD_GP">
         <activity
+            android:name=".EditProfile"
+            android:exported="false" />
+        <activity
             android:name=".ItemMusic"
             android:exported="false" />
         <activity

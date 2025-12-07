@@ -41,6 +41,13 @@ public class ProfilePage extends AppCompatActivity {
         tvPostCount = findViewById(R.id.tvPostCount);
         ivProfileImage = findViewById(R.id.ivProfileImage); // 绑定头像控件
 
+        ImageView btnEditProfile = findViewById(R.id.btnEditProfile);
+        btnEditProfile.setOnClickListener(v -> {
+            // 跳转到编辑页面
+            Intent intent = new Intent(ProfilePage.this, EditProfile.class);
+            startActivity(intent);
+        });
+
         // --- 加载用户数据 ---
         loadUserProfile();
 
