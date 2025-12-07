@@ -2,65 +2,62 @@ package com.example.mad_gp;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 
 public class Workshop1Detail extends AppCompatActivity {
 
-    ImageView backBtn, favoriteBtn;
-    TextView workshopTitle, workshopMode, workshopDescription;
-    Button registerButton;
-
-    boolean isFavorite = false; // toggle state
+    private Workshop currentWorkshop;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_workshop1_detail);
 
-        // --- Initialize Views ---
-        backBtn = findViewById(R.id.backBtn);
-        favoriteBtn = findViewById(R.id.favoriteBtn);
-        workshopTitle = findViewById(R.id.workshopTitle);
-        workshopMode = findViewById(R.id.workshopMode);
-        workshopDescription = findViewById(R.id.workshopDescription);
-        registerButton = findViewById(R.id.registerButton);
+        // 绑定控件
+        ImageView ivImage = findViewById(R.id.ivWorkshopImage);
+        TextView tvTitle = findViewById(R.id.workshopTitle);
+        TextView tvMode = findViewById(R.id.workshopMode);
+        TextView tvPrice = findViewById(R.id.workshopPrice); // 新增价格显示
+        TextView tvDesc = findViewById(R.id.workshopDescription);
+        TextView tvAgenda = findViewById(R.id.tvWorkshopAgenda);
+        Button btnRegister = findViewById(R.id.registerButton);
+        ImageView btnBack = findViewById(R.id.backBtn);
 
-        // --- Set Static Texts (optional if not sent by Intent) ---
-        workshopTitle.setText("Stress & Anxiety Management");
-        workshopMode.setText("Online");
-        workshopDescription.setText(
-                "Learn practical tools to reduce anxiety and calm the mind through mindful habits, " +
-                        "breathing exercises, and simple mental resets you can use anytime."
-        );
+        // 接收数据
+        currentWorkshop = (Workshop) getIntent().getSerializableExtra("WORKSHOP_DATA");
 
-        // --- Back Button Function ---
-        backBtn.setOnClickListener(v -> {
-            finish(); // go back to previous activity
-        });
+        if (currentWorkshop != null) {
+            tvTitle.setText(currentWorkshop.getTitle());
+            tvMode.setText(currentWorkshop.getLocation());
+            tvPrice.setText(currentWorkshop.getPrice());
+            tvDesc.setText(currentWorkshop.getFullDescription());
 
-        // --- Favorite Button Toggle ---
-        favoriteBtn.setOnClickListener(v -> toggleFavorite());
+            // 处理 Agenda
+            if (currentWorkshop.getAgenda() != null) {
+                tvAgenda.setText(currentWorkshop.getAgenda().replace("\\n", "\n"));
+            }
 
-        // --- Register Button ---
-        registerButton.setOnClickListener(v -> {
+            // 图片
+            String imgName = currentWorkshop.getImageName();
+            if (imgName != null) {
+                int resId = getResources().getIdentifier(imgName, "drawable", getPackageName());
+                if (resId != 0) ivImage.setImageResource(resId);
+            }
+        }
+
+        btnBack.setOnClickListener(v -> finish());
+
+        // 注册按钮：传数据给注册页
+        btnRegister.setOnClickListener(v -> {
             Intent intent = new Intent(Workshop1Detail.this, WorkshopRegistration.class);
+            intent.putExtra("WORKSHOP_TITLE", currentWorkshop.getTitle());
+            intent.putExtra("WORKSHOP_ID", currentWorkshop.getId());
             startActivity(intent);
         });
-
-    }
-
-    private void toggleFavorite() {
-        if (!isFavorite) {
-            favoriteBtn.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.favourite_filled));
-            isFavorite = true;
-        } else {
-            favoriteBtn.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.favourite));
-            isFavorite = false;
-        }
     }
 }

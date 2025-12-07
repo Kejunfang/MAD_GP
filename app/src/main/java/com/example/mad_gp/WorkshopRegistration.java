@@ -1,98 +1,84 @@
 package com.example.mad_gp;
 
 import android.os.Bundle;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
+import java.util.Map;
+
 public class WorkshopRegistration extends AppCompatActivity {
 
-    EditText inputName, inputEmail, inputPhone, inputMotivation;
-    Spinner spinnerWorkshopTitle;
-    Button submitButton, cancelButton;
+    private EditText inputName, inputEmail, inputPhone, inputMotivation, etWorkshopTitle;
+    private Button submitButton, cancelButton;
+    private String workshopId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_workshop_registration);
 
-        // INITIALIZE VIEWS
         inputName = findViewById(R.id.inputName);
         inputEmail = findViewById(R.id.inputEmail);
         inputPhone = findViewById(R.id.inputPhone);
         inputMotivation = findViewById(R.id.inputMotivation);
-
-        spinnerWorkshopTitle = findViewById(R.id.spinnerWorkshopTitle);
-
+        etWorkshopTitle = findViewById(R.id.etWorkshopTitle);
         submitButton = findViewById(R.id.submitButton);
         cancelButton = findViewById(R.id.cancelButton);
 
-        // POPULATE DROPDOWNS
+        // 接收上一页传来的标题和 ID
+        String title = getIntent().getStringExtra("WORKSHOP_TITLE");
+        workshopId = getIntent().getStringExtra("WORKSHOP_ID");
 
-        // Workshop Title List
-        String[] workshopTitles = {
-                "Stress & Anxiety Management",
-                "Emotional Regulation",
-                "Overthinking Control",
-                "Mindfulness &amp; Meditation"
-        };
+        etWorkshopTitle.setText(title); // 自动填入标题
 
-        ArrayAdapter<String> titleAdapter = new ArrayAdapter<>(
-                this,
-                android.R.layout.simple_spinner_dropdown_item,
-                workshopTitles
-        );
-        spinnerWorkshopTitle.setAdapter(titleAdapter);
+        cancelButton.setOnClickListener(v -> finish());
 
-        // SUBMIT BUTTON CLICK
-        submitButton.setOnClickListener(v -> {
+        submitButton.setOnClickListener(v -> submitRegistration());
+    }
 
-            // Get field values
-            String name = inputName.getText().toString().trim();
-            String email = inputEmail.getText().toString().trim();
-            String phone = inputPhone.getText().toString().trim();
-            String motivation = inputMotivation.getText().toString().trim();
+    private void submitRegistration() {
+        String name = inputName.getText().toString();
+        String email = inputEmail.getText().toString();
+        String phone = inputPhone.getText().toString();
+        String motivation = inputMotivation.getText().toString();
 
-            String selectedWorkshop = spinnerWorkshopTitle.getSelectedItem().toString();
+        if (name.isEmpty() || email.isEmpty() || phone.isEmpty()) {
+            Toast.makeText(this, "Please fill in all required fields", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
-            // Validation
-            if (name.isEmpty()) {
-                inputName.setError("Name is required");
-                return;
-            }
-            if (email.isEmpty()) {
-                inputEmail.setError("Email is required");
-                return;
-            }
-            if (phone.isEmpty()) {
-                inputPhone.setError("Phone number is required");
-                return;
-            }
-            if (motivation.isEmpty()) {
-                inputMotivation.setError("Please enter your motivation");
-                return;
-            }
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        if (mAuth.getCurrentUser() == null) {
+            Toast.makeText(this, "Please login first", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
-            // SUCCESS — SHOW TOAST
-            Toast.makeText(
-                    this,
-                    "Registration Submitted:\n" +
-                            "Name: " + name + "\n" +
-                            "Email: " + email + "\n" +
-                            "Phone: " + phone + "\n" +
-                            "Workshop: " + selectedWorkshop + "\n",
-                    Toast.LENGTH_LONG
-            ).show();
-        });
+        Map<String, Object> reg = new HashMap<>();
+        reg.put("userId", mAuth.getCurrentUser().getUid());
+        reg.put("workshopId", workshopId);
+        reg.put("workshopTitle", etWorkshopTitle.getText().toString());
+        reg.put("fullName", name);
+        reg.put("email", email);
+        reg.put("phone", phone);
+        reg.put("motivation", motivation);
+        reg.put("timestamp", FieldValue.serverTimestamp());
 
-
-        // CANCEL BUTTON CLICK
-        cancelButton.setOnClickListener(v -> {
-            finish();  // Close this page and go back
-        });
+        FirebaseFirestore.getInstance().collection("workshop_registrations")
+                .add(reg)
+                .addOnSuccessListener(doc -> {
+                    Toast.makeText(this, "Registration Successful!", Toast.LENGTH_SHORT).show();
+                    finish();
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
     }
 }

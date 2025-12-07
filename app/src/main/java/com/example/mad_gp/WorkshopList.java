@@ -1,119 +1,104 @@
 package com.example.mad_gp;
 
-import android.content.Intent; // 记得导入这个
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class WorkshopList extends AppCompatActivity {
 
-    ImageView btnBack;
-    EditText etSearch;
-
-    LinearLayout workshop1, workshop2, workshop3, workshop4;
+    private RecyclerView rvWorkshops;
+    private WorkshopAdapter adapter;
+    private List<Workshop> workshopList;
+    private List<Workshop> fullList; // 备份用于搜索
+    private FirebaseFirestore db;
+    private EditText etSearch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_workshop_list);
 
-        // ----------- FIND VIEWS -----------
-        btnBack = findViewById(R.id.btnBack);
+        db = FirebaseFirestore.getInstance();
+
+        ImageView btnBack = findViewById(R.id.btnBack);
         etSearch = findViewById(R.id.etSearch);
+        rvWorkshops = findViewById(R.id.rvWorkshops);
 
-        // 你的 ID 是 workshop1, workshop2... 我这里保持不变
-        workshop1 = findViewById(R.id.workshop1);
-        workshop2 = findViewById(R.id.workshop2);
-        workshop3 = findViewById(R.id.workshop3);
-        workshop4 = findViewById(R.id.workshop4);
+        rvWorkshops.setLayoutManager(new LinearLayoutManager(this));
+        workshopList = new ArrayList<>();
+        fullList = new ArrayList<>();
+        adapter = new WorkshopAdapter(this, workshopList);
+        rvWorkshops.setAdapter(adapter);
 
+        loadWorkshops();
 
-        // ----------- BACK BUTTON -----------
         btnBack.setOnClickListener(v -> finish());
 
-
-        // ----------- WORKSHOP CLICK EVENTS -----------
-
-        // 【修改点】Workshop 1: 点击跳转到 Workshop1Detail
-        workshop1.setOnClickListener(v -> {
-            // 你原来的 Toast 可以留着测试，也可以注释掉
-            // Toast.makeText(this, "Opening Stress & Anxiety Workshop", Toast.LENGTH_SHORT).show();
-
-            // 添加跳转代码
-            Intent intent = new Intent(WorkshopList.this, Workshop1Detail.class);
-            startActivity(intent);
-        });
-
-        // 其他 Workshop 保持原来的 Toast，或者你以后也可以照样改成跳转
-        workshop2.setOnClickListener(v ->
-                Toast.makeText(this, "Opening Emotional Regulation Workshop", Toast.LENGTH_SHORT).show()
-        );
-
-        workshop3.setOnClickListener(v ->
-                Toast.makeText(this, "Opening Overthinking Control Workshop", Toast.LENGTH_SHORT).show()
-        );
-
-        workshop4.setOnClickListener(v ->
-                Toast.makeText(this, "Opening Mindfulness & Meditation Workshop", Toast.LENGTH_SHORT).show()
-        );
-
-
-        // ----------- SEARCH FILTER FUNCTION (完全保留你的逻辑) -----------
         etSearch.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
-
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                filterWorkshops(s.toString());
+                filter(s.toString());
             }
-
             @Override
-            public void afterTextChanged(Editable s) { }
+            public void afterTextChanged(Editable s) {}
         });
     }
 
-
-    // ----------- FILTERING LOGIC (完全保留) -----------
-    private void filterWorkshops(String text) {
-        text = text.toLowerCase();
-
-        // Workshop 1
-        if ("stress & anxiety management".toLowerCase().contains(text) ||
-                "stress".contains(text) || "anxiety".contains(text)) {
-            workshop1.setVisibility(LinearLayout.VISIBLE);
+    private void filter(String text) {
+        workshopList.clear();
+        if (text.isEmpty()) {
+            workshopList.addAll(fullList);
         } else {
-            workshop1.setVisibility(LinearLayout.GONE);
+            text = text.toLowerCase();
+            for (Workshop item : fullList) {
+                if (item.getTitle().toLowerCase().contains(text) || item.getDescription().toLowerCase().contains(text)) {
+                    workshopList.add(item);
+                }
+            }
         }
+        adapter.notifyDataSetChanged();
+    }
 
-        // Workshop 2
-        if ("emotional regulation workshop".toLowerCase().contains(text) ||
-                "emotional".contains(text)) {
-            workshop2.setVisibility(LinearLayout.VISIBLE);
-        } else {
-            workshop2.setVisibility(LinearLayout.GONE);
-        }
+    private void loadWorkshops() {
+        db.collection("workshops").get().addOnSuccessListener(queryDocumentSnapshots -> {
+            if (!queryDocumentSnapshots.isEmpty()) {
+                workshopList.clear();
+                fullList.clear();
+                for (DocumentSnapshot doc : queryDocumentSnapshots) {
+                    String id = doc.getId();
+                    String title = doc.getString("title");
+                    String desc = doc.getString("description");
+                    String fullDesc = doc.getString("fullDescription");
+                    String loc = doc.getString("location");
+                    String price = doc.getString("price");
+                    String img = doc.getString("imageName");
+                    String agenda = doc.getString("agenda");
 
-        // Workshop 3
-        if ("overthinking control".toLowerCase().contains(text) ||
-                "overthinking".contains(text)) {
-            workshop3.setVisibility(LinearLayout.VISIBLE);
-        } else {
-            workshop3.setVisibility(LinearLayout.GONE);
-        }
-
-        // Workshop 4
-        if ("mindfulness & meditation".toLowerCase().contains(text) ||
-                "meditation".contains(text) || "mindfulness".contains(text)) {
-            workshop4.setVisibility(LinearLayout.VISIBLE);
-        } else {
-            workshop4.setVisibility(LinearLayout.GONE);
-        }
+                    Workshop workshop = new Workshop(id, title, desc, fullDesc, loc, price, img, agenda);
+                    workshopList.add(workshop);
+                    fullList.add(workshop);
+                }
+                adapter.notifyDataSetChanged();
+            } else {
+                Toast.makeText(this, "No workshops found.", Toast.LENGTH_SHORT).show();
+            }
+        }).addOnFailureListener(e -> {
+            Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        });
     }
 }

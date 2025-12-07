@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#F5F5F5"
+    android:orientation="vertical"
     android:fitsSystemWindows="true">
 
     <LinearLayout
@@ -23,7 +24,6 @@
             android:clickable="true"
             android:focusable="true" />
 
-        <!-- Search Bar -->
         <LinearLayout
             android:id="@+id/searchBox"
             android:background="@drawable/search_bg"
@@ -46,210 +46,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
         </LinearLayout>
-
-        <!-- WORKSHOP CARD 1 -->
-        <LinearLayout
-            android:id="@+id/workshop1"
-            android:orientation="horizontal"
-            android:background="@drawable/counsellor_card_bg"
-            android:padding="16dp"
-            android:layout_marginTop="18dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <ImageView
-                android:src="@drawable/stress"
-                android:layout_width="90dp"
-                android:layout_height="90dp"
-                android:layout_marginEnd="16dp" />
-
-            <LinearLayout
-                android:orientation="vertical"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:id="@+id/title1"
-                    android:text="Stress &amp; Anxiety Management"
-                    android:textStyle="bold"
-                    android:textSize="18sp"
-                    android:textColor="#FFFFFF"
-                    android:layout_height="24dp"
-                    android:layout_width="250dp" />
-
-                <TextView
-                    android:id="@+id/desc1"
-                    android:text="Learn practical tools to reduce anxiety and calm the mind."
-                    android:textSize="14sp"
-                    android:textColor="#FFFFFF"
-                    android:layout_marginTop="4dp"
-                    android:layout_height="50dp"
-                    android:layout_width="250dp" />
-
-                <TextView
-                    android:id="@+id/location1"
-                    android:text="Online Workshop"
-                    android:textSize="12sp"
-                    android:textColor="#FFFFFF"
-                    android:layout_marginTop="3dp"
-                    android:layout_height="24dp"
-                    android:layout_width="250dp" />
-            </LinearLayout>
-        </LinearLayout>
-
-        <!-- WORKSHOP CARD 2 -->
-        <LinearLayout
-            android:id="@+id/workshop2"
-            android:orientation="horizontal"
-            android:background="@drawable/counsellor_card_bg"
-            android:padding="16dp"
-            android:layout_marginTop="14dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <ImageView
-                android:src="@drawable/emotional"
-                android:layout_width="90dp"
-                android:layout_height="90dp"
-                android:layout_marginEnd="16dp" />
-
-            <LinearLayout
-                android:orientation="vertical"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:id="@+id/title2"
-                    android:text="Emotional Regulation"
-                    android:textStyle="bold"
-                    android:textSize="18sp"
-                    android:textColor="#FFFFFF"
-                    android:layout_height="24dp"
-                    android:layout_width="250dp" />
-
-                <TextView
-                    android:id="@+id/desc2"
-                    android:text="Learn to manage overwhelming emotions with DBT skills."
-                    android:textSize="14sp"
-                    android:textColor="#FFFFFF"
-                    android:layout_marginTop="4dp"
-                    android:layout_height="50dp"
-                    android:layout_width="250dp" />
-
-                <TextView
-                    android:id="@+id/location2"
-                    android:text="Kuala Lumpur, Malaysia"
-                    android:textSize="12sp"
-                    android:textColor="#FFFFFF"
-                    android:layout_marginTop="3dp"
-                    android:layout_height="24dp"
-                    android:layout_width="250dp" />
-            </LinearLayout>
-        </LinearLayout>
-
-        <!-- WORKSHOP CARD 3 -->
-        <LinearLayout
-            android:id="@+id/workshop3"
-            android:orientation="horizontal"
-            android:background="@drawable/counsellor_card_bg"
-            android:padding="16dp"
-            android:layout_marginTop="14dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <ImageView
-                android:src="@drawable/overthinking"
-                android:layout_width="90dp"
-                android:layout_height="90dp"
-                android:layout_marginEnd="16dp" />
-
-            <LinearLayout
-                android:orientation="vertical"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:id="@+id/title3"
-                    android:text="Overthinking Control"
-                    android:textStyle="bold"
-                    android:textSize="18sp"
-                    android:textColor="#FFFFFF"
-                    android:layout_height="24dp"
-                    android:layout_width="250dp" />
-
-                <TextView
-                    android:id="@+id/desc3"
-                    android:text="Use CBT techniques to break negative thought loops."
-                    android:textSize="14sp"
-                    android:textColor="#FFFFFF"
-                    android:layout_marginTop="4dp"
-                    android:layout_height="50dp"
-                    android:layout_width="250dp" />
-
-                <TextView
-                    android:id="@+id/location3"
-                    android:text="Penang, Malaysia"
-                    android:textSize="12sp"
-                    android:textColor="#FFFFFF"
-                    android:layout_marginTop="3dp"
-                    android:layout_height="24dp"
-                    android:layout_width="250dp" />
-            </LinearLayout>
-        </LinearLayout>
-
-        <!-- WORKSHOP CARD 4 -->
-        <LinearLayout
-            android:id="@+id/workshop4"
-            android:orientation="horizontal"
-            android:background="@drawable/counsellor_card_bg"
-            android:padding="16dp"
-            android:layout_marginTop="14dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <ImageView
-                android:src="@drawable/meditation"
-                android:layout_width="90dp"
-                android:layout_height="90dp"
-                android:layout_marginEnd="16dp" />
-
-            <LinearLayout
-                android:orientation="vertical"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:id="@+id/title4"
-                    android:text="Mindfulness &amp; Meditation"
-                    android:textStyle="bold"
-                    android:textSize="18sp"
-                    android:textColor="#FFFFFF"
-                    android:layout_height="24dp"
-                    android:layout_width="250dp" />
-
-                <TextView
-                    android:id="@+id/desc4"
-                    android:text="Experience guided meditation and breathing practices."
-                    android:textSize="14sp"
-                    android:textColor="#FFFFFF"
-                    android:layout_marginTop="4dp"
-                    android:layout_height="50dp"
-                    android:layout_width="250dp" />
-
-                <TextView
-                    android:id="@+id/location4"
-                    android:text="Online Workshop"
-                    android:textSize="12sp"
-                    android:textColor="#FFFFFF"
-                    android:layout_marginTop="3dp"
-                    android:layout_height="24dp"
-                    android:layout_width="250dp" />
-            </LinearLayout>
-        </LinearLayout>
     </LinearLayout>
 
-</ScrollView>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvWorkshops"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:paddingTop="8dp"
+        android:clipToPadding="false"/>
+
+</LinearLayout>

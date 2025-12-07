@@ -12,7 +12,6 @@
         android:orientation="vertical"
         android:padding="20dp">
 
-        <!-- Header -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -32,7 +31,6 @@
             android:textSize="14sp"
             android:paddingBottom="24dp"/>
 
-        <!-- Full Name -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -52,7 +50,6 @@
             android:textColorHint="#9CA3AF"
             android:textSize="15sp"/>
 
-        <!-- Email -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -73,7 +70,6 @@
             android:textColorHint="#9CA3AF"
             android:textSize="15sp"/>
 
-        <!-- Phone Number -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -94,7 +90,6 @@
             android:textColorHint="#9CA3AF"
             android:textSize="15sp"/>
 
-        <!-- Workshop Title Dropdown -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -103,15 +98,16 @@
             android:textSize="16sp"
             android:layout_marginTop="20dp"/>
 
-        <Spinner
-            android:id="@+id/spinnerWorkshopTitle"
+        <EditText
+            android:id="@+id/etWorkshopTitle"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:background="@drawable/input_field"
             android:padding="10dp"
-            android:spinnerMode="dropdown"/>
+            android:enabled="false"
+            android:textColor="#000000"
+            android:textSize="15sp"/>
 
-        <!-- Motivation -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -132,7 +128,6 @@
             android:textColorHint="#9CA3AF"
             android:textSize="15sp"/>
 
-        <!-- Action Buttons -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
