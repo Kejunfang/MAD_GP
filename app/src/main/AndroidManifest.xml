@@ -12,6 +12,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MAD_GP">
         <activity
+            android:name=".ItemCommunityPost"
+            android:exported="false" />
+        <activity
+            android:name=".ItemParticipatedWorkshop"
+            android:exported="false" />
+        <activity
             android:name=".ItemWorkshop"
             android:exported="false" />
         <activity
