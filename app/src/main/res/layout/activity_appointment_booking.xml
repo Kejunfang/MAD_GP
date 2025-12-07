@@ -167,8 +167,8 @@
                     android:layout_marginTop="6dp"
                     android:padding="10dp"
                     android:gravity="center"
-                    android:textColor="#FFFFFF"
-                    android:background="@drawable/date_selected_circle"
+                    android:textColor="#444"
+                    android:background="@drawable/date_circle"
                     android:layout_height="50dp"
                     android:layout_width="50dp"  />
             </LinearLayout>
@@ -243,8 +243,8 @@
                 android:text="9 - 12 AM\nBrightPath Mental Care Centre"
                 android:textAlignment="center"
                 android:textSize="18sp"
-                android:textColor="#FFFFFF"
-                android:background="@drawable/time_selected" />
+                android:textColor="#000000"
+                android:background="@drawable/time_unselected" />
 
             <TextView
                 android:id="@+id/slotAfternoon"

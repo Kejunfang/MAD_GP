@@ -7,7 +7,7 @@
     android:background="@color/minimal_bg"
     android:fitsSystemWindows="true">
 
-    <ScrollView
+    <androidx.core.widget.NestedScrollView
         android:id="@+id/profileScrollView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -54,7 +54,6 @@
                     app:layout_constraintTop_toTopOf="parent"
                     app:tint="@color/text_main"
                     tools:ignore="ContentDescription" />
-
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <LinearLayout
@@ -155,14 +154,34 @@
                             android:textSize="12sp" />
                     </LinearLayout>
                 </LinearLayout>
-
             </LinearLayout>
+
+            <TextView
+                android:id="@+id/tvLabelAppointments"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="32dp"
+                android:fontFamily="sans-serif-medium"
+                android:text="My Appointments"
+                android:textColor="@color/text_main"
+                android:textSize="18sp"
+                android:visibility="gone"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvAppointments"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="8dp"
+                android:nestedScrollingEnabled="false"
+                android:visibility="gone"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="24dp"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="32dp"
                 android:fontFamily="sans-serif-medium"
                 android:text="Participated Events"
                 android:textColor="@color/text_main"
@@ -408,7 +427,7 @@
             </LinearLayout>
 
         </LinearLayout>
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 
     <LinearLayout
         android:id="@+id/bottomNavigationContainer"
