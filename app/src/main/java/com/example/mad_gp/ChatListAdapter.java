@@ -26,15 +26,16 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
     public ChatListAdapter(Context context, List<ChatRoom> chatRooms) {
         this.context = context;
         this.chatRooms = chatRooms;
-        this.currentUserId = FirebaseAuth.getInstance().getUid();
+        // 修复点 1: 安全获取当前用户 ID，防止空指针
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            this.currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        }
     }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        // 请确保你有一个 item_chat_room.xml 或者类似的布局文件
         View view = LayoutInflater.from(context).inflate(R.layout.activity_chat_row, parent, false);
-        // 注意：activity_chat_row 这个名字可能需要根据你实际的 item 布局文件名修改
         return new ViewHolder(view);
     }
 
@@ -45,11 +46,11 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
         // 显示最后一条消息
         holder.tvLastMessage.setText(room.getLastMessage() != null ? room.getLastMessage() : "");
 
-        // ★★★ 核心：找出对方的 ID 并加载信息 ★★★
+        // 核心：找出对方的 ID 并加载信息
         List<String> participants = room.getParticipants();
         String targetUserId = null;
 
-        if (participants != null) {
+        if (participants != null && currentUserId != null) {
             for (String id : participants) {
                 if (!id.equals(currentUserId)) {
                     targetUserId = id;
@@ -59,19 +60,17 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
         }
 
         if (targetUserId != null) {
-            // 1. 先把 targetUserId 存入 holder，方便点击事件使用
             final String finalTargetId = targetUserId;
 
-            // 2. 去数据库查这个人的信息
+            // 加载对方信息
             FirebaseFirestore.getInstance().collection("users").document(targetUserId)
                     .get()
                     .addOnSuccessListener(documentSnapshot -> {
                         if (documentSnapshot.exists()) {
-                            // 获取名字
                             String name = documentSnapshot.getString("name");
-                            holder.tvUserName.setText(name != null ? name : "Unknown");
+                            // 修复点 2: 这里使用的是修正后的 holder.tvName
+                            holder.tvName.setText(name != null ? name : "Unknown");
 
-                            // 获取头像
                             String avatarUrl = documentSnapshot.getString("profileImageUrl");
                             if (avatarUrl != null && !avatarUrl.isEmpty()) {
                                 if (avatarUrl.startsWith("http")) {
@@ -85,7 +84,6 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
                                 holder.ivAvatar.setImageResource(R.drawable.ic_default_avatar);
                             }
 
-                            // 3. 设置点击跳转事件 (只有拿到名字后跳转体验才好)
                             holder.itemView.setOnClickListener(v -> {
                                 Intent intent = new Intent(context, Chat.class);
                                 intent.putExtra("TARGET_USER_ID", finalTargetId);
@@ -103,13 +101,14 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        public TextView tvUserName, tvLastMessage;
+        // 修复点 3: 变量名改为 tvName 以匹配 XML，防止混淆
+        public TextView tvName, tvLastMessage;
         public ImageView ivAvatar;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            // 绑定 item 布局里的控件 ID
-            tvUserName = itemView.findViewById(R.id.tvUserName);
+            // 修复点 4: ID 必须匹配 XML (activity_chat_row.xml 用的是 tvName)
+            tvName = itemView.findViewById(R.id.tvName);
             tvLastMessage = itemView.findViewById(R.id.tvLastMessage);
             ivAvatar = itemView.findViewById(R.id.ivAvatar);
         }
