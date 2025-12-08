@@ -124,7 +124,10 @@ public class ProfilePage extends AppCompatActivity {
         startListeningToLikedPosts();
 
         // ★★★ 给 Posts 区域添加点击事件
-        btnMyPostsContainer.setOnClickListener(v -> toggleMyPosts());
+        btnMyPostsContainer.setOnClickListener(v -> {
+            Intent intent = new Intent(ProfilePage.this, MyPosts.class);
+            startActivity(intent);
+        });
     }
 
     @Override

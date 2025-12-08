@@ -1,7 +1,7 @@
 package com.example.mad_gp;
 
 import android.os.Bundle;
-import android.view.View;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -20,9 +20,10 @@ import java.util.List;
 
 public class MyPosts extends AppCompatActivity {
 
+    private static final String TAG = "MyPosts";
     private RecyclerView rvMyPosts;
-    private PostAdapter postAdapter;
-    private List<Post> postList;
+    private CommunityPostAdapter postAdapter;
+    private List<CommunityPost> postList;
 
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
@@ -32,16 +33,25 @@ public class MyPosts extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_posts);
 
+        Log.d(TAG, "onCreate called");
+
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
         ImageView btnBack = findViewById(R.id.btnBack);
         rvMyPosts = findViewById(R.id.rvMyPosts);
 
+        if (rvMyPosts == null) {
+            Log.e(TAG, "RecyclerView is NULL!");
+            return;
+        }
+
         postList = new ArrayList<>();
-        postAdapter = new PostAdapter(this, postList);
+        postAdapter = new CommunityPostAdapter(this, postList);
         rvMyPosts.setLayoutManager(new LinearLayoutManager(this));
         rvMyPosts.setAdapter(postAdapter);
+
+        Log.d(TAG, "RecyclerView setup complete");
 
         loadUserPosts();
 
@@ -51,34 +61,46 @@ public class MyPosts extends AppCompatActivity {
     private void loadUserPosts() {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser == null) {
+            Log.e(TAG, "User is not logged in!");
             Toast.makeText(this, "Please log in to view your posts.", Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
 
-        // 核心查询：只获取当前用户发布的帖子
-        db.collection("posts")
-                .whereEqualTo("userId", currentUser.getUid())
-                .orderBy("timestamp", Query.Direction.DESCENDING) // 假设你有 timestamp 字段，最新的在前面
+        String userId = currentUser.getUid();
+        Log.d(TAG, "Loading posts for user: " + userId);
+
+        // ★ 暂时去掉 orderBy,等索引创建完成后再加回来
+        db.collection("community_posts")
+                .whereEqualTo("userId", userId)
+                // .orderBy("timestamp", Query.Direction.DESCENDING) // ← 先注释掉这行
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
+                    Log.d(TAG, "Query successful. Documents found: " + queryDocumentSnapshots.size());
+
                     if (!queryDocumentSnapshots.isEmpty()) {
                         postList.clear();
                         for (DocumentSnapshot doc : queryDocumentSnapshots) {
-                            // 自动将 Firestore 文档转换为 Post 对象
-                            Post post = doc.toObject(Post.class);
+                            Log.d(TAG, "Processing document: " + doc.getId());
+
+                            CommunityPost post = doc.toObject(CommunityPost.class);
                             if (post != null) {
-                                post.setId(doc.getId()); // 手动设置 ID
+                                post.setPostId(doc.getId());
                                 postList.add(post);
+                                Log.d(TAG, "Added post with content: " + post.getContent());
                             }
                         }
+
+                        Log.d(TAG, "Final list size: " + postList.size());
                         postAdapter.notifyDataSetChanged();
                     } else {
+                        Log.d(TAG, "No posts found for this user");
                         Toast.makeText(this, "You haven't made any posts yet.", Toast.LENGTH_LONG).show();
                     }
                 })
                 .addOnFailureListener(e -> {
-                    Toast.makeText(this, "Error loading posts: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    Log.e(TAG, "Error loading posts", e);
+                    Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
                 });
     }
 }
