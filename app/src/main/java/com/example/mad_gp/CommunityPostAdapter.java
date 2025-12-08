@@ -1,6 +1,7 @@
 package com.example.mad_gp;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -107,6 +108,21 @@ public class CommunityPostAdapter extends RecyclerView.Adapter<CommunityPostAdap
                         .update("likesCount", FieldValue.increment(1),
                                 "likedBy", FieldValue.arrayUnion(currentUserId));
             }
+        });
+
+        holder.ivAvatar.setOnClickListener(v -> {
+            // 创建跳转意图
+            Intent intent = new Intent(context, UserProfile.class);
+            // 关键一步：把发帖人的 ID 传过去！
+            intent.putExtra("TARGET_USER_ID", post.getUserId());
+            context.startActivity(intent);
+        });
+
+// 为了体验更好，点击名字也应该能跳过去
+        holder.tvName.setOnClickListener(v -> {
+            Intent intent = new Intent(context, UserProfile.class);
+            intent.putExtra("TARGET_USER_ID", post.getUserId());
+            context.startActivity(intent);
         });
     }
 
