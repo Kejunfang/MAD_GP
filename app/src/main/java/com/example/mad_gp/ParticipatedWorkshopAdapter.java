@@ -1,6 +1,7 @@
 package com.example.mad_gp;
 
 import android.content.Context;
+import android.content.Intent; // 1. 导入 Intent
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,12 +44,37 @@ public class ParticipatedWorkshopAdapter extends RecyclerView.Adapter<Participat
         } else {
             holder.ivImage.setImageResource(R.drawable.stress);
         }
+
+        // --- 2. 新增：点击跳转逻辑 ---
+        holder.itemView.setOnClickListener(v -> {
+            // 注意：如果你实际的文件名是 Workshop1Detail1，请将下面的 Workshop1Detail.class 改为 Workshop1Detail1.class
+            Intent intent = new Intent(context, Workshop1Detail.class);
+
+            // 传递整个 Workshop 对象 (前提是 Workshop 类实现了 Serializable)
+            intent.putExtra("WORKSHOP_DATA", workshop);
+
+            context.startActivity(intent);
+        });
+        // 在 ParticipatedWorkshopAdapter.java 的 onBindViewHolder 里
+        holder.itemView.setOnClickListener(v -> {
+            Intent intent = new Intent(context, Workshop1Detail.class); // 记得确认类名是否为 Workshop1Detail1
+
+            // 1. 传递 Workshop 数据
+            intent.putExtra("WORKSHOP_DATA", workshop);
+
+            // 2. ★★★ 新增：传递一个信号，表示“我是已报名的状态”
+            intent.putExtra("IS_REGISTERED", true);
+
+            context.startActivity(intent);
+        });
     }
 
     @Override
     public int getItemCount() {
         return workshopList.size();
     }
+
+
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvTitle;

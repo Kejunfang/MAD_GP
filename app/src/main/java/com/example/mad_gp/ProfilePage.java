@@ -17,7 +17,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.ListenerRegistration; // 1. 引入监听器注册类
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +37,7 @@ public class ProfilePage extends AppCompatActivity {
     // 3. 参与活动列表 (Workshops)
     private TextView tvLabelWorkshops;
     private RecyclerView rvParticipatedWorkshops;
-    private ParticipatedWorkshopAdapter participatedAdapter; // 使用你现有的 Adapter 类名
+    private ParticipatedWorkshopAdapter participatedAdapter;
     private List<Workshop> participatedWorkshopList;
 
     // 4. 喜欢的帖子列表 (Liked Posts)
@@ -48,6 +48,9 @@ public class ProfilePage extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
+
+    // ★★★ 新增：用于管理实时监听器，防止重复和内存泄漏
+    private ListenerRegistration likedPostsListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,7 +81,6 @@ public class ProfilePage extends AppCompatActivity {
         rvParticipatedWorkshops = findViewById(R.id.rvParticipatedWorkshops);
         rvParticipatedWorkshops.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         participatedWorkshopList = new ArrayList<>();
-        // 修正：使用 ParticipatedWorkshopAdapter
         participatedAdapter = new ParticipatedWorkshopAdapter(this, participatedWorkshopList);
         rvParticipatedWorkshops.setAdapter(participatedAdapter);
 
@@ -97,43 +99,74 @@ public class ProfilePage extends AppCompatActivity {
         });
 
         setupBottomNav();
+
+        // ★★★ 关键修改：我们在 onCreate 里开启“喜欢帖子”的实时监听
+        startListeningToLikedPosts();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        // 这里只保留需要手动刷新数据的部分
+        // Liked Posts 因为有实时监听，不需要在这里刷新了
         loadUserProfile();
         loadMyAppointments();
         loadParticipatedWorkshops();
-        loadLikedPosts();
         loadMyPostCount();
     }
 
-    // --- 1. 加载点赞过的帖子 ---
-    private void loadLikedPosts() {
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // ★★★ 退出页面时移除监听，节省资源
+        if (likedPostsListener != null) {
+            likedPostsListener.remove();
+        }
+    }
+
+    // --- 1. ★★★ 修改后：实时监听点赞过的帖子 ---
+    // 改名为 startListening... 更贴切
+    private void startListeningToLikedPosts() {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser == null) return;
 
-        db.collection("community_posts")
-                .whereArrayContains("likedBy", currentUser.getUid())
-                .get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
-                    if (!queryDocumentSnapshots.isEmpty()) {
-                        tvLabelLikedPosts.setVisibility(View.VISIBLE);
-                        rvLikedPosts.setVisibility(View.VISIBLE);
-                        likedPostList.clear();
+        // 如果已经有监听器在运行，先移除（防止重复监听导致闪退或重复数据）
+        if (likedPostsListener != null) {
+            likedPostsListener.remove();
+        }
 
-                        for (DocumentSnapshot doc : queryDocumentSnapshots) {
+        // 使用 addSnapshotListener 替代 get()
+        likedPostsListener = db.collection("community_posts")
+                .whereArrayContains("likedBy", currentUser.getUid())
+                .addSnapshotListener((value, error) -> {
+                    if (error != null) {
+                        // 出错处理，例如 Log.e(...)
+                        return;
+                    }
+
+                    if (value != null) {
+                        likedPostList.clear(); // 先清空列表
+
+                        // 遍历新数据
+                        for (DocumentSnapshot doc : value.getDocuments()) {
                             CommunityPost post = doc.toObject(CommunityPost.class);
                             if (post != null) {
                                 post.setPostId(doc.getId());
                                 likedPostList.add(post);
                             }
                         }
+
+                        // 刷新适配器
                         likedPostAdapter.notifyDataSetChanged();
-                    } else {
-                        tvLabelLikedPosts.setVisibility(View.GONE);
-                        rvLikedPosts.setVisibility(View.GONE);
+
+                        // 根据是否有数据控制显示/隐藏
+                        if (likedPostList.isEmpty()) {
+                            tvLabelLikedPosts.setVisibility(View.GONE);
+                            rvLikedPosts.setVisibility(View.GONE);
+                        } else {
+                            tvLabelLikedPosts.setVisibility(View.VISIBLE);
+                            rvLikedPosts.setVisibility(View.VISIBLE);
+                        }
                     }
                 });
     }
@@ -174,8 +207,18 @@ public class ProfilePage extends AppCompatActivity {
                     if (documentSnapshot.exists()) {
                         Workshop workshop = documentSnapshot.toObject(Workshop.class);
                         if (workshop != null) {
-                            participatedWorkshopList.add(workshop);
-                            participatedAdapter.notifyDataSetChanged();
+                            // 简单的去重检查（防止Workshop多次加载）
+                            boolean exists = false;
+                            for (Workshop w : participatedWorkshopList) {
+                                if (w.getTitle().equals(workshop.getTitle())) { // 假设 Title 唯一，或者你可以比对 ID
+                                    exists = true;
+                                    break;
+                                }
+                            }
+                            if (!exists) {
+                                participatedWorkshopList.add(workshop);
+                                participatedAdapter.notifyDataSetChanged();
+                            }
                         }
                     }
                 });
@@ -239,6 +282,7 @@ public class ProfilePage extends AppCompatActivity {
                                 if (avatarTag.startsWith("http")) {
                                     Glide.with(ProfilePage.this).load(avatarTag).placeholder(R.drawable.ic_default_avatar).into(ivProfileImage);
                                 } else {
+                                    // 假设 EditProfile 类里有这个静态方法，如果没有请替换为你的逻辑
                                     ivProfileImage.setImageResource(EditProfile.getAvatarResourceId(avatarTag));
                                 }
                             } else {
