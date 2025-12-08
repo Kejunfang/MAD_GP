@@ -5,11 +5,13 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -18,59 +20,76 @@ import java.util.List;
 public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHolder> {
 
     private Context context;
-    private List<ChatRoom> chatRoomList;
+    private List<ChatRoom> chatRooms;
     private String currentUserId;
 
-    public ChatListAdapter(Context context, List<ChatRoom> chatRoomList) {
+    public ChatListAdapter(Context context, List<ChatRoom> chatRooms) {
         this.context = context;
-        this.chatRoomList = chatRoomList;
-        this.currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        this.chatRooms = chatRooms;
+        this.currentUserId = FirebaseAuth.getInstance().getUid();
     }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        // ★★★ 这里加载你原来的 activity_chat_row.xml ★★★
-        // 注意：activity_chat_row.xml 的根布局不需要 id="messageContainer" 了，那是给气泡用的
+        // 请确保你有一个 item_chat_room.xml 或者类似的布局文件
         View view = LayoutInflater.from(context).inflate(R.layout.activity_chat_row, parent, false);
+        // 注意：activity_chat_row 这个名字可能需要根据你实际的 item 布局文件名修改
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        ChatRoom room = chatRoomList.get(position);
-        holder.tvLastMsg.setText(room.getLastMessage());
+        ChatRoom room = chatRooms.get(position);
 
-        // 处理时间显示 (简化版)
-        if (room.getLastMessageTime() != null) {
-            holder.tvTime.setText(room.getLastMessageTime().toDate().toString().substring(11, 16));
-        }
+        // 显示最后一条消息
+        holder.tvLastMessage.setText(room.getLastMessage() != null ? room.getLastMessage() : "");
 
-        // --- 关键：找出“对方”是谁 ---
-        // participants 列表里有两个 ID，不等于 currentUserId 的那个就是对方
-        String otherUserId = null;
-        for (String id : room.getParticipants()) {
-            if (!id.equals(currentUserId)) {
-                otherUserId = id;
-                break;
+        // ★★★ 核心：找出对方的 ID 并加载信息 ★★★
+        List<String> participants = room.getParticipants();
+        String targetUserId = null;
+
+        if (participants != null) {
+            for (String id : participants) {
+                if (!id.equals(currentUserId)) {
+                    targetUserId = id;
+                    break;
+                }
             }
         }
 
-        // 去 Users 表查对方的名字和头像
-        if (otherUserId != null) {
-            String finalOtherUserId = otherUserId;
-            FirebaseFirestore.getInstance().collection("users").document(otherUserId).get()
-                    .addOnSuccessListener(doc -> {
-                        if (doc.exists()) {
-                            String name = doc.getString("name");
-                            holder.tvName.setText(name);
-                            // 这里可以加 Glide 加载头像...
+        if (targetUserId != null) {
+            // 1. 先把 targetUserId 存入 holder，方便点击事件使用
+            final String finalTargetId = targetUserId;
 
-                            // 点击跳转
+            // 2. 去数据库查这个人的信息
+            FirebaseFirestore.getInstance().collection("users").document(targetUserId)
+                    .get()
+                    .addOnSuccessListener(documentSnapshot -> {
+                        if (documentSnapshot.exists()) {
+                            // 获取名字
+                            String name = documentSnapshot.getString("name");
+                            holder.tvUserName.setText(name != null ? name : "Unknown");
+
+                            // 获取头像
+                            String avatarUrl = documentSnapshot.getString("profileImageUrl");
+                            if (avatarUrl != null && !avatarUrl.isEmpty()) {
+                                if (avatarUrl.startsWith("http")) {
+                                    Glide.with(context).load(avatarUrl).into(holder.ivAvatar);
+                                } else {
+                                    int resId = context.getResources().getIdentifier(avatarUrl, "drawable", context.getPackageName());
+                                    if (resId != 0) holder.ivAvatar.setImageResource(resId);
+                                    else holder.ivAvatar.setImageResource(R.drawable.ic_default_avatar);
+                                }
+                            } else {
+                                holder.ivAvatar.setImageResource(R.drawable.ic_default_avatar);
+                            }
+
+                            // 3. 设置点击跳转事件 (只有拿到名字后跳转体验才好)
                             holder.itemView.setOnClickListener(v -> {
                                 Intent intent = new Intent(context, Chat.class);
-                                intent.putExtra("TARGET_USER_ID", finalOtherUserId);
-                                intent.putExtra("USER_NAME", name);
+                                intent.putExtra("TARGET_USER_ID", finalTargetId);
+                                intent.putExtra("USER_NAME", name != null ? name : "User");
                                 context.startActivity(intent);
                             });
                         }
@@ -80,18 +99,19 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
 
     @Override
     public int getItemCount() {
-        return chatRoomList.size();
+        return chatRooms.size();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView tvName, tvLastMsg, tvTime;
+        public TextView tvUserName, tvLastMessage;
+        public ImageView ivAvatar;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            // 绑定 activity_chat_row.xml 里的 ID
-            tvName = itemView.findViewById(R.id.tvName);
-            tvLastMsg = itemView.findViewById(R.id.tvLastMessage);
-            tvTime = itemView.findViewById(R.id.tvTime);
+            // 绑定 item 布局里的控件 ID
+            tvUserName = itemView.findViewById(R.id.tvUserName);
+            tvLastMessage = itemView.findViewById(R.id.tvLastMessage);
+            ivAvatar = itemView.findViewById(R.id.ivAvatar);
         }
     }
 }

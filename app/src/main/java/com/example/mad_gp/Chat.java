@@ -1,7 +1,6 @@
 package com.example.mad_gp;
 
 import android.os.Bundle;
-import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -12,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide; // ★ 引入 Glide
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentChange;
@@ -37,6 +37,7 @@ public class Chat extends AppCompatActivity {
     private RecyclerView rvChat;
     private EditText etMessageInput;
     private ImageView btnSend;
+    private ImageView ivChatAvatar; // ★ 新增：头像控件
 
     private ChatAdapter chatAdapter;
     private List<Message> messageList;
@@ -50,7 +51,6 @@ public class Chat extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
         currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-        // 1. 获取传递过来的数据
         targetUserId = getIntent().getStringExtra("TARGET_USER_ID");
         targetUserName = getIntent().getStringExtra("USER_NAME");
 
@@ -60,25 +60,25 @@ public class Chat extends AppCompatActivity {
             return;
         }
 
-        // 2. 生成 Chat Room ID (确保无论谁发起，ID都一样)
         chatRoomId = getChatRoomId(currentUserId, targetUserId);
 
-        // 3. 初始化 UI
         initViews();
-
-        // 4. 加载消息
+        loadTargetUserInfo(); // ★ 新增：加载对方头像
         loadMessages();
 
-        // 5. 发送按钮
         btnSend.setOnClickListener(v -> sendMessage());
     }
 
     private void initViews() {
-        tvChatUserName = findViewById(R.id.tvChatUserName); // 确保 XML 有这个 ID
+        tvChatUserName = findViewById(R.id.tvChatUserName);
         btnBack = findViewById(R.id.btnBack);
-        rvChat = findViewById(R.id.rvChat); // 确保 XML 有这个 ID
-        etMessageInput = findViewById(R.id.etMessageInput); // 确保 XML 有这个 ID
-        btnSend = findViewById(R.id.btnSend); // 确保 XML 有这个 ID
+        rvChat = findViewById(R.id.rvChat);
+        etMessageInput = findViewById(R.id.etMessageInput);
+        btnSend = findViewById(R.id.btnSend);
+
+        // ★ 请确保你的 activity_chat.xml 里面有一个 ImageView 的 ID 是 ivChatAvatar
+        // 如果你的 XML 只有名字没有头像，你需要加一个 ImageView 在名字旁边
+        ivChatAvatar = findViewById(R.id.ivChatAvatar);
 
         tvChatUserName.setText(targetUserName);
         btnBack.setOnClickListener(v -> finish());
@@ -89,46 +89,66 @@ public class Chat extends AppCompatActivity {
         rvChat.setAdapter(chatAdapter);
     }
 
+    // ★★★ 新增方法：加载对方的头像 ★★★
+    private void loadTargetUserInfo() {
+        db.collection("users").document(targetUserId).get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        String avatarUrl = documentSnapshot.getString("profileImageUrl");
+
+                        // 使用 Glide 加载图片
+                        if (ivChatAvatar != null) {
+                            if (avatarUrl != null && !avatarUrl.isEmpty()) {
+                                if (avatarUrl.startsWith("http")) {
+                                    Glide.with(this).load(avatarUrl).into(ivChatAvatar);
+                                } else {
+                                    // 处理本地资源名 (例如 "counsellor1")
+                                    int resId = getResources().getIdentifier(avatarUrl, "drawable", getPackageName());
+                                    if (resId != 0) ivChatAvatar.setImageResource(resId);
+                                    else ivChatAvatar.setImageResource(R.drawable.ic_default_avatar);
+                                }
+                            } else {
+                                ivChatAvatar.setImageResource(R.drawable.ic_default_avatar);
+                            }
+                        }
+                    }
+                });
+    }
+
     private void sendMessage() {
         String msgText = etMessageInput.getText().toString().trim();
         if (msgText.isEmpty()) return;
 
-        etMessageInput.setText(""); // 清空输入框
+        etMessageInput.setText("");
 
         Timestamp now = new Timestamp(new Date());
         Message message = new Message(currentUserId, targetUserId, msgText, now);
 
-        // 1. 保存消息到 sub-collection
         db.collection("chat_rooms").document(chatRoomId)
                 .collection("messages")
                 .add(message);
 
-        // 2. 更新聊天室的最新消息 (用于列表显示)
         Map<String, Object> roomData = new HashMap<>();
         roomData.put("participants", Arrays.asList(currentUserId, targetUserId));
         roomData.put("lastMessage", msgText);
         roomData.put("lastMessageTime", now);
 
-        // set(..., SetOptions.merge()) 会创建文档(如果不存在)或更新字段
+        // ★ 同时也存入 participantsIds 以便查询更精准 (可选，但推荐)
         db.collection("chat_rooms").document(chatRoomId).set(roomData);
     }
 
     private void loadMessages() {
         db.collection("chat_rooms").document(chatRoomId)
                 .collection("messages")
-                .orderBy("timestamp", Query.Direction.ASCENDING) // 按时间正序
+                .orderBy("timestamp", Query.Direction.ASCENDING)
                 .addSnapshotListener((value, error) -> {
                     if (error != null) return;
-
                     if (value != null) {
-                        // 使用 DocumentChanges 只处理新增的消息，避免重复刷新
                         for (DocumentChange dc : value.getDocumentChanges()) {
                             if (dc.getType() == DocumentChange.Type.ADDED) {
                                 Message msg = dc.getDocument().toObject(Message.class);
                                 messageList.add(msg);
-                                // 通知插入了最后一行
                                 chatAdapter.notifyItemInserted(messageList.size() - 1);
-                                // 滚动到底部
                                 rvChat.smoothScrollToPosition(messageList.size() - 1);
                             }
                         }
@@ -136,7 +156,6 @@ public class Chat extends AppCompatActivity {
                 });
     }
 
-    // 辅助方法：生成唯一的聊天室 ID (按字母顺序排序拼接)
     private String getChatRoomId(String uid1, String uid2) {
         if (uid1.compareTo(uid2) < 0) {
             return uid1 + "_" + uid2;
