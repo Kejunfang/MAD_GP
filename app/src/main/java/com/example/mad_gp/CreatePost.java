@@ -1,93 +1,189 @@
-package com.example.mad_gp; // 记得检查包名
+package com.example.mad_gp;
 
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.HorizontalScrollView; // 引入
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class CreatePost extends AppCompatActivity {
 
-    // 声明控件
-    private ImageButton btnClose;
+    private ImageButton btnClose, btnRemoveImage, btnAddPhoto, btnAddCamera;
     private MaterialButton btnPost;
     private EditText etPostContent;
     private MaterialCardView imagePreviewContainer;
-    private ImageButton btnRemoveImage;
-    private ImageButton btnAddPhoto;
-    private ImageButton btnAddCamera;
+    private ImageView ivPreview, ivCurrentUserAvatar;
+    private TextView tvCurrentUserName;
+
+    // ★★★ 新增：选择区域控件
+    private HorizontalScrollView imageSelectionContainer;
+    private ImageView imgOption1, imgOption2, imgOption3, imgOption5;
+
+    private FirebaseFirestore db;
+    private FirebaseAuth mAuth;
+    private String currentUserId;
+    private String currentUserName = "Anonymous";
+    private String currentUserAvatar = "counsellor1";
+
+    private String selectedImageName = ""; // 存储选中的图片名
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_post);
 
-        // 1. 初始化控件
-        initViews();
+        db = FirebaseFirestore.getInstance();
+        mAuth = FirebaseAuth.getInstance();
+        FirebaseUser user = mAuth.getCurrentUser();
 
-        // 2. 设置点击事件
+        if (user != null) {
+            currentUserId = user.getUid();
+            fetchCurrentUserInfo();
+        } else {
+            finish();
+            return;
+        }
+
+        initViews();
         setupListeners();
+    }
+
+    private void fetchCurrentUserInfo() {
+        db.collection("users").document(currentUserId).get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        String name = documentSnapshot.getString("name");
+                        String avatar = documentSnapshot.getString("profileImageUrl");
+                        if (name != null) {
+                            currentUserName = name;
+                            tvCurrentUserName.setText(name);
+                        }
+                        if (avatar != null) {
+                            currentUserAvatar = avatar;
+                            int resId = getResources().getIdentifier(avatar, "drawable", getPackageName());
+                            if (resId != 0) ivCurrentUserAvatar.setImageResource(resId);
+                        }
+                    }
+                });
     }
 
     private void initViews() {
         btnClose = findViewById(R.id.btnClose);
         btnPost = findViewById(R.id.btnPost);
         etPostContent = findViewById(R.id.etPostContent);
-
-        // 图片预览区域
         imagePreviewContainer = findViewById(R.id.imagePreviewContainer);
-        btnRemoveImage = findViewById(R.id.btnRemoveImage); // 刚才加的 ID
-
-        // 底部工具栏按钮
+        ivPreview = findViewById(R.id.ivPreview);
+        btnRemoveImage = findViewById(R.id.btnRemoveImage);
         btnAddPhoto = findViewById(R.id.btnAddPhoto);
         btnAddCamera = findViewById(R.id.btnAddCamera);
+        ivCurrentUserAvatar = findViewById(R.id.ivHeaderAvatar);
+        tvCurrentUserName = findViewById(R.id.tvHeaderName);
 
-        // 默认状态：隐藏图片预览 (模拟刚进来没有图片)
+        // ★★★ 初始化选择区域
+        imageSelectionContainer = findViewById(R.id.imageSelectionContainer);
+        imgOption1 = findViewById(R.id.imgOption1);
+        imgOption2 = findViewById(R.id.imgOption2);
+        imgOption3 = findViewById(R.id.imgOption3);
+        imgOption5 = findViewById(R.id.imgOption5);
+
         imagePreviewContainer.setVisibility(View.GONE);
     }
 
     private void setupListeners() {
-        // --- 关闭页面 ---
         btnClose.setOnClickListener(v -> finish());
+        btnPost.setOnClickListener(v -> postToFirebase());
 
-        // --- 发布按钮 ---
-        btnPost.setOnClickListener(v -> {
-            String content = etPostContent.getText().toString().trim();
-            boolean hasImage = imagePreviewContainer.getVisibility() == View.VISIBLE;
-
-            // 校验：既没字也没图，不让发
-            if (content.isEmpty() && !hasImage) {
-                Toast.makeText(CreatePost.this, "Please write something...", Toast.LENGTH_SHORT).show();
-            } else {
-                // 模拟发布成功
-                Toast.makeText(CreatePost.this, "Post Published Successfully!", Toast.LENGTH_SHORT).show();
-                finish(); // 关闭页面，返回上一页
-            }
-        });
-
-        // --- 模拟添加图片 (相册) ---
+        // 点击 Add Photo，显示选择栏，隐藏预览图(如果之前有)
         btnAddPhoto.setOnClickListener(v -> {
-            imagePreviewContainer.setVisibility(View.VISIBLE); // 显示预览图
-            Toast.makeText(CreatePost.this, "Image Selected", Toast.LENGTH_SHORT).show();
+            imageSelectionContainer.setVisibility(View.VISIBLE);
+            imagePreviewContainer.setVisibility(View.GONE);
+            Toast.makeText(this, "Select an image", Toast.LENGTH_SHORT).show();
         });
 
-        // --- 模拟拍照 ---
+        // 这里的 Camera 按钮如果你想也改成选图，可以一样处理
         btnAddCamera.setOnClickListener(v -> {
-            imagePreviewContainer.setVisibility(View.VISIBLE); // 显示预览图
-            Toast.makeText(CreatePost.this, "Photo Taken", Toast.LENGTH_SHORT).show();
+            imageSelectionContainer.setVisibility(View.VISIBLE);
         });
 
-        // --- 删除图片 ---
-        if (btnRemoveImage != null) {
-            btnRemoveImage.setOnClickListener(v -> {
-                imagePreviewContainer.setVisibility(View.GONE); // 隐藏预览图
-                Toast.makeText(CreatePost.this, "Image Removed", Toast.LENGTH_SHORT).show();
-            });
+        // ★★★ 图片选择逻辑
+        View.OnClickListener selectImageListener = v -> {
+            ImageView clickedImg = (ImageView) v;
+
+            // 1. 获取选中的图片名 (根据 ID 判断)
+            if (v.getId() == R.id.imgOption1) selectedImageName = "relaximage1";
+            else if (v.getId() == R.id.imgOption2) selectedImageName = "relaximage2";
+            else if (v.getId() == R.id.imgOption3) selectedImageName = "relaximage3";
+            else if (v.getId() == R.id.imgOption5) selectedImageName = "relaximage5";
+
+            // 2. 显示预览图
+            int resId = getResources().getIdentifier(selectedImageName, "drawable", getPackageName());
+            ivPreview.setImageResource(resId);
+            imagePreviewContainer.setVisibility(View.VISIBLE);
+
+            // 3. 隐藏选择栏
+            imageSelectionContainer.setVisibility(View.GONE);
+        };
+
+        imgOption1.setOnClickListener(selectImageListener);
+        imgOption2.setOnClickListener(selectImageListener);
+        imgOption3.setOnClickListener(selectImageListener);
+        imgOption5.setOnClickListener(selectImageListener);
+
+        // 删除图片
+        btnRemoveImage.setOnClickListener(v -> {
+            selectedImageName = "";
+            imagePreviewContainer.setVisibility(View.GONE);
+            // 可以选择重新显示选择栏，或者什么都不做
+        });
+    }
+
+    private void postToFirebase() {
+        String content = etPostContent.getText().toString().trim();
+
+        if (content.isEmpty() && selectedImageName.isEmpty()) {
+            Toast.makeText(CreatePost.this, "Please write something...", Toast.LENGTH_SHORT).show();
+            return;
         }
+
+        btnPost.setEnabled(false);
+
+        Map<String, Object> postMap = new HashMap<>();
+        postMap.put("content", content);
+        postMap.put("userId", currentUserId);
+        postMap.put("userName", currentUserName);
+        postMap.put("userAvatar", currentUserAvatar);
+        postMap.put("timestamp", FieldValue.serverTimestamp());
+        postMap.put("timeAgo", "Just now");
+        postMap.put("likesCount", 0);
+        postMap.put("commentCount", 0);
+        postMap.put("likedBy", new ArrayList<String>());
+        // ★★★ 直接存入选中的图片名
+        postMap.put("postImage", selectedImageName);
+
+        db.collection("community_posts").add(postMap)
+                .addOnSuccessListener(ref -> {
+                    Toast.makeText(CreatePost.this, "Posted!", Toast.LENGTH_SHORT).show();
+                    finish();
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(CreatePost.this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    btnPost.setEnabled(true);
+                });
     }
 }

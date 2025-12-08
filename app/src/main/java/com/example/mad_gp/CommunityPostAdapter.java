@@ -15,6 +15,8 @@ import com.google.android.material.card.MaterialCardView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+// ★ 引入 DocumentSnapshot
+import com.google.firebase.firestore.DocumentSnapshot;
 
 import java.util.List;
 
@@ -23,10 +25,12 @@ public class CommunityPostAdapter extends RecyclerView.Adapter<CommunityPostAdap
     private Context context;
     private List<CommunityPost> postList;
     private String currentUserId;
+    private FirebaseFirestore db; // ★ 引入 Firestore
 
     public CommunityPostAdapter(Context context, List<CommunityPost> postList) {
         this.context = context;
         this.postList = postList;
+        this.db = FirebaseFirestore.getInstance(); // ★ 初始化 DB
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
             this.currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         }
@@ -49,10 +53,32 @@ public class CommunityPostAdapter extends RecyclerView.Adapter<CommunityPostAdap
         holder.tvLikeCount.setText(String.valueOf(post.getLikesCount()));
         holder.tvCommentCount.setText(String.valueOf(post.getCommentCount()));
 
-        // 设置头像
-        setLocalImage(holder.ivAvatar, post.getUserAvatar());
+        // --- ★★★ 核心修改：实时获取最新头像 ★★★ ---
+        // 我们不直接用 post.getUserAvatar()，而是去 users 表里查最新的
+        String authorId = post.getUserId();
+        if (authorId != null && !authorId.isEmpty()) {
+            db.collection("users").document(authorId).get()
+                    .addOnSuccessListener(documentSnapshot -> {
+                        if (documentSnapshot.exists()) {
+                            // 获取最新的 profileImageUrl
+                            String latestAvatar = documentSnapshot.getString("profileImageUrl");
+                            // 如果有名字变动，也可以顺便更新名字
+                            String latestName = documentSnapshot.getString("name");
+                            if (latestName != null) holder.tvName.setText(latestName);
 
-        // 设置帖子图片
+                            // 更新头像 UI
+                            setLocalImage(holder.ivAvatar, latestAvatar);
+                        } else {
+                            // 如果查不到用户，回退使用帖子里的旧数据
+                            setLocalImage(holder.ivAvatar, post.getUserAvatar());
+                        }
+                    });
+        } else {
+            setLocalImage(holder.ivAvatar, post.getUserAvatar());
+        }
+        // ---------------------------------------------
+
+        // 设置帖子图片 (这个不用实时查，因为帖子图片一般不变)
         if (post.getPostImage() != null && !post.getPostImage().isEmpty()) {
             holder.cardPostImage.setVisibility(View.VISIBLE);
             setLocalImage(holder.ivPostImage, post.getPostImage());
@@ -60,7 +86,7 @@ public class CommunityPostAdapter extends RecyclerView.Adapter<CommunityPostAdap
             holder.cardPostImage.setVisibility(View.GONE);
         }
 
-        // --- 点赞状态判断 ---
+        // 点赞逻辑 (保持不变)
         boolean isLiked = post.getLikedBy().contains(currentUserId);
         if (isLiked) {
             holder.ivLike.setImageResource(R.drawable.favourite_filled);
@@ -70,18 +96,13 @@ public class CommunityPostAdapter extends RecyclerView.Adapter<CommunityPostAdap
             holder.ivLike.setColorFilter(Color.parseColor("#7D8C9A"));
         }
 
-        // --- 点赞点击事件 ---
         holder.btnLike.setOnClickListener(v -> {
             if (currentUserId == null) return;
-
-            FirebaseFirestore db = FirebaseFirestore.getInstance();
             if (isLiked) {
-                // 取消点赞
                 db.collection("community_posts").document(post.getPostId())
                         .update("likesCount", FieldValue.increment(-1),
                                 "likedBy", FieldValue.arrayRemove(currentUserId));
             } else {
-                // 点赞
                 db.collection("community_posts").document(post.getPostId())
                         .update("likesCount", FieldValue.increment(1),
                                 "likedBy", FieldValue.arrayUnion(currentUserId));
@@ -89,10 +110,21 @@ public class CommunityPostAdapter extends RecyclerView.Adapter<CommunityPostAdap
         });
     }
 
+    // 辅助方法：加载本地 drawable 资源
     private void setLocalImage(ImageView iv, String imgName) {
-        if (imgName == null || imgName.isEmpty()) return;
-        int resId = context.getResources().getIdentifier(imgName, "drawable", context.getPackageName());
-        if (resId != 0) iv.setImageResource(resId);
+        if (imgName == null || imgName.isEmpty()) {
+            iv.setImageResource(R.drawable.ic_default_avatar); // 给个默认图防止空白
+            return;
+        }
+        // 处理可能存在的 http URL (虽然你说只用本地图片，但为了保险)
+        if (imgName.startsWith("http")) {
+            // 如果你有 Glide: Glide.with(context).load(imgName).into(iv);
+            // 如果没有，就忽略或者处理
+        } else {
+            int resId = context.getResources().getIdentifier(imgName, "drawable", context.getPackageName());
+            if (resId != 0) iv.setImageResource(resId);
+            else iv.setImageResource(R.drawable.ic_default_avatar);
+        }
     }
 
     @Override
@@ -101,6 +133,7 @@ public class CommunityPostAdapter extends RecyclerView.Adapter<CommunityPostAdap
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
+        // ... ViewHolder 代码保持不变 ...
         TextView tvName, tvTime, tvContent, tvLikeCount, tvCommentCount;
         ImageView ivAvatar, ivPostImage, ivLike;
         View btnLike;
