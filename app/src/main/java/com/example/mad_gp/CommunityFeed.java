@@ -33,7 +33,7 @@ public class CommunityFeed extends AppCompatActivity {
 
         db = FirebaseFirestore.getInstance();
 
-        // 1. 初始化 RecyclerView
+        // 1. 初始化列表
         rvPosts = findViewById(R.id.rvCommunityPosts);
         rvPosts.setLayoutManager(new LinearLayoutManager(this));
 
@@ -41,10 +41,10 @@ public class CommunityFeed extends AppCompatActivity {
         postAdapter = new CommunityPostAdapter(this, postList);
         rvPosts.setAdapter(postAdapter);
 
-        // 2. 加载数据 (实时监听)
+        // 2. 加载数据
         loadPosts();
 
-        // 3. 按钮点击事件
+        // 3. 按钮逻辑
         ImageButton btnChat = findViewById(R.id.btnChat);
         btnChat.setOnClickListener(v -> {
             Intent intent = new Intent(CommunityFeed.this, ChatList.class);
@@ -62,7 +62,7 @@ public class CommunityFeed extends AppCompatActivity {
     }
 
     private void loadPosts() {
-        // 使用 addSnapshotListener 可以让点赞数变化时自动更新界面
+        // 实时监听 community_posts 集合
         db.collection("community_posts")
                 .orderBy("timestamp", Query.Direction.DESCENDING)
                 .addSnapshotListener((value, error) -> {
@@ -76,7 +76,7 @@ public class CommunityFeed extends AppCompatActivity {
                         for (DocumentSnapshot doc : value.getDocuments()) {
                             CommunityPost post = doc.toObject(CommunityPost.class);
                             if (post != null) {
-                                post.setPostId(doc.getId()); // 重要：设置ID以便点赞时使用
+                                post.setPostId(doc.getId()); // 关键：设置ID用于点赞
                                 postList.add(post);
                             }
                         }
@@ -109,7 +109,5 @@ public class CommunityFeed extends AppCompatActivity {
             startActivity(intent);
             overridePendingTransition(0, 0);
         });
-
-        // navSocial 不需要点击事件，因为已经在当前页
     }
 }

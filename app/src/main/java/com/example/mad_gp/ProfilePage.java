@@ -17,30 +17,30 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-// import com.google.firebase.firestore.Query; // 暂时注释掉，避免需要索引
+import com.google.firebase.firestore.Query;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ProfilePage extends AppCompatActivity {
 
-    // 基本 UI
+    // 1. 基本信息 UI
     private TextView tvUserName, tvUserBio, tvEventCount, tvPostCount;
     private ImageView ivProfileImage, btnEditProfile;
 
-    // 列表 1: 预约 (竖向)
+    // 2. 预约列表 (Appointments)
     private TextView tvLabelAppointments;
     private RecyclerView rvAppointments;
     private AppointmentAdapter appointmentAdapter;
     private List<Appointment> appointmentList;
 
-    // 列表 2: 参与的活动 (横向)
+    // 3. 参与活动列表 (Workshops)
     private TextView tvLabelWorkshops;
     private RecyclerView rvParticipatedWorkshops;
-    private ParticipatedAdapter participatedAdapter; // 这里用上了我们新建的 Adapter
+    private ParticipatedWorkshopAdapter participatedAdapter; // 使用你现有的 Adapter 类名
     private List<Workshop> participatedWorkshopList;
 
-    // 列表 3: 点赞的帖子 (竖向)
+    // 4. 喜欢的帖子列表 (Liked Posts)
     private TextView tvLabelLikedPosts;
     private RecyclerView rvLikedPosts;
     private CommunityPostAdapter likedPostAdapter;
@@ -57,7 +57,7 @@ public class ProfilePage extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
-        // --- 绑定控件 ---
+        // --- 绑定基本控件 ---
         tvUserName = findViewById(R.id.tvUserName);
         tvUserBio = findViewById(R.id.tvUserBio);
         tvEventCount = findViewById(R.id.tvEventCount);
@@ -65,30 +65,26 @@ public class ProfilePage extends AppCompatActivity {
         ivProfileImage = findViewById(R.id.ivProfileImage);
         btnEditProfile = findViewById(R.id.btnEditProfile);
 
+        // --- 初始化预约列表 (Vertical) ---
         tvLabelAppointments = findViewById(R.id.tvLabelAppointments);
         rvAppointments = findViewById(R.id.rvAppointments);
-
-        tvLabelWorkshops = findViewById(R.id.tvLabelWorkshops);
-        rvParticipatedWorkshops = findViewById(R.id.rvParticipatedWorkshops);
-
-        tvLabelLikedPosts = findViewById(R.id.tvLabelLikedPosts);
-        rvLikedPosts = findViewById(R.id.rvLikedPosts);
-
-        // --- 初始化 Adapter ---
-
-        // 1. 预约列表
         rvAppointments.setLayoutManager(new LinearLayoutManager(this));
         appointmentList = new ArrayList<>();
         appointmentAdapter = new AppointmentAdapter(this, appointmentList);
         rvAppointments.setAdapter(appointmentAdapter);
 
-        // 2. 参与活动列表 (横向)
+        // --- 初始化活动列表 (Horizontal) ---
+        tvLabelWorkshops = findViewById(R.id.tvLabelWorkshops);
+        rvParticipatedWorkshops = findViewById(R.id.rvParticipatedWorkshops);
         rvParticipatedWorkshops.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         participatedWorkshopList = new ArrayList<>();
-        participatedAdapter = new ParticipatedAdapter(this, participatedWorkshopList);
+        // 修正：使用 ParticipatedWorkshopAdapter
+        participatedAdapter = new ParticipatedWorkshopAdapter(this, participatedWorkshopList);
         rvParticipatedWorkshops.setAdapter(participatedAdapter);
 
-        // 3. 点赞帖子列表
+        // --- 初始化喜欢帖子列表 (Vertical) ---
+        tvLabelLikedPosts = findViewById(R.id.tvLabelLikedPosts);
+        rvLikedPosts = findViewById(R.id.rvLikedPosts);
         rvLikedPosts.setLayoutManager(new LinearLayoutManager(this));
         likedPostList = new ArrayList<>();
         likedPostAdapter = new CommunityPostAdapter(this, likedPostList);
@@ -110,12 +106,82 @@ public class ProfilePage extends AppCompatActivity {
         loadMyAppointments();
         loadParticipatedWorkshops();
         loadLikedPosts();
-        loadMyPostCount(); // 加载发帖数量
+        loadMyPostCount();
     }
 
-    // --- 加载数据方法 ---
+    // --- 1. 加载点赞过的帖子 ---
+    private void loadLikedPosts() {
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser == null) return;
 
-    // 1. 预约
+        db.collection("community_posts")
+                .whereArrayContains("likedBy", currentUser.getUid())
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    if (!queryDocumentSnapshots.isEmpty()) {
+                        tvLabelLikedPosts.setVisibility(View.VISIBLE);
+                        rvLikedPosts.setVisibility(View.VISIBLE);
+                        likedPostList.clear();
+
+                        for (DocumentSnapshot doc : queryDocumentSnapshots) {
+                            CommunityPost post = doc.toObject(CommunityPost.class);
+                            if (post != null) {
+                                post.setPostId(doc.getId());
+                                likedPostList.add(post);
+                            }
+                        }
+                        likedPostAdapter.notifyDataSetChanged();
+                    } else {
+                        tvLabelLikedPosts.setVisibility(View.GONE);
+                        rvLikedPosts.setVisibility(View.GONE);
+                    }
+                });
+    }
+
+    // --- 2. 加载参与活动 (含计数) ---
+    private void loadParticipatedWorkshops() {
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser == null) return;
+
+        db.collection("workshop_registrations")
+                .whereEqualTo("userId", currentUser.getUid())
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    int count = queryDocumentSnapshots.size();
+                    tvEventCount.setText(String.valueOf(count));
+
+                    if (!queryDocumentSnapshots.isEmpty()) {
+                        tvLabelWorkshops.setVisibility(View.VISIBLE);
+                        rvParticipatedWorkshops.setVisibility(View.VISIBLE);
+                        participatedWorkshopList.clear();
+
+                        for (DocumentSnapshot doc : queryDocumentSnapshots) {
+                            String workshopId = doc.getString("workshopId");
+                            if (workshopId != null) {
+                                fetchWorkshopDetails(workshopId);
+                            }
+                        }
+                    } else {
+                        tvLabelWorkshops.setVisibility(View.GONE);
+                        rvParticipatedWorkshops.setVisibility(View.GONE);
+                    }
+                });
+    }
+
+    private void fetchWorkshopDetails(String workshopId) {
+        db.collection("workshops").document(workshopId).get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        Workshop workshop = documentSnapshot.toObject(Workshop.class);
+                        if (workshop != null) {
+                            participatedWorkshopList.add(workshop);
+                            participatedAdapter.notifyDataSetChanged();
+                        }
+                    }
+                });
+    }
+
+    // --- 3. 加载预约 ---
     private void loadMyAppointments() {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser == null) return;
@@ -144,80 +210,11 @@ public class ProfilePage extends AppCompatActivity {
                 });
     }
 
-    // 2. 参与活动 (含计数)
-    private void loadParticipatedWorkshops() {
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        if (currentUser == null) return;
-
-        db.collection("workshop_registrations")
-                .whereEqualTo("userId", currentUser.getUid())
-                .get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
-                    int count = queryDocumentSnapshots.size();
-                    tvEventCount.setText(String.valueOf(count)); // 更新 Events 数量
-
-                    if (!queryDocumentSnapshots.isEmpty()) {
-                        tvLabelWorkshops.setVisibility(View.VISIBLE);
-                        rvParticipatedWorkshops.setVisibility(View.VISIBLE);
-                        participatedWorkshopList.clear();
-                        for (DocumentSnapshot doc : queryDocumentSnapshots) {
-                            String workshopId = doc.getString("workshopId");
-                            if (workshopId != null) fetchWorkshopDetails(workshopId);
-                        }
-                    } else {
-                        tvLabelWorkshops.setVisibility(View.GONE);
-                        rvParticipatedWorkshops.setVisibility(View.GONE);
-                    }
-                });
-    }
-
-    private void fetchWorkshopDetails(String workshopId) {
-        db.collection("workshops").document(workshopId).get()
-                .addOnSuccessListener(documentSnapshot -> {
-                    if (documentSnapshot.exists()) {
-                        Workshop workshop = documentSnapshot.toObject(Workshop.class);
-                        if (workshop != null) {
-                            participatedWorkshopList.add(workshop);
-                            participatedAdapter.notifyDataSetChanged();
-                        }
-                    }
-                });
-    }
-
-    // 3. 点赞的帖子
-    private void loadLikedPosts() {
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        if (currentUser == null) return;
-
-        db.collection("community_posts")
-                .whereArrayContains("likedBy", currentUser.getUid())
-                .get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
-                    if (!queryDocumentSnapshots.isEmpty()) {
-                        tvLabelLikedPosts.setVisibility(View.VISIBLE);
-                        rvLikedPosts.setVisibility(View.VISIBLE);
-                        likedPostList.clear();
-                        for (DocumentSnapshot doc : queryDocumentSnapshots) {
-                            CommunityPost post = doc.toObject(CommunityPost.class);
-                            if (post != null) {
-                                post.setPostId(doc.getId());
-                                likedPostList.add(post);
-                            }
-                        }
-                        likedPostAdapter.notifyDataSetChanged();
-                    } else {
-                        tvLabelLikedPosts.setVisibility(View.GONE);
-                        rvLikedPosts.setVisibility(View.GONE);
-                    }
-                });
-    }
-
-    // 4. 统计我发的帖子数量
+    // --- 4. 统计发帖数量 ---
     private void loadMyPostCount() {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser == null) return;
 
-        // 假设 community_posts 里有 userId 字段
         db.collection("community_posts")
                 .whereEqualTo("userId", currentUser.getUid())
                 .get()
@@ -226,7 +223,7 @@ public class ProfilePage extends AppCompatActivity {
                 });
     }
 
-    // 5. 用户基本信息
+    // --- 5. 加载用户信息 ---
     private void loadUserProfile() {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
@@ -240,7 +237,7 @@ public class ProfilePage extends AppCompatActivity {
                             String avatarTag = documentSnapshot.getString("profileImageUrl");
                             if (avatarTag != null && !avatarTag.isEmpty()) {
                                 if (avatarTag.startsWith("http")) {
-                                    Glide.with(ProfilePage.this).load(avatarTag).placeholder(R.drawable.ic_default_avatar).centerCrop().into(ivProfileImage);
+                                    Glide.with(ProfilePage.this).load(avatarTag).placeholder(R.drawable.ic_default_avatar).into(ivProfileImage);
                                 } else {
                                     ivProfileImage.setImageResource(EditProfile.getAvatarResourceId(avatarTag));
                                 }

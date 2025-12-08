@@ -74,11 +74,12 @@
             android:layout_marginTop="12dp"
             app:cardCornerRadius="12dp"
             app:cardElevation="0dp"
-            android:visibility="gone"> <ImageView
-            android:id="@+id/ivPostImage"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="centerCrop" />
+            android:visibility="gone">
+            <ImageView
+                android:id="@+id/ivPostImage"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop" />
         </com.google.android.material.card.MaterialCardView>
 
         <LinearLayout

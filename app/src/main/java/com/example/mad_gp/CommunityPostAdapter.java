@@ -52,7 +52,7 @@ public class CommunityPostAdapter extends RecyclerView.Adapter<CommunityPostAdap
         // 设置头像
         setLocalImage(holder.ivAvatar, post.getUserAvatar());
 
-        // 设置帖子图片 (如果有)
+        // 设置帖子图片
         if (post.getPostImage() != null && !post.getPostImage().isEmpty()) {
             holder.cardPostImage.setVisibility(View.VISIBLE);
             setLocalImage(holder.ivPostImage, post.getPostImage());
@@ -63,11 +63,11 @@ public class CommunityPostAdapter extends RecyclerView.Adapter<CommunityPostAdap
         // --- 点赞状态判断 ---
         boolean isLiked = post.getLikedBy().contains(currentUserId);
         if (isLiked) {
-            holder.ivLike.setImageResource(R.drawable.favourite_filled); // 实心红心
-            holder.ivLike.setColorFilter(Color.parseColor("#F44336")); // 红色
+            holder.ivLike.setImageResource(R.drawable.favourite_filled);
+            holder.ivLike.setColorFilter(Color.parseColor("#F44336"));
         } else {
-            holder.ivLike.setImageResource(R.drawable.ic_favorite_border); // 空心
-            holder.ivLike.setColorFilter(Color.parseColor("#7D8C9A")); // 灰色
+            holder.ivLike.setImageResource(R.drawable.ic_favorite_border);
+            holder.ivLike.setColorFilter(Color.parseColor("#7D8C9A"));
         }
 
         // --- 点赞点击事件 ---
@@ -76,17 +76,16 @@ public class CommunityPostAdapter extends RecyclerView.Adapter<CommunityPostAdap
 
             FirebaseFirestore db = FirebaseFirestore.getInstance();
             if (isLiked) {
-                // 取消点赞: 数量-1，从数组移除ID
+                // 取消点赞
                 db.collection("community_posts").document(post.getPostId())
                         .update("likesCount", FieldValue.increment(-1),
                                 "likedBy", FieldValue.arrayRemove(currentUserId));
             } else {
-                // 点赞: 数量+1，添加ID到数组
+                // 点赞
                 db.collection("community_posts").document(post.getPostId())
                         .update("likesCount", FieldValue.increment(1),
                                 "likedBy", FieldValue.arrayUnion(currentUserId));
             }
-            // 界面会自动刷新，因为我们在 Activity 里监听了 snapshot
         });
     }
 

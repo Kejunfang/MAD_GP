@@ -4,21 +4,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CommunityPost {
-    private String postId; // 文档ID
+    private String postId;
     private String userName;
+    private String userId; // 发帖人的ID
     private String userAvatar;
     private String timeAgo;
     private String content;
     private String postImage;
     private int likesCount;
     private int commentCount;
-    private List<String> likedBy; // 谁点赞了
+    private List<String> likedBy; // 存储点赞用户的ID列表
 
-    public CommunityPost() {} // Firebase 需要
+    public CommunityPost() {} // Firebase 需要空构造函数
 
     // Getters
     public String getPostId() { return postId; }
     public String getUserName() { return userName; }
+    public String getUserId() { return userId; }
     public String getUserAvatar() { return userAvatar; }
     public String getTimeAgo() { return timeAgo; }
     public String getContent() { return content; }
@@ -29,5 +31,13 @@ public class CommunityPost {
 
     // Setters
     public void setPostId(String postId) { this.postId = postId; }
-    // ... 其他 setter 也就是标准写法，Firebase 会自动处理
+    public void setUserName(String userName) { this.userName = userName; }
+    public void setUserId(String userId) { this.userId = userId; }
+    public void setUserAvatar(String userAvatar) { this.userAvatar = userAvatar; }
+    public void setTimeAgo(String timeAgo) { this.timeAgo = timeAgo; }
+    public void setContent(String content) { this.content = content; }
+    public void setPostImage(String postImage) { this.postImage = postImage; }
+    public void setLikesCount(int likesCount) { this.likesCount = likesCount; }
+    public void setCommentCount(int commentCount) { this.commentCount = commentCount; }
+    public void setLikedBy(List<String> likedBy) { this.likedBy = likedBy; }
 }
