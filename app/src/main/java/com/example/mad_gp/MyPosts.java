@@ -70,37 +70,39 @@ public class MyPosts extends AppCompatActivity {
         String userId = currentUser.getUid();
         Log.d(TAG, "Loading posts for user: " + userId);
 
-        // ★ 暂时去掉 orderBy,等索引创建完成后再加回来
+        // ★★★ 修改重点：使用 addSnapshotListener 替换 get() ★★★
+        // 这样当你点赞时，数据库更新，这里会自动收到通知并刷新列表，红心就会变色
         db.collection("community_posts")
                 .whereEqualTo("userId", userId)
-                // .orderBy("timestamp", Query.Direction.DESCENDING) // ← 先注释掉这行
-                .get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
-                    Log.d(TAG, "Query successful. Documents found: " + queryDocumentSnapshots.size());
+                .orderBy("timestamp", Query.Direction.DESCENDING) // 建议加上排序，如果报错请看 Logcat 创建索引
+                .addSnapshotListener(this, (value, error) -> {
+                    if (error != null) {
+                        Log.e(TAG, "Error loading posts", error);
+                        Toast.makeText(this, "Error: " + error.getMessage(), Toast.LENGTH_LONG).show();
+                        return;
+                    }
 
-                    if (!queryDocumentSnapshots.isEmpty()) {
+                    if (value != null) {
                         postList.clear();
-                        for (DocumentSnapshot doc : queryDocumentSnapshots) {
-                            Log.d(TAG, "Processing document: " + doc.getId());
-
-                            CommunityPost post = doc.toObject(CommunityPost.class);
-                            if (post != null) {
-                                post.setPostId(doc.getId());
-                                postList.add(post);
-                                Log.d(TAG, "Added post with content: " + post.getContent());
+                        if (!value.isEmpty()) {
+                            Log.d(TAG, "Documents found: " + value.size());
+                            for (DocumentSnapshot doc : value.getDocuments()) {
+                                CommunityPost post = doc.toObject(CommunityPost.class);
+                                if (post != null) {
+                                    post.setPostId(doc.getId()); // 关键：设置ID用于点赞
+                                    postList.add(post);
+                                    Log.d(TAG, "Added post: " + post.getContent());
+                                }
                             }
+                        } else {
+                            Log.d(TAG, "No posts found for this user");
+                            // 列表为空时，这里可以选择显示一个 Empty View 或者 Toast
+                            // Toast.makeText(this, "You haven't made any posts yet.", Toast.LENGTH_SHORT).show();
                         }
 
-                        Log.d(TAG, "Final list size: " + postList.size());
+                        // 刷新列表
                         postAdapter.notifyDataSetChanged();
-                    } else {
-                        Log.d(TAG, "No posts found for this user");
-                        Toast.makeText(this, "You haven't made any posts yet.", Toast.LENGTH_LONG).show();
                     }
-                })
-                .addOnFailureListener(e -> {
-                    Log.e(TAG, "Error loading posts", e);
-                    Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
                 });
     }
 }

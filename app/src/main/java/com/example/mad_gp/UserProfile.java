@@ -41,7 +41,7 @@ public class UserProfile extends AppCompatActivity {
     private FirebaseAuth mAuth;
 
     private String targetUserId;
-    private String currentUserId; // 新增：当前登录用户的ID
+    private String currentUserId;
     private boolean isFollowing = false;
 
     @Override
@@ -52,10 +52,8 @@ public class UserProfile extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
 
-        // 获取 Intent 传来的目标用户 ID
         targetUserId = getIntent().getStringExtra("TARGET_USER_ID");
 
-        // 获取当前登录用户 ID
         if (mAuth.getCurrentUser() != null) {
             currentUserId = mAuth.getCurrentUser().getUid();
         }
@@ -69,7 +67,7 @@ public class UserProfile extends AppCompatActivity {
         initViews();
         loadUserInfo();
         loadUserPosts();
-        setupButtons(); // 这里面包含了检查关注状态的逻辑
+        setupButtons();
     }
 
     private void initViews() {
@@ -85,6 +83,7 @@ public class UserProfile extends AppCompatActivity {
 
         rvUserPosts.setLayoutManager(new LinearLayoutManager(this));
         userPostList = new ArrayList<>();
+        // 这里的 Context 传 this 即可
         postAdapter = new CommunityPostAdapter(this, userPostList);
         rvUserPosts.setAdapter(postAdapter);
     }
@@ -113,61 +112,57 @@ public class UserProfile extends AppCompatActivity {
                 });
     }
 
+    // ★★★ 核心修复：改用 addSnapshotListener 实现实时刷新 ★★★
     private void loadUserPosts() {
         Log.d("UserProfile", "Loading posts for user: " + targetUserId);
 
+        // 使用 addSnapshotListener 替换 get()
+        // 传入 this 是为了让监听器跟随 Activity 生命周期自动销毁，防止内存泄漏
         db.collection("community_posts")
                 .whereEqualTo("userId", targetUserId)
                 .orderBy("timestamp", Query.Direction.DESCENDING)
-                .get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
+                .addSnapshotListener(this, (value, error) -> {
+                    if (error != null) {
+                        Toast.makeText(this, "Load failed: " + error.getMessage(), Toast.LENGTH_LONG).show();
+                        Log.e("UserProfile", "Error loading posts", error);
+                        return;
+                    }
+
                     userPostList.clear();
-                    if (queryDocumentSnapshots.isEmpty()) {
-                        // Toast.makeText(this, "This user has no posts.", Toast.LENGTH_SHORT).show();
-                        // 很多人没发过贴，这里不弹 Toast 体验更好，或者显示一个 Empty View
-                    } else {
-                        for (DocumentSnapshot doc : queryDocumentSnapshots) {
+                    if (value != null && !value.isEmpty()) {
+                        for (DocumentSnapshot doc : value.getDocuments()) {
                             CommunityPost post = doc.toObject(CommunityPost.class);
                             if (post != null) {
-                                post.setPostId(doc.getId());
+                                post.setPostId(doc.getId()); // 这一步很重要，否则点赞找不到文档ID
                                 userPostList.add(post);
                             }
                         }
-                        postAdapter.notifyDataSetChanged();
                     }
-                })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(this, "Load failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                    Log.e("UserProfile", "Error loading posts", e);
+                    // 刷新列表，此时 Adapter 会重新判断 isLiked，红心就会变色
+                    postAdapter.notifyDataSetChanged();
                 });
     }
 
-    // ★★★ 核心修改：检查数据库状态并根据操作写入数据库 ★★★
     private void setupButtons() {
-        // 1. 如果是看自己的主页，隐藏关注和私信按钮
         if (currentUserId != null && currentUserId.equals(targetUserId)) {
             btnFollow.setVisibility(View.GONE);
             btnMessage.setVisibility(View.GONE);
             return;
         }
 
-        // 2. 初始检查：我在数据库里是否已经关注了他？
         checkFollowStatus();
 
-        // 3. 点击关注/取消关注逻辑
         btnFollow.setOnClickListener(v -> {
             if (currentUserId == null) return;
 
-            btnFollow.setEnabled(false); // 防止快速连点
+            btnFollow.setEnabled(false);
 
             if (isFollowing) {
-                // --- 执行取消关注 ---
-                // 删除我的 following 记录
+                // 取消关注
                 db.collection("users").document(currentUserId)
                         .collection("following").document(targetUserId)
                         .delete();
 
-                // 删除对方的 followers 记录
                 db.collection("users").document(targetUserId)
                         .collection("followers").document(currentUserId)
                         .delete()
@@ -180,16 +175,14 @@ public class UserProfile extends AppCompatActivity {
                         .addOnFailureListener(e -> btnFollow.setEnabled(true));
 
             } else {
-                // --- 执行关注 ---
+                // 关注
                 Map<String, Object> data = new HashMap<>();
                 data.put("timestamp", com.google.firebase.Timestamp.now());
 
-                // 写入我的 following
                 db.collection("users").document(currentUserId)
                         .collection("following").document(targetUserId)
                         .set(data);
 
-                // 写入对方的 followers
                 db.collection("users").document(targetUserId)
                         .collection("followers").document(currentUserId)
                         .set(data)
@@ -206,7 +199,6 @@ public class UserProfile extends AppCompatActivity {
             }
         });
 
-        // 4. 私信按钮逻辑 (保持不变)
         btnMessage.setOnClickListener(v -> {
             Intent intent = new Intent(UserProfile.this, Chat.class);
             intent.putExtra("USER_NAME", tvUserName.getText().toString());
@@ -215,7 +207,6 @@ public class UserProfile extends AppCompatActivity {
         });
     }
 
-    // 辅助方法：去数据库查状态
     private void checkFollowStatus() {
         if (currentUserId == null) return;
 
@@ -224,19 +215,18 @@ public class UserProfile extends AppCompatActivity {
                 .get()
                 .addOnSuccessListener(documentSnapshot -> {
                     isFollowing = documentSnapshot.exists();
-                    updateFollowButtonUI(); // 根据查到的结果刷新按钮样子
+                    updateFollowButtonUI();
                 });
     }
 
-    // 辅助方法：只负责更新按钮样式
     private void updateFollowButtonUI() {
         if (isFollowing) {
             btnFollow.setText("Following");
-            btnFollow.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#E0E0E0"))); // 灰色
+            btnFollow.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#E0E0E0")));
             btnFollow.setTextColor(getResources().getColor(R.color.text_main));
         } else {
             btnFollow.setText("Follow");
-            btnFollow.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.sage_green))); // 绿色
+            btnFollow.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.sage_green)));
             btnFollow.setTextColor(getResources().getColor(R.color.white));
         }
     }
