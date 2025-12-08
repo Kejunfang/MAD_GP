@@ -118,9 +118,27 @@ public class HomePage extends AppCompatActivity {
         });
 
         navHome.setOnClickListener(v -> {});
-        navEvent.setOnClickListener(v -> startActivity(new Intent(HomePage.this, Event.class)));
-        navSocial.setOnClickListener(v -> startActivity(new Intent(HomePage.this, CommunityFeed.class)));
-        navProfile.setOnClickListener(v -> startActivity(new Intent(HomePage.this, ProfilePage.class)));
+        navEvent.setOnClickListener(v -> {
+            Intent intent = new Intent(HomePage.this, Event.class);
+            // 避免重复创建 Activity
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            startActivity(intent);
+            overridePendingTransition(0, 0); // 【关键】取消跳转动画
+        });
+
+        navSocial.setOnClickListener(v -> {
+            Intent intent = new Intent(HomePage.this, CommunityFeed.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            startActivity(intent);
+            overridePendingTransition(0, 0); // 【关键】取消跳转动画
+        });
+
+        navProfile.setOnClickListener(v -> {
+            Intent intent = new Intent(HomePage.this, ProfilePage.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            startActivity(intent);
+            overridePendingTransition(0, 0); // 【关键】取消跳转动画
+        });
     }
 
     // --- 新功能：检查今天是否已经记录过心情 ---

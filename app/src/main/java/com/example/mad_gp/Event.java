@@ -47,7 +47,9 @@ public class Event extends AppCompatActivity {
         // Home
         navHome.setOnClickListener(v -> {
             Intent intent = new Intent(Event.this, HomePage.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
             startActivity(intent);
+            overridePendingTransition(0, 0); // 【关键】取消跳转动画
         });
 
         // Event
@@ -58,13 +60,17 @@ public class Event extends AppCompatActivity {
         // Social
         navSocial.setOnClickListener(v -> {
             Intent intent = new Intent(Event.this, CommunityFeed.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
             startActivity(intent);
+            overridePendingTransition(0, 0); // 【关键】取消跳转动画
         });
 
         // Profile
         navProfile.setOnClickListener(v -> {
             Intent intent = new Intent(Event.this, ProfilePage.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
             startActivity(intent);
+            overridePendingTransition(0, 0); // 【关键】取消跳转动画
         });
     }
 }
