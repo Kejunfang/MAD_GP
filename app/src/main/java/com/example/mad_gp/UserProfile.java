@@ -161,6 +161,7 @@ public class UserProfile extends AppCompatActivity {
         btnMessage.setOnClickListener(v -> {
             Intent intent = new Intent(UserProfile.this, Chat.class);
             intent.putExtra("USER_NAME", tvUserName.getText().toString());
+            intent.putExtra("TARGET_USER_ID", targetUserId);
             startActivity(intent);
         });
     }
