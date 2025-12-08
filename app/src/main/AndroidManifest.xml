@@ -12,6 +12,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MAD_GP">
         <activity
+            android:name=".MyPosts"
+            android:exported="false" />
+        <activity
+            android:name=".ItemPost"
+            android:exported="false" />
+        <activity
             android:name=".ItemCommunityPost"
             android:exported="false" />
         <activity
