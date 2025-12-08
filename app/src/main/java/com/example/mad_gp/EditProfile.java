@@ -28,7 +28,6 @@ public class EditProfile extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
 
-    // 默认依然是 "default" (对应灰色占位图)
     private String selectedAvatarTag = "default";
 
     @Override
@@ -71,7 +70,6 @@ public class EditProfile extends AppCompatActivity {
                     selectedAvatarTag = currentAvatar;
                 }
 
-                // 更新视图
                 updateAvatarView(selectedAvatarTag);
             }
         });
@@ -79,12 +77,12 @@ public class EditProfile extends AppCompatActivity {
 
     private void showAvatarSelectionDialog() {
         Dialog dialog = new Dialog(this);
-        // 确保这里的 layout 文件名正确
         dialog.setContentView(R.layout.activity_dialog_select_avatar);
         dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
-        // --- 修改点 1: 给第一个头像换个名字，叫 "avatar_original"，不要叫 "default" ---
-        setupDialogAvatar(dialog, R.id.imgAv1, "avatar_original");
+        // ★★★ 修复点 1：必须用真实的文件名 "smile"，不能用 "avatar_original" ★★★
+        // 因为 CommunityFeed 是通过文件名来找图片的
+        setupDialogAvatar(dialog, R.id.imgAv1, "smile");
 
         setupDialogAvatar(dialog, R.id.imgAv2, "counsellor1");
         setupDialogAvatar(dialog, R.id.imgAv3, "counsellor2");
@@ -133,13 +131,13 @@ public class EditProfile extends AppCompatActivity {
                 });
     }
 
-    // --- 修改点 2: 在这里处理 "avatar_original" ---
     public static int getAvatarResourceId(String tag) {
         if (tag == null) tag = "default";
 
         switch (tag) {
-            // 如果用户选了第一个头像，返回那个彩色的 R.drawable.avatar
-            case "avatar_original": return R.drawable.smile;
+            // ★★★ 修复点 2：这里也要改成 "smile" ★★★
+            // 这样在 EditProfile 页面里预览时也能正常显示
+            case "smile": return R.drawable.smile;
 
             case "counsellor1": return R.drawable.counsellor1;
             case "counsellor2": return R.drawable.counsellor2;
@@ -147,7 +145,9 @@ public class EditProfile extends AppCompatActivity {
             case "counsellor4": return R.drawable.counsellor4;
             case "counsellor5": return R.drawable.counsellor5;
 
-            // 只有 tag 是 "default" (或者其他未知的) 时，才返回灰色的 ic_default_avatar
+            // 处理旧数据：如果数据库里已经存了 "avatar_original"，为了兼容防止崩溃，也可以让它返回 smile
+            case "avatar_original": return R.drawable.smile;
+
             default: return R.drawable.ic_default_avatar;
         }
     }
