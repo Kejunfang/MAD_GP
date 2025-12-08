@@ -20,6 +20,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.Query;
 
+import android.view.MenuItem;
+import android.widget.PopupMenu;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -124,10 +127,7 @@ public class ProfilePage extends AppCompatActivity {
         // --- 点击事件 ---
 
         // 1. 编辑资料
-        btnEditProfile.setOnClickListener(v -> {
-            Intent intent = new Intent(ProfilePage.this, EditProfile.class);
-            startActivity(intent);
-        });
+        btnEditProfile.setOnClickListener(this::showPopupMenu);
 
         // 2. 我的帖子 (跳转到 MyPosts 页面)
         btnMyPostsContainer.setOnClickListener(v -> {
@@ -145,6 +145,46 @@ public class ProfilePage extends AppCompatActivity {
 
         // 开启喜欢帖子的实时监听
         startListeningToLikedPosts();
+    }
+
+    private void showPopupMenu(View view) {
+        PopupMenu popup = new PopupMenu(this, view);
+
+        // 动态添加菜单项 (也可以用 menu resource xml，但这样写更简单直接)
+        popup.getMenu().add(0, 1, 0, "Edit Profile"); // id=1
+        popup.getMenu().add(0, 2, 1, "Log Out");      // id=2
+
+        // 设置菜单项点击监听
+        popup.setOnMenuItemClickListener(item -> {
+            switch (item.getItemId()) {
+                case 1: // Edit Profile
+                    Intent intent = new Intent(ProfilePage.this, EditProfile.class);
+                    startActivity(intent);
+                    return true;
+
+                case 2: // Log Out
+                    logout();
+                    return true;
+
+                default:
+                    return false;
+            }
+        });
+
+        popup.show();
+    }
+
+    private void logout() {
+        // 1. Firebase 登出
+        mAuth.signOut();
+
+        // 2. 跳转回登录页，并清空所有之前的页面 (防止按返回键回来)
+        Intent intent = new Intent(ProfilePage.this, Login.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
+
+        Toast.makeText(this, "Logged out successfully", Toast.LENGTH_SHORT).show();
     }
 
     @Override
