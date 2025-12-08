@@ -67,26 +67,35 @@
                 app:layout_constraintTop_toBottomOf="@id/titleEmotion">
 
                 <ImageView
+                    android:id="@+id/ivShock"
                     android:layout_width="0dp"
                     android:layout_height="48dp"
                     android:layout_weight="1"
                     android:src="@drawable/shock" />
+
                 <ImageView
+                    android:id="@+id/ivDisgusted"
                     android:layout_width="0dp"
                     android:layout_height="48dp"
                     android:layout_weight="1"
                     android:src="@drawable/disgusted" />
+
                 <ImageView
+                    android:id="@+id/ivCute"
                     android:layout_width="0dp"
                     android:layout_height="56dp"
                     android:layout_weight="1"
                     android:src="@drawable/cute" />
+
                 <ImageView
+                    android:id="@+id/ivSmile"
                     android:layout_width="0dp"
                     android:layout_height="48dp"
                     android:layout_weight="1"
                     android:src="@drawable/smile" />
+
                 <ImageView
+                    android:id="@+id/ivHappy"
                     android:layout_width="0dp"
                     android:layout_height="48dp"
                     android:layout_weight="1"
@@ -105,16 +114,12 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/layoutEmojis" />
 
-
-            <ImageView
-                android:id="@+id/chartPlaceholder"
+            <com.github.mikephil.charting.charts.LineChart
+                android:id="@+id/moodChart"
                 android:layout_width="match_parent"
                 android:layout_height="290dp"
                 android:layout_marginTop="16dp"
-                android:scaleType="fitXY"
-                android:src="@drawable/sampletrend"
-                app:layout_constraintTop_toBottomOf="@id/tvChartHeader"
-                tools:layout_editor_absoluteX="66dp" />
+                app:layout_constraintTop_toBottomOf="@id/tvChartHeader" />
 
             <TextView
                 android:id="@+id/titleMindfulness"
@@ -126,8 +131,7 @@
                 android:textColor="@color/text_main"
                 android:textSize="20sp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/chartPlaceholder" />
-
+                app:layout_constraintTop_toBottomOf="@id/moodChart" />
             <LinearLayout
                 android:id="@+id/layoutMindfulnessCards"
                 android:layout_width="match_parent"
