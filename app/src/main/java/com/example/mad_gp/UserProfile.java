@@ -240,7 +240,6 @@ public class UserProfile extends AppCompatActivity implements CommunityPostAdapt
     }
 
     // --- 4. 实现接口方法：分享点击 ---
-    @Override
     public void onShareClick(CommunityPost post) {
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.setType("text/plain");

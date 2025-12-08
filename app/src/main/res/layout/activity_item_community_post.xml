@@ -136,14 +136,6 @@
                     android:textSize="12sp"/>
             </LinearLayout>
 
-            <ImageView
-                android:id="@+id/ivShare"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:src="@drawable/ic_share"
-                app:tint="@color/text_secondary"/>
         </LinearLayout>
 
     </LinearLayout>

@@ -444,7 +444,7 @@ public class ProfilePage extends AppCompatActivity implements CommunityPostAdapt
     }
 
     // --- 实现接口：分享 ---
-    @Override
+
     public void onShareClick(CommunityPost post) {
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.setType("text/plain");

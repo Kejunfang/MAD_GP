@@ -134,7 +134,6 @@ public class CommunityFeed extends AppCompatActivity implements CommunityPostAda
                 });
     }
 
-    @Override
     public void onShareClick(CommunityPost post) {
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.setType("text/plain");

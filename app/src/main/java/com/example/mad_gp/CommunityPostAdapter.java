@@ -7,13 +7,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide; // 确保你引入了 Glide
+import com.bumptech.glide.Glide;
 import com.google.android.material.card.MaterialCardView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FieldValue;
@@ -29,10 +28,10 @@ public class CommunityPostAdapter extends RecyclerView.Adapter<CommunityPostAdap
     private FirebaseFirestore db;
     private OnPostActionListener actionListener; // 点击事件接口
 
-    // 定义接口
+    // 定义接口 (已移除 onShareClick)
     public interface OnPostActionListener {
         void onCommentClick(CommunityPost post);
-        void onShareClick(CommunityPost post);
+        // void onShareClick(CommunityPost post); // 已删除
     }
 
     // 构造函数
@@ -46,7 +45,7 @@ public class CommunityPostAdapter extends RecyclerView.Adapter<CommunityPostAdap
         }
     }
 
-    // 为了兼容旧的构造调用 (ProfilePage 可能会用到)，保留这个构造函数
+    // 为了兼容旧的构造调用
     public CommunityPostAdapter(Context context, List<CommunityPost> postList) {
         this(context, postList, null);
     }
@@ -69,7 +68,7 @@ public class CommunityPostAdapter extends RecyclerView.Adapter<CommunityPostAdap
         holder.tvLikeCount.setText(String.valueOf(post.getLikesCount()));
         holder.tvCommentCount.setText(String.valueOf(post.getCommentCount()));
 
-        // 2. 加载头像 (实时获取最新头像逻辑)
+        // 2. 加载头像
         String authorId = post.getUserId();
         if (authorId != null && !authorId.isEmpty()) {
             db.collection("users").document(authorId).get()
@@ -91,11 +90,9 @@ public class CommunityPostAdapter extends RecyclerView.Adapter<CommunityPostAdap
         // 3. 加载帖子图片
         if (post.getPostImage() != null && !post.getPostImage().isEmpty()) {
             holder.cardPostImage.setVisibility(View.VISIBLE);
-            // 使用 Glide 加载 URL (推荐)
             if (post.getPostImage().startsWith("http")) {
                 Glide.with(context).load(post.getPostImage()).into(holder.ivPostImage);
             } else {
-                // 兼容本地资源名
                 int resId = context.getResources().getIdentifier(post.getPostImage(), "drawable", context.getPackageName());
                 if (resId != 0) holder.ivPostImage.setImageResource(resId);
             }
@@ -134,12 +131,7 @@ public class CommunityPostAdapter extends RecyclerView.Adapter<CommunityPostAdap
             });
         }
 
-        // 分享点击
-        if (holder.ivShare != null) {
-            holder.ivShare.setOnClickListener(v -> {
-                if (actionListener != null) actionListener.onShareClick(post);
-            });
-        }
+        // 分享点击逻辑已移除
 
         // 点击头像/名字跳转个人主页
         View.OnClickListener profileListener = v -> {
@@ -151,7 +143,6 @@ public class CommunityPostAdapter extends RecyclerView.Adapter<CommunityPostAdap
         holder.tvName.setOnClickListener(profileListener);
     }
 
-    // 辅助方法：加载头像
     private void loadAvatar(ImageView iv, String imgSource) {
         if (imgSource == null || imgSource.isEmpty()) {
             iv.setImageResource(R.drawable.ic_default_avatar);
@@ -171,19 +162,17 @@ public class CommunityPostAdapter extends RecyclerView.Adapter<CommunityPostAdap
         return postList.size();
     }
 
-    // ViewHolder 类
     public static class PostViewHolder extends RecyclerView.ViewHolder {
         TextView tvName, tvTime, tvContent, tvLikeCount, tvCommentCount;
-        ImageView ivAvatar, ivPostImage, ivLike, ivComment, ivShare;
+        ImageView ivAvatar, ivPostImage, ivLike, ivComment; // 已移除 ivShare
         View btnLike;
         MaterialCardView cardPostImage;
 
         public PostViewHolder(@NonNull View itemView) {
             super(itemView);
-            // 这里一定要对应 XML 里的 ID
             tvName = itemView.findViewById(R.id.tvPostUserName);
             tvTime = itemView.findViewById(R.id.tvPostTime);
-            tvContent = itemView.findViewById(R.id.tvPostContent); // 之前报错就是这里名字不对
+            tvContent = itemView.findViewById(R.id.tvPostContent);
             tvLikeCount = itemView.findViewById(R.id.tvLikeCount);
             tvCommentCount = itemView.findViewById(R.id.tvCommentCount);
 
@@ -191,9 +180,8 @@ public class CommunityPostAdapter extends RecyclerView.Adapter<CommunityPostAdap
             ivPostImage = itemView.findViewById(R.id.ivPostImage);
             ivLike = itemView.findViewById(R.id.ivLike);
 
-            // 新增的 ID，必须在 XML 里加上
             ivComment = itemView.findViewById(R.id.ivComment);
-            ivShare = itemView.findViewById(R.id.ivShare);
+            // ivShare = itemView.findViewById(R.id.ivShare); // 已移除
 
             btnLike = itemView.findViewById(R.id.btnLike);
             cardPostImage = itemView.findViewById(R.id.cardPostImage);
