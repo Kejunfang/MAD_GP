@@ -4,8 +4,10 @@ import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -16,9 +18,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButton;
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
@@ -27,7 +32,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class UserProfile extends AppCompatActivity {
+// 1. 实现 OnPostActionListener 接口
+public class UserProfile extends AppCompatActivity implements CommunityPostAdapter.OnPostActionListener {
 
     private ImageView ivUserAvatar;
     private TextView tvUserName, tvUserBio;
@@ -83,8 +89,9 @@ public class UserProfile extends AppCompatActivity {
 
         rvUserPosts.setLayoutManager(new LinearLayoutManager(this));
         userPostList = new ArrayList<>();
-        // 这里的 Context 传 this 即可
-        postAdapter = new CommunityPostAdapter(this, userPostList);
+
+        // 2. 这里修改构造函数，传入 this 作为监听器
+        postAdapter = new CommunityPostAdapter(this, userPostList, this);
         rvUserPosts.setAdapter(postAdapter);
     }
 
@@ -112,17 +119,15 @@ public class UserProfile extends AppCompatActivity {
                 });
     }
 
-    // ★★★ 核心修复：改用 addSnapshotListener 实现实时刷新 ★★★
     private void loadUserPosts() {
         Log.d("UserProfile", "Loading posts for user: " + targetUserId);
 
-        // 使用 addSnapshotListener 替换 get()
-        // 传入 this 是为了让监听器跟随 Activity 生命周期自动销毁，防止内存泄漏
         db.collection("community_posts")
                 .whereEqualTo("userId", targetUserId)
                 .orderBy("timestamp", Query.Direction.DESCENDING)
                 .addSnapshotListener(this, (value, error) -> {
                     if (error != null) {
+                        // 注意：如果出现 "The query requires an index" 错误，请查看 Logcat 中的链接去创建索引
                         Toast.makeText(this, "Load failed: " + error.getMessage(), Toast.LENGTH_LONG).show();
                         Log.e("UserProfile", "Error loading posts", error);
                         return;
@@ -133,12 +138,11 @@ public class UserProfile extends AppCompatActivity {
                         for (DocumentSnapshot doc : value.getDocuments()) {
                             CommunityPost post = doc.toObject(CommunityPost.class);
                             if (post != null) {
-                                post.setPostId(doc.getId()); // 这一步很重要，否则点赞找不到文档ID
+                                post.setPostId(doc.getId());
                                 userPostList.add(post);
                             }
                         }
                     }
-                    // 刷新列表，此时 Adapter 会重新判断 isLiked，红心就会变色
                     postAdapter.notifyDataSetChanged();
                 });
     }
@@ -158,7 +162,6 @@ public class UserProfile extends AppCompatActivity {
             btnFollow.setEnabled(false);
 
             if (isFollowing) {
-                // 取消关注
                 db.collection("users").document(currentUserId)
                         .collection("following").document(targetUserId)
                         .delete();
@@ -175,7 +178,6 @@ public class UserProfile extends AppCompatActivity {
                         .addOnFailureListener(e -> btnFollow.setEnabled(true));
 
             } else {
-                // 关注
                 Map<String, Object> data = new HashMap<>();
                 data.put("timestamp", com.google.firebase.Timestamp.now());
 
@@ -229,5 +231,86 @@ public class UserProfile extends AppCompatActivity {
             btnFollow.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.sage_green)));
             btnFollow.setTextColor(getResources().getColor(R.color.white));
         }
+    }
+
+    // --- 3. 实现接口方法：评论点击 ---
+    @Override
+    public void onCommentClick(CommunityPost post) {
+        showCommentDialog(post.getPostId());
+    }
+
+    // --- 4. 实现接口方法：分享点击 ---
+    @Override
+    public void onShareClick(CommunityPost post) {
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.setType("text/plain");
+        String shareBody = post.getUserName() + " posted: " + post.getContent();
+        shareIntent.putExtra(Intent.EXTRA_SUBJECT, "Check out this post from MAD GP");
+        shareIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
+        startActivity(Intent.createChooser(shareIntent, "Share via"));
+    }
+
+    // --- 5. 添加显示评论弹窗的逻辑 ---
+    private void showCommentDialog(String postId) {
+        BottomSheetDialog dialog = new BottomSheetDialog(this);
+        // 确保你的布局文件中有 dialog_comment_sheet.xml
+        View view = getLayoutInflater().inflate(R.layout.dialog_comment_sheet, null);
+        dialog.setContentView(view);
+
+        RecyclerView rvComments = view.findViewById(R.id.rvComments);
+        EditText etCommentInput = view.findViewById(R.id.etCommentInput);
+        ImageView btnSend = view.findViewById(R.id.btnSendComment);
+
+        List<Comment> commentList = new ArrayList<>();
+        CommentAdapter commentAdapter = new CommentAdapter(commentList);
+        rvComments.setLayoutManager(new LinearLayoutManager(this));
+        rvComments.setAdapter(commentAdapter);
+
+        // 加载评论
+        db.collection("community_posts").document(postId).collection("comments")
+                .orderBy("timestamp", Query.Direction.ASCENDING)
+                .addSnapshotListener((value, error) -> {
+                    if (error != null) return;
+                    if (value != null) {
+                        commentList.clear();
+                        for (DocumentSnapshot doc : value.getDocuments()) {
+                            commentList.add(doc.toObject(Comment.class));
+                        }
+                        commentAdapter.notifyDataSetChanged();
+                        if (commentList.size() > 0) {
+                            rvComments.smoothScrollToPosition(commentList.size() - 1);
+                        }
+                    }
+                });
+
+        // 发送评论
+        btnSend.setOnClickListener(v -> {
+            String content = etCommentInput.getText().toString().trim();
+            if (TextUtils.isEmpty(content)) return;
+
+            if (mAuth.getCurrentUser() != null) {
+                String uid = mAuth.getCurrentUser().getUid();
+
+                db.collection("users").document(uid).get().addOnSuccessListener(userDoc -> {
+                    String name = userDoc.getString("name");
+                    if (name == null) name = "User";
+
+                    Comment newComment = new Comment(uid, name, content, Timestamp.now());
+
+                    db.collection("community_posts").document(postId).collection("comments")
+                            .add(newComment)
+                            .addOnSuccessListener(docRef -> {
+                                etCommentInput.setText("");
+                                Toast.makeText(this, "Comment sent", Toast.LENGTH_SHORT).show();
+
+                                // 更新帖子评论数
+                                db.collection("community_posts").document(postId)
+                                        .update("commentCount", FieldValue.increment(1));
+                            });
+                });
+            }
+        });
+
+        dialog.show();
     }
 }
