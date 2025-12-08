@@ -4,7 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout; // 引入 LinearLayout
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,7 +18,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
-import com.google.firebase.firestore.Query; // 引入 Query
+import com.google.firebase.firestore.Query;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,9 +27,14 @@ public class ProfilePage extends AppCompatActivity {
 
     // 1. 基本信息 UI
     private TextView tvUserName, tvUserBio, tvEventCount, tvPostCount;
+    // ★★★ 新增：关注数显示
+    private TextView tvFollowingCount;
+
     private ImageView ivProfileImage, btnEditProfile;
-    // ★★★ 新增：Posts 按钮容器
+
+    // ★★★ Posts 和 Following 的按钮容器
     private LinearLayout btnMyPostsContainer;
+    private LinearLayout btnFollowingContainer; // ★★★ 新增
 
     // 2. 预约列表 (Appointments)
     private TextView tvLabelAppointments;
@@ -49,12 +54,12 @@ public class ProfilePage extends AppCompatActivity {
     private CommunityPostAdapter likedPostAdapter;
     private List<CommunityPost> likedPostList;
 
-    // 5. ★★★ 新增：我的帖子列表 (My Posts)
+    // 5. 我的帖子列表 (My Posts - 用于页面内展开，目前逻辑是跳转新页面)
     private TextView tvLabelMyPosts;
     private RecyclerView rvMyPosts;
-    private CommunityPostAdapter myPostAdapter; // 复用 Adapter
+    private CommunityPostAdapter myPostAdapter;
     private List<CommunityPost> myPostList;
-    private boolean isMyPostsVisible = false; // 控制展开/折叠状态
+    private boolean isMyPostsVisible = false;
 
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
@@ -76,6 +81,10 @@ public class ProfilePage extends AppCompatActivity {
         tvPostCount = findViewById(R.id.tvPostCount);
         ivProfileImage = findViewById(R.id.ivProfileImage);
         btnEditProfile = findViewById(R.id.btnEditProfile);
+
+        // ★★★ 绑定新增的 Following 控件
+        tvFollowingCount = findViewById(R.id.tvFollowingCount);
+        btnFollowingContainer = findViewById(R.id.btnFollowingContainer);
 
         // ★ 绑定 Posts 容器
         btnMyPostsContainer = findViewById(R.id.btnMyPostsContainer);
@@ -104,17 +113,31 @@ public class ProfilePage extends AppCompatActivity {
         likedPostAdapter = new CommunityPostAdapter(this, likedPostList);
         rvLikedPosts.setAdapter(likedPostAdapter);
 
-        // --- ★★★ 初始化我的帖子列表 (Vertical, 默认隐藏) ---
+        // --- 初始化我的帖子列表 (Vertical, 默认隐藏) ---
         tvLabelMyPosts = findViewById(R.id.tvLabelMyPosts);
         rvMyPosts = findViewById(R.id.rvMyPosts);
         rvMyPosts.setLayoutManager(new LinearLayoutManager(this));
         myPostList = new ArrayList<>();
-        myPostAdapter = new CommunityPostAdapter(this, myPostList); // 复用 Adapter
+        myPostAdapter = new CommunityPostAdapter(this, myPostList);
         rvMyPosts.setAdapter(myPostAdapter);
 
-        // 点击事件
+        // --- 点击事件 ---
+
+        // 1. 编辑资料
         btnEditProfile.setOnClickListener(v -> {
             Intent intent = new Intent(ProfilePage.this, EditProfile.class);
+            startActivity(intent);
+        });
+
+        // 2. 我的帖子 (跳转到 MyPosts 页面)
+        btnMyPostsContainer.setOnClickListener(v -> {
+            Intent intent = new Intent(ProfilePage.this, MyPosts.class);
+            startActivity(intent);
+        });
+
+        // 3. ★★★ 关注列表 (跳转到 FollowList 页面)
+        btnFollowingContainer.setOnClickListener(v -> {
+            Intent intent = new Intent(ProfilePage.this, FollowList.class);
             startActivity(intent);
         });
 
@@ -122,12 +145,6 @@ public class ProfilePage extends AppCompatActivity {
 
         // 开启喜欢帖子的实时监听
         startListeningToLikedPosts();
-
-        // ★★★ 给 Posts 区域添加点击事件
-        btnMyPostsContainer.setOnClickListener(v -> {
-            Intent intent = new Intent(ProfilePage.this, MyPosts.class);
-            startActivity(intent);
-        });
     }
 
     @Override
@@ -138,7 +155,10 @@ public class ProfilePage extends AppCompatActivity {
         loadParticipatedWorkshops();
         loadMyPostCount();
 
-        // ★★★ 如果当前是展开状态，回来时刷新一下我的帖子数据
+        // ★★★ 每次回来都要刷新关注数
+        loadFollowingCount();
+
+        // 如果之前的逻辑需要保持展开状态刷新数据
         if (isMyPostsVisible) {
             loadMyPosts();
         }
@@ -152,21 +172,36 @@ public class ProfilePage extends AppCompatActivity {
         }
     }
 
-    // --- ★★★ 新功能：切换显示/隐藏我的帖子 ---
+    // --- ★★★ 新增：加载关注数量 ---
+    private void loadFollowingCount() {
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser == null) return;
+
+        db.collection("users").document(currentUser.getUid())
+                .collection("following")
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    int count = queryDocumentSnapshots.size();
+                    tvFollowingCount.setText(String.valueOf(count));
+                })
+                .addOnFailureListener(e -> {
+                    // 如果获取失败，默认为 0
+                    tvFollowingCount.setText("0");
+                });
+    }
+
+    // --- 切换显示/隐藏我的帖子 (保留你的原有代码) ---
     private void toggleMyPosts() {
         if (isMyPostsVisible) {
-            // 如果本来是显示的，就隐藏
             tvLabelMyPosts.setVisibility(View.GONE);
             rvMyPosts.setVisibility(View.GONE);
             isMyPostsVisible = false;
         } else {
-            // 如果本来是隐藏的，就显示并加载数据
             tvLabelMyPosts.setVisibility(View.VISIBLE);
             rvMyPosts.setVisibility(View.VISIBLE);
             isMyPostsVisible = true;
             loadMyPosts();
 
-            // 自动滑到底部查看
             rvMyPosts.post(() -> {
                 View scrollView = findViewById(R.id.profileScrollView);
                 if(scrollView instanceof androidx.core.widget.NestedScrollView){
@@ -176,14 +211,14 @@ public class ProfilePage extends AppCompatActivity {
         }
     }
 
-    // --- ★★★ 加载我的帖子数据 ---
+    // --- 加载我的帖子数据 ---
     private void loadMyPosts() {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser == null) return;
 
         db.collection("community_posts")
-                .whereEqualTo("userId", currentUser.getUid()) // 只查询 userId 等于当前用户的
-                .orderBy("timestamp", Query.Direction.DESCENDING) // 按时间倒序
+                .whereEqualTo("userId", currentUser.getUid())
+                .orderBy("timestamp", Query.Direction.DESCENDING)
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     myPostList.clear();
@@ -197,7 +232,7 @@ public class ProfilePage extends AppCompatActivity {
                     myPostAdapter.notifyDataSetChanged();
 
                     if (myPostList.isEmpty()) {
-                        Toast.makeText(this, "You haven't posted anything yet.", Toast.LENGTH_SHORT).show();
+                        // Toast.makeText(this, "You haven't posted anything yet.", Toast.LENGTH_SHORT).show();
                     }
                 })
                 .addOnFailureListener(e -> {
@@ -205,7 +240,7 @@ public class ProfilePage extends AppCompatActivity {
                 });
     }
 
-    // --- 1. 实时监听点赞过的帖子 ---
+    // --- 实时监听点赞过的帖子 ---
     private void startListeningToLikedPosts() {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser == null) return;
@@ -241,7 +276,7 @@ public class ProfilePage extends AppCompatActivity {
                 });
     }
 
-    // --- 2. 加载参与活动 ---
+    // --- 加载参与活动 ---
     private void loadParticipatedWorkshops() {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser == null) return;
@@ -293,7 +328,7 @@ public class ProfilePage extends AppCompatActivity {
                 });
     }
 
-    // --- 3. 加载预约 ---
+    // --- 加载预约 ---
     private void loadMyAppointments() {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser == null) return;
@@ -322,7 +357,7 @@ public class ProfilePage extends AppCompatActivity {
                 });
     }
 
-    // --- 4. 统计发帖数量 ---
+    // --- 统计发帖数量 ---
     private void loadMyPostCount() {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser == null) return;
@@ -335,7 +370,7 @@ public class ProfilePage extends AppCompatActivity {
                 });
     }
 
-    // --- 5. 加载用户信息 ---
+    // --- 加载用户信息 ---
     private void loadUserProfile() {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
