@@ -2,9 +2,13 @@ package com.example.mad_gp;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -13,51 +17,51 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue; // ★★★ 关键导入：用于更新计数
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.Query;
 
-import android.view.MenuItem;
-import android.widget.PopupMenu;
-
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProfilePage extends AppCompatActivity {
+// 实现 CommunityPostAdapter.OnPostActionListener 接口
+public class ProfilePage extends AppCompatActivity implements CommunityPostAdapter.OnPostActionListener {
 
     // 1. 基本信息 UI
     private TextView tvUserName, tvUserBio, tvEventCount, tvPostCount;
-    // ★★★ 新增：关注数显示
     private TextView tvFollowingCount;
 
     private ImageView ivProfileImage, btnEditProfile;
 
-    // ★★★ Posts 和 Following 的按钮容器
+    // Posts 和 Following 的按钮容器
     private LinearLayout btnMyPostsContainer;
-    private LinearLayout btnFollowingContainer; // ★★★ 新增
+    private LinearLayout btnFollowingContainer;
 
-    // 2. 预约列表 (Appointments)
+    // 2. 预约列表
     private TextView tvLabelAppointments;
     private RecyclerView rvAppointments;
     private AppointmentAdapter appointmentAdapter;
     private List<Appointment> appointmentList;
 
-    // 3. 参与活动列表 (Workshops)
+    // 3. 参与活动列表
     private TextView tvLabelWorkshops;
     private RecyclerView rvParticipatedWorkshops;
     private ParticipatedWorkshopAdapter participatedAdapter;
     private List<Workshop> participatedWorkshopList;
 
-    // 4. 喜欢的帖子列表 (Liked Posts)
+    // 4. 喜欢的帖子列表
     private TextView tvLabelLikedPosts;
     private RecyclerView rvLikedPosts;
     private CommunityPostAdapter likedPostAdapter;
     private List<CommunityPost> likedPostList;
 
-    // 5. 我的帖子列表 (My Posts - 用于页面内展开，目前逻辑是跳转新页面)
+    // 5. 我的帖子列表
     private TextView tvLabelMyPosts;
     private RecyclerView rvMyPosts;
     private CommunityPostAdapter myPostAdapter;
@@ -85,14 +89,11 @@ public class ProfilePage extends AppCompatActivity {
         ivProfileImage = findViewById(R.id.ivProfileImage);
         btnEditProfile = findViewById(R.id.btnEditProfile);
 
-        // ★★★ 绑定新增的 Following 控件
         tvFollowingCount = findViewById(R.id.tvFollowingCount);
         btnFollowingContainer = findViewById(R.id.btnFollowingContainer);
-
-        // ★ 绑定 Posts 容器
         btnMyPostsContainer = findViewById(R.id.btnMyPostsContainer);
 
-        // --- 初始化预约列表 (Vertical) ---
+        // --- 初始化预约列表 ---
         tvLabelAppointments = findViewById(R.id.tvLabelAppointments);
         rvAppointments = findViewById(R.id.rvAppointments);
         rvAppointments.setLayoutManager(new LinearLayoutManager(this));
@@ -100,7 +101,7 @@ public class ProfilePage extends AppCompatActivity {
         appointmentAdapter = new AppointmentAdapter(this, appointmentList);
         rvAppointments.setAdapter(appointmentAdapter);
 
-        // --- 初始化活动列表 (Horizontal) ---
+        // --- 初始化活动列表 ---
         tvLabelWorkshops = findViewById(R.id.tvLabelWorkshops);
         rvParticipatedWorkshops = findViewById(R.id.rvParticipatedWorkshops);
         rvParticipatedWorkshops.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
@@ -108,34 +109,32 @@ public class ProfilePage extends AppCompatActivity {
         participatedAdapter = new ParticipatedWorkshopAdapter(this, participatedWorkshopList);
         rvParticipatedWorkshops.setAdapter(participatedAdapter);
 
-        // --- 初始化喜欢帖子列表 (Vertical) ---
+        // --- 初始化喜欢帖子列表 ---
         tvLabelLikedPosts = findViewById(R.id.tvLabelLikedPosts);
         rvLikedPosts = findViewById(R.id.rvLikedPosts);
         rvLikedPosts.setLayoutManager(new LinearLayoutManager(this));
         likedPostList = new ArrayList<>();
-        likedPostAdapter = new CommunityPostAdapter(this, likedPostList);
+        // 传入 'this' 作为监听器
+        likedPostAdapter = new CommunityPostAdapter(this, likedPostList, this);
         rvLikedPosts.setAdapter(likedPostAdapter);
 
-        // --- 初始化我的帖子列表 (Vertical, 默认隐藏) ---
+        // --- 初始化我的帖子列表 ---
         tvLabelMyPosts = findViewById(R.id.tvLabelMyPosts);
         rvMyPosts = findViewById(R.id.rvMyPosts);
         rvMyPosts.setLayoutManager(new LinearLayoutManager(this));
         myPostList = new ArrayList<>();
-        myPostAdapter = new CommunityPostAdapter(this, myPostList);
+        // 传入 'this' 作为监听器
+        myPostAdapter = new CommunityPostAdapter(this, myPostList, this);
         rvMyPosts.setAdapter(myPostAdapter);
 
         // --- 点击事件 ---
-
-        // 1. 编辑资料
         btnEditProfile.setOnClickListener(this::showPopupMenu);
 
-        // 2. 我的帖子 (跳转到 MyPosts 页面)
         btnMyPostsContainer.setOnClickListener(v -> {
             Intent intent = new Intent(ProfilePage.this, MyPosts.class);
             startActivity(intent);
         });
 
-        // 3. ★★★ 关注列表 (跳转到 FollowList 页面)
         btnFollowingContainer.setOnClickListener(v -> {
             Intent intent = new Intent(ProfilePage.this, FollowList.class);
             startActivity(intent);
@@ -149,41 +148,31 @@ public class ProfilePage extends AppCompatActivity {
 
     private void showPopupMenu(View view) {
         PopupMenu popup = new PopupMenu(this, view);
+        popup.getMenu().add(0, 1, 0, "Edit Profile");
+        popup.getMenu().add(0, 2, 1, "Log Out");
 
-        // 动态添加菜单项 (也可以用 menu resource xml，但这样写更简单直接)
-        popup.getMenu().add(0, 1, 0, "Edit Profile"); // id=1
-        popup.getMenu().add(0, 2, 1, "Log Out");      // id=2
-
-        // 设置菜单项点击监听
         popup.setOnMenuItemClickListener(item -> {
             switch (item.getItemId()) {
-                case 1: // Edit Profile
+                case 1:
                     Intent intent = new Intent(ProfilePage.this, EditProfile.class);
                     startActivity(intent);
                     return true;
-
-                case 2: // Log Out
+                case 2:
                     logout();
                     return true;
-
                 default:
                     return false;
             }
         });
-
         popup.show();
     }
 
     private void logout() {
-        // 1. Firebase 登出
         mAuth.signOut();
-
-        // 2. 跳转回登录页，并清空所有之前的页面 (防止按返回键回来)
         Intent intent = new Intent(ProfilePage.this, Login.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         finish();
-
         Toast.makeText(this, "Logged out successfully", Toast.LENGTH_SHORT).show();
     }
 
@@ -194,11 +183,8 @@ public class ProfilePage extends AppCompatActivity {
         loadMyAppointments();
         loadParticipatedWorkshops();
         loadMyPostCount();
-
-        // ★★★ 每次回来都要刷新关注数
         loadFollowingCount();
 
-        // 如果之前的逻辑需要保持展开状态刷新数据
         if (isMyPostsVisible) {
             loadMyPosts();
         }
@@ -212,7 +198,6 @@ public class ProfilePage extends AppCompatActivity {
         }
     }
 
-    // --- ★★★ 新增：加载关注数量 ---
     private void loadFollowingCount() {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser == null) return;
@@ -224,13 +209,9 @@ public class ProfilePage extends AppCompatActivity {
                     int count = queryDocumentSnapshots.size();
                     tvFollowingCount.setText(String.valueOf(count));
                 })
-                .addOnFailureListener(e -> {
-                    // 如果获取失败，默认为 0
-                    tvFollowingCount.setText("0");
-                });
+                .addOnFailureListener(e -> tvFollowingCount.setText("0"));
     }
 
-    // --- 切换显示/隐藏我的帖子 (保留你的原有代码) ---
     private void toggleMyPosts() {
         if (isMyPostsVisible) {
             tvLabelMyPosts.setVisibility(View.GONE);
@@ -251,7 +232,6 @@ public class ProfilePage extends AppCompatActivity {
         }
     }
 
-    // --- 加载我的帖子数据 ---
     private void loadMyPosts() {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser == null) return;
@@ -270,17 +250,12 @@ public class ProfilePage extends AppCompatActivity {
                         }
                     }
                     myPostAdapter.notifyDataSetChanged();
-
-                    if (myPostList.isEmpty()) {
-                        // Toast.makeText(this, "You haven't posted anything yet.", Toast.LENGTH_SHORT).show();
-                    }
                 })
                 .addOnFailureListener(e -> {
                     Toast.makeText(ProfilePage.this, "Error loading posts: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
     }
 
-    // --- 实时监听点赞过的帖子 ---
     private void startListeningToLikedPosts() {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser == null) return;
@@ -316,7 +291,6 @@ public class ProfilePage extends AppCompatActivity {
                 });
     }
 
-    // --- 加载参与活动 ---
     private void loadParticipatedWorkshops() {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser == null) return;
@@ -368,7 +342,6 @@ public class ProfilePage extends AppCompatActivity {
                 });
     }
 
-    // --- 加载预约 ---
     private void loadMyAppointments() {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser == null) return;
@@ -397,7 +370,6 @@ public class ProfilePage extends AppCompatActivity {
                 });
     }
 
-    // --- 统计发帖数量 ---
     private void loadMyPostCount() {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser == null) return;
@@ -410,7 +382,6 @@ public class ProfilePage extends AppCompatActivity {
                 });
     }
 
-    // --- 加载用户信息 ---
     private void loadUserProfile() {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
@@ -436,19 +407,119 @@ public class ProfilePage extends AppCompatActivity {
         }
     }
 
+    // --- 导航栏设置 (优化了动画) ---
     private void setupBottomNav() {
         LinearLayout navHome = findViewById(R.id.navHome);
         LinearLayout navEvent = findViewById(R.id.navEvent);
         LinearLayout navSocial = findViewById(R.id.navSocial);
         LinearLayout navProfile = findViewById(R.id.navProfile);
 
-        navHome.setOnClickListener(v -> {
-            Intent intent = new Intent(ProfilePage.this, HomePage.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-            startActivity(intent);
+        if (navHome != null) {
+            navHome.setOnClickListener(v -> {
+                Intent intent = new Intent(ProfilePage.this, HomePage.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                startActivity(intent);
+                overridePendingTransition(0, 0); // 取消动画，体验更佳
+            });
+        }
+        if (navEvent != null) {
+            navEvent.setOnClickListener(v -> {
+                Intent intent = new Intent(ProfilePage.this, Event.class);
+                startActivity(intent);
+                overridePendingTransition(0, 0);
+            });
+        }
+        if (navSocial != null) {
+            navSocial.setOnClickListener(v -> {
+                Intent intent = new Intent(ProfilePage.this, CommunityFeed.class);
+                startActivity(intent);
+                overridePendingTransition(0, 0);
+            });
+        }
+        if (navProfile != null) {
+            navProfile.setOnClickListener(v -> {
+                // 已经在 Profile 页，不需要跳转
+            });
+        }
+    }
+
+    // --- 实现接口：分享 ---
+    @Override
+    public void onShareClick(CommunityPost post) {
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.setType("text/plain");
+        String shareBody = post.getUserName() + " posted: " + post.getContent();
+        shareIntent.putExtra(Intent.EXTRA_SUBJECT, "Check out this post from MAD GP");
+        shareIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
+        startActivity(Intent.createChooser(shareIntent, "Share via"));
+    }
+
+    // --- 实现接口：评论 ---
+    @Override
+    public void onCommentClick(CommunityPost post) {
+        showCommentDialog(post.getPostId());
+    }
+
+    // --- 评论弹窗 (修复了评论数不更新的问题) ---
+    private void showCommentDialog(String postId) {
+        BottomSheetDialog dialog = new BottomSheetDialog(this);
+        View view = getLayoutInflater().inflate(R.layout.dialog_comment_sheet, null);
+        dialog.setContentView(view);
+
+        RecyclerView rvComments = view.findViewById(R.id.rvComments);
+        EditText etCommentInput = view.findViewById(R.id.etCommentInput);
+        ImageView btnSend = view.findViewById(R.id.btnSendComment);
+
+        List<Comment> commentList = new ArrayList<>();
+        CommentAdapter commentAdapter = new CommentAdapter(commentList);
+        rvComments.setLayoutManager(new LinearLayoutManager(this));
+        rvComments.setAdapter(commentAdapter);
+
+        // 加载评论
+        db.collection("community_posts").document(postId).collection("comments")
+                .orderBy("timestamp", Query.Direction.ASCENDING)
+                .addSnapshotListener((value, error) -> {
+                    if (error != null) return;
+                    if (value != null) {
+                        commentList.clear();
+                        for (DocumentSnapshot doc : value.getDocuments()) {
+                            commentList.add(doc.toObject(Comment.class));
+                        }
+                        commentAdapter.notifyDataSetChanged();
+                        if (commentList.size() > 0) {
+                            rvComments.smoothScrollToPosition(commentList.size() - 1);
+                        }
+                    }
+                });
+
+        // 发送评论
+        btnSend.setOnClickListener(v -> {
+            String content = etCommentInput.getText().toString().trim();
+            if (TextUtils.isEmpty(content)) return;
+
+            if (mAuth.getCurrentUser() != null) {
+                String uid = mAuth.getCurrentUser().getUid();
+                db.collection("users").document(uid).get().addOnSuccessListener(userDoc -> {
+                    String name = userDoc.getString("name");
+                    if (name == null) name = "User";
+
+                    Comment newComment = new Comment(uid, name, content, Timestamp.now());
+
+                    // 1. 添加评论
+                    db.collection("community_posts").document(postId).collection("comments")
+                            .add(newComment)
+                            .addOnSuccessListener(docRef -> {
+                                etCommentInput.setText("");
+                                Toast.makeText(this, "Comment sent", Toast.LENGTH_SHORT).show();
+
+                                // 2. ★★★ 关键修复：更新帖子的 commentCount 字段 (+1) ★★★
+                                db.collection("community_posts").document(postId)
+                                        .update("commentCount", FieldValue.increment(1));
+                            });
+                });
+            }
         });
-        navEvent.setOnClickListener(v -> startActivity(new Intent(ProfilePage.this, Event.class)));
-        navSocial.setOnClickListener(v -> startActivity(new Intent(ProfilePage.this, CommunityFeed.class)));
-        navProfile.setOnClickListener(v -> Toast.makeText(ProfilePage.this, "You are already here!", Toast.LENGTH_SHORT).show());
+
+        dialog.show();
     }
 }

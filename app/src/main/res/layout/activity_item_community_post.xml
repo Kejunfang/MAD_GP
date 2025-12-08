@@ -119,8 +119,11 @@
                 android:gravity="center_vertical"
                 android:layout_marginEnd="24dp">
                 <ImageView
+                    android:id="@+id/ivComment"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
+                    android:clickable="true"
+                    android:focusable="true"
                     android:src="@drawable/ic_comment"
                     app:tint="@color/text_secondary"/>
                 <TextView
@@ -134,8 +137,11 @@
             </LinearLayout>
 
             <ImageView
+                android:id="@+id/ivShare"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
+                android:clickable="true"
+                android:focusable="true"
                 android:src="@drawable/ic_share"
                 app:tint="@color/text_secondary"/>
         </LinearLayout>
