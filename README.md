@@ -90,7 +90,7 @@ You can run the application using either a physical Android device or the Androi
 
 **Option B: Using a Physical Device via USB**
 1.  Enable **Developer Options** and **USB Debugging** on your Android device.
-    *[How to open Developer Options and USB Debugging](https://developer.android.com/studio/debug/dev-options)
+    * [How to open Developer Options and USB Debugging](https://developer.android.com/studio/debug/dev-options)
 3.  Connect the device to your computer via a USB cable.
 4.  Select your device from the run target dropdown menu in Android Studio.
 5.  Click the **Run** button to deploy the app.
