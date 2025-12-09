@@ -62,7 +62,7 @@ To set up and run this project locally, please follow the steps below.
 1.  **Clone the Repository**
     Clone the project to your local machine using Git.
     ```bash
-    git clone [https://github.com/YourUsername/MAD_GP.git](https://github.com/YourUsername/MAD_GP.git)
+    git clone https://github.com/Kejunfang/MAD_GP.git
     ```
 
 2.  **Open the Project**
