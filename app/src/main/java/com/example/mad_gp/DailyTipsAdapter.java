@@ -39,14 +39,11 @@ public class DailyTipsAdapter extends RecyclerView.Adapter<DailyTipsAdapter.TipV
         holder.tvTitle.setText(tip.getTitle());
         holder.tvSubtitle.setText(tip.getSubtitle());
 
-        // 图片加载逻辑 (兼容本地资源名和网络 URL)
         String imageUrl = tip.getImageUrl();
         if (imageUrl != null && !imageUrl.isEmpty()) {
             if (imageUrl.startsWith("http")) {
-                // 网络图片
                 Glide.with(context).load(imageUrl).placeholder(R.drawable.studydesk).centerCrop().into(holder.ivImage);
             } else {
-                // 本地资源名 (例如 "studydesk")
                 int resId = context.getResources().getIdentifier(imageUrl, "drawable", context.getPackageName());
                 if (resId != 0) {
                     holder.ivImage.setImageResource(resId);
@@ -58,7 +55,6 @@ public class DailyTipsAdapter extends RecyclerView.Adapter<DailyTipsAdapter.TipV
             holder.ivImage.setImageResource(R.drawable.studydesk);
         }
 
-        // 点击跳转
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(context, DailyTipsDetails.class);
             intent.putExtra("TIP_ID", tip.getId()); // 传递 ID

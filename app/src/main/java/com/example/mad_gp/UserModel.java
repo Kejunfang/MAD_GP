@@ -6,11 +6,11 @@ public class UserModel {
     private String email;
     private String phone;
     private String birthDate;
-    private String profileImageUrl; // 预留给头像
-    private String bio;             // 预留给简介
+    private String profileImageUrl;
+    private String bio;
 
-    // 空构造函数 (Firebase 需要)
     public UserModel() {
+
     }
 
     // 构造函数
@@ -20,11 +20,11 @@ public class UserModel {
         this.email = email;
         this.phone = phone;
         this.birthDate = birthDate;
-        this.profileImageUrl = ""; // 默认为空
-        this.bio = "Hello, I am using MAD GP!"; // 默认简介
+        this.profileImageUrl = "";
+        this.bio = "Hello, I am using MAD GP!";
     }
 
-    // Getter 和 Setter 方法
+    // Getter and Setter
     public String getUserId() { return userId; }
     public void setUserId(String userId) { this.userId = userId; }
 

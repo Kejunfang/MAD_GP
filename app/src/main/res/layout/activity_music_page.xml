@@ -169,7 +169,6 @@
                     tools:ignore="ContentDescription" />
             </LinearLayout>
 
-            <!-- Up Next 标题 -->
             <TextView
                 android:id="@+id/tvUpNextTitle"
                 android:layout_width="wrap_content"
@@ -181,7 +180,6 @@
                 android:textColor="@color/text_main"
                 android:textSize="18sp" />
 
-            <!-- Up Next 列表 -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerViewUpNext"
                 android:layout_width="match_parent"

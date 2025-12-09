@@ -47,7 +47,6 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.ViewHo
             holder.ivAvatar.setImageResource(R.drawable.ic_default_avatar);
         }
 
-        // 点击跳转到该用户的 Profile
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(context, UserProfile.class);
             intent.putExtra("TARGET_USER_ID", user.getUserId());

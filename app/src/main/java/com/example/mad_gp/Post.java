@@ -7,13 +7,12 @@ public class Post implements Serializable {
     private String userId;
     private String userName;
     private String content;
-    private String timestamp; // 简化为 String
+    private String timestamp;
     private int likeCount;
     private int commentCount;
 
     public Post() {}
 
-    // 假设这是从 Firebase 自动转换的对象
     public String getId() { return id; }
     public String getContent() { return content; }
     public String getUserName() { return userName; }
@@ -22,7 +21,7 @@ public class Post implements Serializable {
     public int getCommentCount() { return commentCount; }
     public String getUserId() { return userId; }
 
-    // Setters (如果需要)
+    // Setters
     public void setId(String id) { this.id = id; }
     public void setContent(String content) { this.content = content; }
     public void setUserName(String userName) { this.userName = userName; }

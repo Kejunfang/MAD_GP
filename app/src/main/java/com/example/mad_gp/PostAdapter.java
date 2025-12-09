@@ -37,7 +37,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         holder.tvLikes.setText(post.getLikeCount() + " Likes");
         holder.tvComments.setText(post.getCommentCount() + " Comments");
 
-        // (可选) 设置点击事件跳转到帖子详情页
         holder.itemView.setOnClickListener(v -> {
             Toast.makeText(context, "Post ID: " + post.getId(), Toast.LENGTH_SHORT).show();
         });

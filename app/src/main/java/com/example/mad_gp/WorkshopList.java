@@ -22,7 +22,7 @@ public class WorkshopList extends AppCompatActivity {
     private RecyclerView rvWorkshops;
     private WorkshopAdapter adapter;
     private List<Workshop> workshopList;
-    private List<Workshop> fullList; // 备份用于搜索
+    private List<Workshop> fullList;
     private FirebaseFirestore db;
     private EditText etSearch;
 

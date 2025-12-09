@@ -5,7 +5,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ImageButton; // 修正导入
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -20,7 +20,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FieldValue; // ★★★ 关键导入：用于原子计数更新
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
@@ -47,13 +47,11 @@ public class CommunityFeed extends AppCompatActivity implements CommunityPostAda
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         postList = new ArrayList<>();
-        // 传入 'this' 作为监听器
         adapter = new CommunityPostAdapter(this, postList, this);
         recyclerView.setAdapter(adapter);
 
         loadPosts();
 
-        // 绑定聊天按钮
         ImageButton btnChat = findViewById(R.id.btnChat);
         if (btnChat != null) {
             btnChat.setOnClickListener(v -> {
@@ -62,7 +60,6 @@ public class CommunityFeed extends AppCompatActivity implements CommunityPostAda
             });
         }
 
-        // 绑定发帖按钮
         FloatingActionButton fabPost = findViewById(R.id.fabCreatePost);
         if (fabPost != null) {
             fabPost.setOnClickListener(v ->
@@ -70,11 +67,10 @@ public class CommunityFeed extends AppCompatActivity implements CommunityPostAda
             );
         }
 
-        // ★★★ 关键修复：初始化底部导航栏
         setupBottomNavigation();
     }
 
-    // --- 导航栏逻辑 ---
+    // navigation Bar
     private void setupBottomNavigation() {
         LinearLayout navHome = findViewById(R.id.navHome);
         LinearLayout navEvent = findViewById(R.id.navEvent);
@@ -84,10 +80,9 @@ public class CommunityFeed extends AppCompatActivity implements CommunityPostAda
         if (navHome != null) {
             navHome.setOnClickListener(v -> {
                 Intent intent = new Intent(CommunityFeed.this, HomePage.class);
-                // 清除栈顶，防止重复返回
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(intent);
-                overridePendingTransition(0, 0); // 取消转场动画
+                overridePendingTransition(0, 0);
             });
         }
 
@@ -99,10 +94,9 @@ public class CommunityFeed extends AppCompatActivity implements CommunityPostAda
             });
         }
 
-        // Social 就是当前页，不需要跳转，或者可以做刷新操作
         if (navSocial != null) {
             navSocial.setOnClickListener(v -> {
-                // 当前就在 Social 页，不做动作
+
             });
         }
 
@@ -162,7 +156,6 @@ public class CommunityFeed extends AppCompatActivity implements CommunityPostAda
         rvComments.setLayoutManager(new LinearLayoutManager(this));
         rvComments.setAdapter(commentAdapter);
 
-        // 加载评论
         db.collection("community_posts").document(postId).collection("comments")
                 .orderBy("timestamp", Query.Direction.ASCENDING)
                 .addSnapshotListener((value, error) -> {
@@ -179,7 +172,6 @@ public class CommunityFeed extends AppCompatActivity implements CommunityPostAda
                     }
                 });
 
-        // 发送评论
         btnSend.setOnClickListener(v -> {
             String content = etCommentInput.getText().toString().trim();
             if (TextUtils.isEmpty(content)) return;
@@ -193,15 +185,12 @@ public class CommunityFeed extends AppCompatActivity implements CommunityPostAda
 
                     Comment newComment = new Comment(uid, name, content, Timestamp.now());
 
-                    // 1. 添加评论到子集合
                     db.collection("community_posts").document(postId).collection("comments")
                             .add(newComment)
                             .addOnSuccessListener(docRef -> {
-                                etCommentInput.setText(""); // 清空输入框
+                                etCommentInput.setText("");
                                 Toast.makeText(this, "Comment sent", Toast.LENGTH_SHORT).show();
 
-                                // ★★★ 关键修复：更新帖子的 commentCount 字段 (+1) ★★★
-                                // 这会让列表页的数字自动更新
                                 db.collection("community_posts").document(postId)
                                         .update("commentCount", FieldValue.increment(1));
                             });

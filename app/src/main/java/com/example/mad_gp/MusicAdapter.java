@@ -71,7 +71,6 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.MusicViewHol
             tvDuration = itemView.findViewById(R.id.tvMusicDuration);
             btnPlay = itemView.findViewById(R.id.btnPlayMusic);
 
-            // 👇 添加调试日志，检查哪个控件是 null
             Log.d(TAG, "ViewHolder created:");
             Log.d(TAG, "ivCover: " + (ivCover != null ? "OK" : "NULL"));
             Log.d(TAG, "tvTitle: " + (tvTitle != null ? "OK" : "NULL"));
@@ -81,7 +80,6 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.MusicViewHol
         }
 
         public void bind(Music music, OnMusicClickListener listener) {
-            // 👇 添加空值检查，防止崩溃
             if (tvTitle != null) {
                 tvTitle.setText(music.getTitle());
             } else {
@@ -100,7 +98,6 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.MusicViewHol
                 Log.e(TAG, "tvDuration is NULL!");
             }
 
-            // 加载封面图片
             if (ivCover != null) {
                 Glide.with(itemView.getContext())
                         .load(music.getCoverUrl())
@@ -110,7 +107,6 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.MusicViewHol
                 Log.e(TAG, "ivCover is NULL!");
             }
 
-            // 播放按钮点击
             if (btnPlay != null) {
                 btnPlay.setOnClickListener(v -> {
                     if (listener != null) {

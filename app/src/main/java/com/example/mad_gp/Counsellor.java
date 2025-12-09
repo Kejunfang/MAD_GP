@@ -1,8 +1,7 @@
 package com.example.mad_gp;
 
-import java.io.Serializable; // 1. 务必添加这就导入
+import java.io.Serializable;
 
-// 2. 务必添加 "implements Serializable"
 public class Counsellor implements Serializable {
     private String id;
     private String name;

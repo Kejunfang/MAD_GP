@@ -44,7 +44,6 @@ public class ChatList extends AppCompatActivity {
         if (mAuth.getCurrentUser() == null) return;
         String myId = mAuth.getCurrentUser().getUid();
 
-        // 查询 participants 数组中包含当前用户 ID 的聊天室
         db.collection("chat_rooms")
                 .whereArrayContains("participants", myId)
                 .addSnapshotListener((value, error) -> {

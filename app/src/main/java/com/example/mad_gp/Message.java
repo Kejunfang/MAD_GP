@@ -8,7 +8,7 @@ public class Message {
     private String message;
     private Timestamp timestamp;
 
-    public Message() { } // Firebase 需要空构造函数
+    public Message() { }
 
     public Message(String senderId, String receiverId, String message, Timestamp timestamp) {
         this.senderId = senderId;

@@ -14,7 +14,6 @@
         android:orientation="horizontal"
         android:padding="12dp">
 
-        <!-- 封面图 -->
         <ImageView
             android:id="@+id/ivMusicCover"
             android:layout_width="60dp"
@@ -22,7 +21,6 @@
             android:scaleType="centerCrop"
             android:background="@color/sage_green"/>
 
-        <!-- 音乐信息 -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -59,7 +57,6 @@
                 android:layout_marginTop="4dp"/>
         </LinearLayout>
 
-        <!-- 播放按钮 -->
         <ImageButton
             android:id="@+id/btnPlayMusic"
             android:layout_width="40dp"

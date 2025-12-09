@@ -12,7 +12,6 @@ public class Music implements Parcelable {
     private String coverUrl;
     private String audioUrl;
 
-    // 空构造函数 (Firebase 需要)
     public Music() {}
 
     // 完整构造函数
@@ -27,7 +26,6 @@ public class Music implements Parcelable {
         this.audioUrl = audioUrl;
     }
 
-    // Parcelable 构造函数
     protected Music(Parcel in) {
         id = in.readString();
         title = in.readString();
@@ -72,14 +70,12 @@ public class Music implements Parcelable {
     public String getAudioUrl() { return audioUrl; }
     public void setAudioUrl(String audioUrl) { this.audioUrl = audioUrl; }
 
-    // 辅助方法：格式化时长
     public String getFormattedDuration() {
         int minutes = duration / 60;
         int seconds = duration % 60;
         return String.format("%d:%02d", minutes, seconds);
     }
 
-    // Parcelable 方法
     @Override
     public int describeContents() {
         return 0;

@@ -3,7 +3,7 @@ package com.example.mad_gp;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.HorizontalScrollView; // 引入
+import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -31,7 +31,6 @@ public class CreatePost extends AppCompatActivity {
     private ImageView ivPreview, ivCurrentUserAvatar;
     private TextView tvCurrentUserName;
 
-    // ★★★ 新增：选择区域控件
     private HorizontalScrollView imageSelectionContainer;
     private ImageView imgOption1, imgOption2, imgOption3, imgOption5;
 
@@ -41,7 +40,7 @@ public class CreatePost extends AppCompatActivity {
     private String currentUserName = "Anonymous";
     private String currentUserAvatar = "counsellor1";
 
-    private String selectedImageName = ""; // 存储选中的图片名
+    private String selectedImageName = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,7 +94,6 @@ public class CreatePost extends AppCompatActivity {
         ivCurrentUserAvatar = findViewById(R.id.ivHeaderAvatar);
         tvCurrentUserName = findViewById(R.id.tvHeaderName);
 
-        // ★★★ 初始化选择区域
         imageSelectionContainer = findViewById(R.id.imageSelectionContainer);
         imgOption1 = findViewById(R.id.imgOption1);
         imgOption2 = findViewById(R.id.imgOption2);
@@ -109,34 +107,28 @@ public class CreatePost extends AppCompatActivity {
         btnClose.setOnClickListener(v -> finish());
         btnPost.setOnClickListener(v -> postToFirebase());
 
-        // 点击 Add Photo，显示选择栏，隐藏预览图(如果之前有)
         btnAddPhoto.setOnClickListener(v -> {
             imageSelectionContainer.setVisibility(View.VISIBLE);
             imagePreviewContainer.setVisibility(View.GONE);
             Toast.makeText(this, "Select an image", Toast.LENGTH_SHORT).show();
         });
 
-        // 这里的 Camera 按钮如果你想也改成选图，可以一样处理
         btnAddCamera.setOnClickListener(v -> {
             imageSelectionContainer.setVisibility(View.VISIBLE);
         });
 
-        // ★★★ 图片选择逻辑
         View.OnClickListener selectImageListener = v -> {
             ImageView clickedImg = (ImageView) v;
 
-            // 1. 获取选中的图片名 (根据 ID 判断)
             if (v.getId() == R.id.imgOption1) selectedImageName = "relaximage1";
             else if (v.getId() == R.id.imgOption2) selectedImageName = "relaximage2";
             else if (v.getId() == R.id.imgOption3) selectedImageName = "relaximage3";
             else if (v.getId() == R.id.imgOption5) selectedImageName = "relaximage5";
 
-            // 2. 显示预览图
             int resId = getResources().getIdentifier(selectedImageName, "drawable", getPackageName());
             ivPreview.setImageResource(resId);
             imagePreviewContainer.setVisibility(View.VISIBLE);
 
-            // 3. 隐藏选择栏
             imageSelectionContainer.setVisibility(View.GONE);
         };
 
@@ -145,11 +137,9 @@ public class CreatePost extends AppCompatActivity {
         imgOption3.setOnClickListener(selectImageListener);
         imgOption5.setOnClickListener(selectImageListener);
 
-        // 删除图片
         btnRemoveImage.setOnClickListener(v -> {
             selectedImageName = "";
             imagePreviewContainer.setVisibility(View.GONE);
-            // 可以选择重新显示选择栏，或者什么都不做
         });
     }
 
@@ -173,7 +163,6 @@ public class CreatePost extends AppCompatActivity {
         postMap.put("likesCount", 0);
         postMap.put("commentCount", 0);
         postMap.put("likedBy", new ArrayList<String>());
-        // ★★★ 直接存入选中的图片名
         postMap.put("postImage", selectedImageName);
 
         db.collection("community_posts").add(postMap)

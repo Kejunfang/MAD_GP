@@ -7,8 +7,8 @@ public class Appointment {
     private String time;
     private String location;
 
-    public Appointment() {
-        // Firebase 需要空构造函数
+   public Appointment() {
+
     }
 
     public Appointment(String counsellorName, String counsellorImage, String date, String time, String location) {

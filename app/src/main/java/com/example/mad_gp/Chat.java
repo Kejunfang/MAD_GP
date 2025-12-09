@@ -11,7 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide; // ★ 引入 Glide
+import com.bumptech.glide.Glide;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentChange;
@@ -37,7 +37,7 @@ public class Chat extends AppCompatActivity {
     private RecyclerView rvChat;
     private EditText etMessageInput;
     private ImageView btnSend;
-    private ImageView ivChatAvatar; // ★ 新增：头像控件
+    private ImageView ivChatAvatar;
 
     private ChatAdapter chatAdapter;
     private List<Message> messageList;
@@ -63,7 +63,7 @@ public class Chat extends AppCompatActivity {
         chatRoomId = getChatRoomId(currentUserId, targetUserId);
 
         initViews();
-        loadTargetUserInfo(); // ★ 新增：加载对方头像
+        loadTargetUserInfo();
         loadMessages();
 
         btnSend.setOnClickListener(v -> sendMessage());
@@ -76,8 +76,6 @@ public class Chat extends AppCompatActivity {
         etMessageInput = findViewById(R.id.etMessageInput);
         btnSend = findViewById(R.id.btnSend);
 
-        // ★ 请确保你的 activity_chat.xml 里面有一个 ImageView 的 ID 是 ivChatAvatar
-        // 如果你的 XML 只有名字没有头像，你需要加一个 ImageView 在名字旁边
         ivChatAvatar = findViewById(R.id.ivChatAvatar);
 
         tvChatUserName.setText(targetUserName);
@@ -89,20 +87,17 @@ public class Chat extends AppCompatActivity {
         rvChat.setAdapter(chatAdapter);
     }
 
-    // ★★★ 新增方法：加载对方的头像 ★★★
     private void loadTargetUserInfo() {
         db.collection("users").document(targetUserId).get()
                 .addOnSuccessListener(documentSnapshot -> {
                     if (documentSnapshot.exists()) {
                         String avatarUrl = documentSnapshot.getString("profileImageUrl");
 
-                        // 使用 Glide 加载图片
                         if (ivChatAvatar != null) {
                             if (avatarUrl != null && !avatarUrl.isEmpty()) {
                                 if (avatarUrl.startsWith("http")) {
                                     Glide.with(this).load(avatarUrl).into(ivChatAvatar);
                                 } else {
-                                    // 处理本地资源名 (例如 "counsellor1")
                                     int resId = getResources().getIdentifier(avatarUrl, "drawable", getPackageName());
                                     if (resId != 0) ivChatAvatar.setImageResource(resId);
                                     else ivChatAvatar.setImageResource(R.drawable.ic_default_avatar);
@@ -133,7 +128,6 @@ public class Chat extends AppCompatActivity {
         roomData.put("lastMessage", msgText);
         roomData.put("lastMessageTime", now);
 
-        // ★ 同时也存入 participantsIds 以便查询更精准 (可选，但推荐)
         db.collection("chat_rooms").document(chatRoomId).set(roomData);
     }
 

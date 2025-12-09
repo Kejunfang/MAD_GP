@@ -23,24 +23,24 @@ import java.util.Map;
 
 public class AppointmentBooking extends AppCompatActivity {
 
-    // 控件变量
+    // btn variable
     private ImageView counsellorImage, btnBack;
     private TextView counsellorName, counsellorTitle, counsellorLocation;
     private Button bookbtn, backbtn;
 
-    // 日期控件
+    // date variable
     private TextView dateMon, dateTue, dateWed, dateThu, dateFri;
-    private TextView[] dateViews; // 数组方便管理
+    private TextView[] dateViews;
 
-    // 时间段控件
+    // time varibale
     private TextView slotMorning, slotAfternoon, slotEvening;
-    private TextView[] slotViews; // 数组方便管理
+    private TextView[] slotViews;
 
-    // 数据变量
+    // data variable
     private Counsellor currentCounsellor;
-    private String selectedDate = ""; // 记录用户选的日期
-    private String selectedTime = ""; // 记录用户选的时间
-    private String selectedLocation = ""; // 记录对应的地点
+    private String selectedDate = "";
+    private String selectedTime = "";
+    private String selectedLocation = "";
 
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
@@ -48,30 +48,30 @@ public class AppointmentBooking extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // 确保这里的布局文件名和你 XML 的名字一致
+
         setContentView(R.layout.activity_appointment_booking);
 
-        // 初始化 Firebase
+        // initial firebase
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
 
-        // --- 1. 初始化控件 ---
+        // initial view
         initViews();
 
-        // --- 2. 接收上一页传来的咨询师数据 ---
+        //Catch the data of the counsellor from last page
         currentCounsellor = (Counsellor) getIntent().getSerializableExtra("COUNSELLOR_DATA");
         if (currentCounsellor != null) {
             setupCounsellorInfo();
         }
 
-        // --- 3. 设置真实的日期数据 (新增功能) ---
+        //  Set up the real time data
         setupRealDates();
 
-        // --- 4. 设置点击事件 ---
+        //  Set up the click event
         setupDateClickListeners();
         setupTimeClickListeners();
 
-        // --- 5. 按钮逻辑 ---
+        //  Set up the logic of the Btn
         backbtn.setOnClickListener(v -> finish());
         btnBack.setOnClickListener(v -> finish());
 
@@ -87,7 +87,7 @@ public class AppointmentBooking extends AppCompatActivity {
         backbtn = findViewById(R.id.backbtn);
         btnBack = findViewById(R.id.btnBack);
 
-        // 日期 Views
+        // Date Views
         dateMon = findViewById(R.id.dateMon);
         dateTue = findViewById(R.id.dateTue);
         dateWed = findViewById(R.id.dateWed);
@@ -95,7 +95,7 @@ public class AppointmentBooking extends AppCompatActivity {
         dateFri = findViewById(R.id.dateFri);
         dateViews = new TextView[]{dateMon, dateTue, dateWed, dateThu, dateFri};
 
-        // 时间 Views
+        // Time Views
         slotMorning = findViewById(R.id.slotMorning);
         slotAfternoon = findViewById(R.id.slotAfternoon);
         slotEvening = findViewById(R.id.slotEvening);
@@ -114,49 +114,42 @@ public class AppointmentBooking extends AppCompatActivity {
         }
     }
 
-    // --- 新增：计算并显示本周日期 ---
+    // Calculate and show the date of this week
     private void setupRealDates() {
         Calendar calendar = Calendar.getInstance();
 
-        // 设置为本周一 (这样 Mon 对应周一，Tue 对应周二...)
-        // 注意：如果你希望显示的是“未来5天”而不是“本周一到周五”，可以把下面这一行删掉
         calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
 
-        // 日期格式化工具
-        SimpleDateFormat dayNumberFormat = new SimpleDateFormat("d", Locale.getDefault()); // 只获取数字 "12"
-        SimpleDateFormat fullDateFormat = new SimpleDateFormat("EEE, d MMM", Locale.getDefault()); // 获取完整 "Mon, 12 Oct"
+        //  Date format tools
+        SimpleDateFormat dayNumberFormat = new SimpleDateFormat("d", Locale.getDefault());
+        SimpleDateFormat fullDateFormat = new SimpleDateFormat("EEE, d MMM", Locale.getDefault());
 
-        // 循环填充5个格子
         for (TextView dateView : dateViews) {
-            // 1. 设置显示的数字 (例如 "12")
+
             dateView.setText(dayNumberFormat.format(calendar.getTime()));
 
-            // 2. 把完整日期 (例如 "Mon, 12 Oct") 藏在 tag 里，方便点击时获取
             dateView.setTag(fullDateFormat.format(calendar.getTime()));
 
-            // 3. 如果这一天是“今天”，可以给个默认高亮 (可选)
-            // 这里我们暂时不默认高亮，保持清爽，让用户自己点
 
-            // 天数加 1，准备处理下一个格子
             calendar.add(Calendar.DAY_OF_MONTH, 1);
         }
     }
 
-    // --- 日期选择逻辑 ---
+    //   Choose Date Logic
     private void setupDateClickListeners() {
         View.OnClickListener dateListener = v -> {
-            // 1. 重置所有日期样式 (变灰)
+            //  Set up the layout of all the date
             for (TextView view : dateViews) {
                 view.setBackgroundResource(R.drawable.date_circle);
                 view.setTextColor(Color.parseColor("#444444"));
             }
 
-            // 2. 设置当前点击的样式 (变绿)
+            //  Change the btn color to green
             TextView clickedView = (TextView) v;
             clickedView.setBackgroundResource(R.drawable.date_selected_circle);
             clickedView.setTextColor(Color.WHITE);
 
-            // 3. 记录选择 (从 Tag 里取出我们刚才存的真实日期)
+            //  record the choice
             if (v.getTag() != null) {
                 selectedDate = v.getTag().toString();
             }
@@ -167,21 +160,21 @@ public class AppointmentBooking extends AppCompatActivity {
         }
     }
 
-    // --- 时间选择逻辑 ---
+    //  Time choice logic
     private void setupTimeClickListeners() {
         View.OnClickListener timeListener = v -> {
-            // 1. 重置所有时间样式
+            //  Reset all the time
             for (TextView view : slotViews) {
                 view.setBackgroundResource(R.drawable.time_unselected);
                 view.setTextColor(Color.BLACK);
             }
 
-            // 2. 设置当前点击的样式
+            //   Set up the click view
             TextView clickedView = (TextView) v;
             clickedView.setBackgroundResource(R.drawable.time_selected);
             clickedView.setTextColor(Color.WHITE);
 
-            // 3. 记录选择
+            //  record the choice
             if (v == slotMorning) {
                 selectedTime = "9 - 12 AM";
                 selectedLocation = "BrightPath Mental Care Centre";
@@ -199,7 +192,7 @@ public class AppointmentBooking extends AppCompatActivity {
         }
     }
 
-    // --- 提交预约到 Firebase ---
+    //  Submit to the firebase
     private void handleBooking() {
         if (selectedDate.isEmpty()) {
             Toast.makeText(this, "Please select a date", Toast.LENGTH_SHORT).show();
@@ -224,7 +217,7 @@ public class AppointmentBooking extends AppCompatActivity {
         appointment.put("counsellorId", currentCounsellor.getId());
         appointment.put("counsellorName", currentCounsellor.getName());
         appointment.put("counsellorImage", currentCounsellor.getImageName());
-        appointment.put("date", selectedDate); // 这里现在存的是真实日期
+        appointment.put("date", selectedDate);
         appointment.put("time", selectedTime);
         appointment.put("location", selectedLocation);
         appointment.put("status", "upcoming");

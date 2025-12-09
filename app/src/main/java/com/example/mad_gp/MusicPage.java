@@ -92,7 +92,6 @@ public class MusicPage extends AppCompatActivity {
             Log.w(TAG, "Creating default music list");
             musicList = new ArrayList<>();
 
-            // 创建 3 首默认歌曲用于测试
             Music music1 = new Music();
             music1.setTitle("Calm Piano");
             music1.setArtist("Peaceful Mind");

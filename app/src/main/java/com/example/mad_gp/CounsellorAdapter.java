@@ -38,23 +38,20 @@ public class CounsellorAdapter extends RecyclerView.Adapter<CounsellorAdapter.Vi
         holder.tvTitle.setText(counsellor.getTitle());
         holder.tvLocation.setText(counsellor.getLocation());
 
-        // 加载本地图片 (根据数据库里的 imageName 字符串)
         String imgName = counsellor.getImageName();
         if (imgName != null && !imgName.isEmpty()) {
             int resId = context.getResources().getIdentifier(imgName, "drawable", context.getPackageName());
             if (resId != 0) {
                 holder.ivImage.setImageResource(resId);
             } else {
-                holder.ivImage.setImageResource(R.drawable.counsellor1); // 默认图
+                holder.ivImage.setImageResource(R.drawable.counsellor1);
             }
         } else {
             holder.ivImage.setImageResource(R.drawable.counsellor1);
         }
 
-        // 点击卡片，跳转到详情页 (AppointmentBooking)
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(context, AppointmentBooking.class);
-            // 传递整个对象
             intent.putExtra("COUNSELLOR_DATA", counsellor);
             context.startActivity(intent);
         });

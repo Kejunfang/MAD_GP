@@ -4,12 +4,12 @@ import com.google.firebase.Timestamp;
 import java.util.List;
 
 public class ChatRoom {
-    private String id; // 聊天室ID
-    private List<String> participants; // 参与者 ID 列表
+    private String id;
+    private List<String> participants;
     private String lastMessage;
     private Timestamp lastMessageTime;
 
-    public ChatRoom() {} // Firebase 需要
+    public ChatRoom() {}
 
     // Getters
     public String getId() { return id; }

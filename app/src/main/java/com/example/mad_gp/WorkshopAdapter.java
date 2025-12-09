@@ -44,7 +44,6 @@ public class WorkshopAdapter extends RecyclerView.Adapter<WorkshopAdapter.ViewHo
             if (resId != 0) holder.ivImage.setImageResource(resId);
         }
 
-        // 点击跳转到详情页
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(context, Workshop1Detail.class);
             intent.putExtra("WORKSHOP_DATA", workshop);

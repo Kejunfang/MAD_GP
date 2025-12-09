@@ -24,7 +24,6 @@ public class MusicList extends AppCompatActivity {
     private ProgressBar progressBar;
     private FirebaseFirestore db;
 
-    // 👇 保存音乐列表，方便传递
     private ArrayList<Music> musicList = new ArrayList<>();
 
     @Override
@@ -42,16 +41,13 @@ public class MusicList extends AppCompatActivity {
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        // 👇 修改这里，传递位置信息
         adapter = new MusicAdapter(new MusicAdapter.OnMusicClickListener() {
             @Override
             public void onPlayClick(Music music) {
-                // 找到点击的歌曲在列表中的位置
                 int position = musicList.indexOf(music);
 
                 Intent intent = new Intent(MusicList.this, MusicPage.class);
 
-                // 传递整个播放列表和当前位置
                 intent.putParcelableArrayListExtra("music_list", musicList);
                 intent.putExtra("current_position", position);
 
@@ -69,7 +65,7 @@ public class MusicList extends AppCompatActivity {
         db.collection("music")
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
-                    musicList.clear(); // 清空旧数据
+                    musicList.clear();
 
                     for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
                         Music music = new Music();

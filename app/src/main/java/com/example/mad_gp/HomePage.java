@@ -43,16 +43,14 @@ import java.util.Map;
 public class HomePage extends AppCompatActivity {
 
     private TextView tvGreeting, tvDate, titleEmotion;
-    private LinearLayout layoutEmojis; // 需要控制这个的显示/隐藏
+    private LinearLayout layoutEmojis;
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
 
-    // RecyclerView 相关变量
     private RecyclerView rvDailyTips;
     private DailyTipsAdapter tipsAdapter;
     private List<DailyTip> tipsList;
 
-    // 图表变量
     private LineChart moodChart;
 
     @Override
@@ -60,53 +58,41 @@ public class HomePage extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.homepage);
 
-        // --- 1. 初始化 Firebase ---
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
-        // --- 2. 绑定基本控件 ---
         tvGreeting = findViewById(R.id.tvGreeting);
         tvDate = findViewById(R.id.tvDate);
         titleEmotion = findViewById(R.id.titleEmotion);
-        layoutEmojis = findViewById(R.id.layoutEmojis); // 记得在 XML 里确认这个 ID
+        layoutEmojis = findViewById(R.id.layoutEmojis);
 
-        // 绑定图表控件
         moodChart = findViewById(R.id.moodChart);
 
-        // --- 3. 初始化 RecyclerView ---
         rvDailyTips = findViewById(R.id.rvDailyTips);
         rvDailyTips.setLayoutManager(new LinearLayoutManager(this));
 
-        // 初始化列表和适配器
         tipsList = new ArrayList<>();
         tipsAdapter = new DailyTipsAdapter(this, tipsList);
         rvDailyTips.setAdapter(tipsAdapter);
 
-        // --- 4. 其他卡片控件 ---
         FrameLayout cardBreathe = findViewById(R.id.cardBreathe);
         FrameLayout cardMusic = findViewById(R.id.cardMusic);
 
-        // 底部导航栏
         LinearLayout navHome = findViewById(R.id.navHome);
         LinearLayout navEvent = findViewById(R.id.navEvent);
         LinearLayout navSocial = findViewById(R.id.navSocial);
         LinearLayout navProfile = findViewById(R.id.navProfile);
 
-        // --- 5. 加载数据 ---
         updateGreetingUI();
         updateDate();
         loadAllDailyTips();
 
-        // 设置表情点击事件
         setupMoodListeners();
 
-        // 【关键修改】检查今天是否已打卡
         checkIfMoodLoggedToday();
 
-        // 【关键修改】开启实时图表监听
         setupRealtimeMoodChart();
 
-        // --- 6. 设置点击事件 ---
         cardBreathe.setOnClickListener(v -> {
             Intent intent = new Intent(HomePage.this, BrathingExercise.class);
             startActivity(intent);
@@ -120,7 +106,6 @@ public class HomePage extends AppCompatActivity {
         navHome.setOnClickListener(v -> {});
         navEvent.setOnClickListener(v -> {
             Intent intent = new Intent(HomePage.this, Event.class);
-            // 避免重复创建 Activity
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
             startActivity(intent);
             overridePendingTransition(0, 0); // 【关键】取消跳转动画
@@ -141,64 +126,58 @@ public class HomePage extends AppCompatActivity {
         });
     }
 
-    // --- 新功能：检查今天是否已经记录过心情 ---
     private void checkIfMoodLoggedToday() {
         FirebaseUser user = mAuth.getCurrentUser();
         if (user == null) return;
 
-        // 获取今天的日期字符串
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         String todayDate = sdf.format(new Date());
 
-        // 查询数据库里 date 字段等于今天的数据
         db.collection("users").document(user.getUid())
                 .collection("mood_logs")
                 .whereEqualTo("date", todayDate)
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     if (!queryDocumentSnapshots.isEmpty()) {
-                        // 如果找到了记录，说明今天已经打卡了
+                        // Today already click
                         hideMoodInputUI();
                     } else {
-                        // 没找到，显示输入框
+                        // if not found
                         showMoodInputUI();
                     }
                 })
                 .addOnFailureListener(e -> {
-                    // 查询失败默认显示，以免卡死
+                    // default show
                     showMoodInputUI();
                 });
     }
 
     private void hideMoodInputUI() {
         if (layoutEmojis != null) {
-            layoutEmojis.setVisibility(View.GONE); // 隐藏表情栏
+            layoutEmojis.setVisibility(View.GONE);
         }
         if (titleEmotion != null) {
-            titleEmotion.setText("Check-in complete for today! \nSee you tomorrow."); // 修改标题
+            titleEmotion.setText("Check-in complete for today! \nSee you tomorrow.");
         }
     }
 
     private void showMoodInputUI() {
         if (layoutEmojis != null) {
-            layoutEmojis.setVisibility(View.VISIBLE); // 显示表情栏
+            layoutEmojis.setVisibility(View.VISIBLE);
         }
         if (titleEmotion != null) {
-            titleEmotion.setText("How are you feeling today?"); // 恢复标题
+            titleEmotion.setText("How are you feeling today?");
         }
     }
 
-    // --- 修改功能：实时监听图表数据 (取代了原来的 loadMoodTrendChart) ---
     private void setupRealtimeMoodChart() {
         FirebaseUser user = mAuth.getCurrentUser();
         if (user == null || moodChart == null) return;
 
-        // 使用 addSnapshotListener 替代 get()
-        // 这样只要后台数据有变化（包括你在后台删除数据），这里会立刻收到通知
         db.collection("users").document(user.getUid())
                 .collection("mood_logs")
                 .orderBy("timestamp", Query.Direction.ASCENDING)
-                .limit(7) // 修改：获取最近30条数据，而不是7条
+                .limit(7) //
                 .addSnapshotListener(this, new EventListener<QuerySnapshot>() {
                     @Override
                     public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
@@ -212,7 +191,6 @@ public class HomePage extends AppCompatActivity {
                             List<String> xLabels = new ArrayList<>();
 
                             int index = 0;
-                            // 遍历数据
                             for (DocumentSnapshot doc : value.getDocuments()) {
                                 Long val = doc.getLong("moodValue");
                                 if (val != null) {
@@ -220,25 +198,21 @@ public class HomePage extends AppCompatActivity {
 
                                     String dateStr = doc.getString("date");
                                     if (dateStr != null && dateStr.length() >= 5) {
-                                        xLabels.add(dateStr.substring(5)); // 取 MM-dd
+                                        xLabels.add(dateStr.substring(5));
                                     } else {
                                         xLabels.add("");
                                     }
                                     index++;
                                 }
                             }
-                            // 刷新图表
+                            // update the graph
                             displayChart(entries, xLabels);
 
-                            // 再次检查一下今天的数据状态（处理用户在后台删除了今天数据的情况）
-                            // 如果用户在后台删了今天的记录，我们希望App能重新允许打卡
                             checkIfMoodLoggedToday();
 
                         } else {
-                            // 数据为空（比如全删光了）
-                            moodChart.clear(); // 清空图表
+                            moodChart.clear();
                             moodChart.setNoDataText("No mood data yet.");
-                            // 如果没有数据，肯定也没打卡，显示输入框
                             showMoodInputUI();
                         }
                     }
@@ -276,10 +250,8 @@ public class HomePage extends AppCompatActivity {
         moodChart.getDescription().setEnabled(false);
         moodChart.getLegend().setEnabled(false);
 
-        // --- 关键修改：让图表可以水平滑动，显示更多数据 ---
-        // 每次屏幕只显示最近的 7 个点，用户可以往左滑看以前的
         moodChart.setVisibleXRangeMaximum(7);
-        // 自动移动到最右边（最新的数据）
+
         moodChart.moveViewToX(entries.size());
 
         moodChart.notifyDataSetChanged();
@@ -323,16 +295,13 @@ public class HomePage extends AppCompatActivity {
                 .add(moodData)
                 .addOnSuccessListener(documentReference -> {
                     Toast.makeText(HomePage.this, "Mood logged: " + name, Toast.LENGTH_SHORT).show();
-                    // 保存成功后，立即隐藏输入框
                     hideMoodInputUI();
-                    // 注意：不需要手动调用 updateChart，因为上面的 SnapshotListener 会自动监听到数据变化并刷新
                 })
                 .addOnFailureListener(e -> {
                     Toast.makeText(HomePage.this, "Failed to log mood", Toast.LENGTH_SHORT).show();
                 });
     }
 
-    // --- 原有逻辑保持不变 ---
     private void updateDate() {
         SimpleDateFormat sdf = new SimpleDateFormat("MMMM dd, EEEE", Locale.getDefault());
         String currentDate = sdf.format(new Date());

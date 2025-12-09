@@ -9,7 +9,7 @@ public class Comment {
     private String content;
     private Timestamp timestamp;
 
-    public Comment() { } // Firebase 需要空构造函数
+    public Comment() { }
 
     public Comment(String userId, String userName, String content, Timestamp timestamp) {
         this.userId = userId;
@@ -18,7 +18,6 @@ public class Comment {
         this.timestamp = timestamp;
     }
 
-    // Getters and Setters
     public String getCommentId() { return commentId; }
     public void setCommentId(String commentId) { this.commentId = commentId; }
     public String getUserId() { return userId; }

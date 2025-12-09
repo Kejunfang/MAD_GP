@@ -12,7 +12,7 @@ public class Workshop implements Serializable {
     private String imageName;
     private String agenda;
 
-    public Workshop() {} // Firebase 需要空构造函数
+    public Workshop() {}
 
     public Workshop(String id, String title, String description, String fullDescription, String location, String price, String imageName, String agenda) {
         this.id = id;

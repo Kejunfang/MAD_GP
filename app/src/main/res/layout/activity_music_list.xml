@@ -6,7 +6,6 @@
     android:background="@color/cardview_light_background"
     android:fitsSystemWindows="true">
 
-    <!-- 顶部标题栏 -->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="56dp"
@@ -32,14 +31,12 @@
             android:layout_centerInParent="true"/>
     </RelativeLayout>
 
-    <!-- 音乐列表 -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewMusic"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="8dp"/>
 
-    <!-- 加载提示 -->
     <ProgressBar
         android:id="@+id/progressBar"
         android:layout_width="wrap_content"

@@ -32,7 +32,7 @@ public class SignUp extends AppCompatActivity {
     private Button signUpButton, googleSignUpButton;
     private TextView loginText;
 
-    // Firebase 声明
+    // Firebase
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
 
@@ -41,7 +41,7 @@ public class SignUp extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
 
-        // 初始化 Firebase Auth 和 Firestore
+        // Initial Firebase Auth and Firestore
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
@@ -69,7 +69,6 @@ public class SignUp extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Toast.makeText(SignUp.this, "Google Sign Up clicked", Toast.LENGTH_SHORT).show();
-                // Google Sign-In 逻辑通常比较复杂，需要单独配置 GoogleSignInClient
             }
         });
 
@@ -77,7 +76,7 @@ public class SignUp extends AppCompatActivity {
         loginText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(SignUp.this, Login.class); // 修正：跳转到 Login 而不是 HomePage
+                Intent intent = new Intent(SignUp.this, Login.class);
                 startActivity(intent);
                 finish();
             }
@@ -100,7 +99,6 @@ public class SignUp extends AppCompatActivity {
         String password = passwordEditText.getText().toString();
         String confirmPassword = confirmPasswordEditText.getText().toString();
 
-        // --- 验证逻辑 ---
         if (TextUtils.isEmpty(name)) {
             nameEditText.setError("Name required");
             nameEditText.requestFocus();
@@ -143,8 +141,7 @@ public class SignUp extends AppCompatActivity {
             return;
         }
 
-        // --- 1. 创建 Firebase Authentication 用户 ---
-        signUpButton.setEnabled(false); // 防止重复点击
+        signUpButton.setEnabled(false);
         signUpButton.setText("Signing Up...");
 
         mAuth.createUserWithEmailAndPassword(email, password)
@@ -152,14 +149,12 @@ public class SignUp extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            // 注册成功，获取当前用户 ID
                             FirebaseUser firebaseUser = mAuth.getCurrentUser();
                             if (firebaseUser != null) {
                                 String userId = firebaseUser.getUid();
                                 saveUserToFirestore(userId, name, email, phone, birthDate);
                             }
                         } else {
-                            // 注册失败
                             signUpButton.setEnabled(true);
                             signUpButton.setText("Sign Up");
                             Toast.makeText(SignUp.this, "Authentication failed: " + task.getException().getMessage(),
@@ -169,12 +164,10 @@ public class SignUp extends AppCompatActivity {
                 });
     }
 
-    // --- 2. 将用户信息保存到 Firestore ---
+    // Store Information into Firebase
     private void saveUserToFirestore(String userId, String name, String email, String phone, String birthDate) {
-        // 创建 UserModel 对象
         UserModel user = new UserModel(userId, name, email, phone, birthDate);
 
-        // 保存到 "users" 集合，文档 ID 为 userId
         db.collection("users").document(userId)
                 .set(user)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -182,9 +175,7 @@ public class SignUp extends AppCompatActivity {
                     public void onSuccess(Void aVoid) {
                         Toast.makeText(SignUp.this, "Sign Up Successful!", Toast.LENGTH_SHORT).show();
 
-                        // 跳转到主页
                         Intent intent = new Intent(SignUp.this, HomePage.class);
-                        // 清除之前的 Activity 栈，防止用户按返回键回到注册页
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intent);
                         finish();
@@ -210,7 +201,6 @@ public class SignUp extends AppCompatActivity {
                 new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker datePicker, int y, int m, int d) {
-                        // 格式化日期
                         String selectedDate = String.format("%02d/%02d/%04d", d, m + 1, y);
                         birthDateEditText.setText(selectedDate);
                     }

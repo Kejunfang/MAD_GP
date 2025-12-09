@@ -32,7 +32,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-// 1. 实现 OnPostActionListener 接口
+// Achieve OnPostActionListener API
 public class UserProfile extends AppCompatActivity implements CommunityPostAdapter.OnPostActionListener {
 
     private ImageView ivUserAvatar;
@@ -90,7 +90,6 @@ public class UserProfile extends AppCompatActivity implements CommunityPostAdapt
         rvUserPosts.setLayoutManager(new LinearLayoutManager(this));
         userPostList = new ArrayList<>();
 
-        // 2. 这里修改构造函数，传入 this 作为监听器
         postAdapter = new CommunityPostAdapter(this, userPostList, this);
         rvUserPosts.setAdapter(postAdapter);
     }
@@ -127,7 +126,6 @@ public class UserProfile extends AppCompatActivity implements CommunityPostAdapt
                 .orderBy("timestamp", Query.Direction.DESCENDING)
                 .addSnapshotListener(this, (value, error) -> {
                     if (error != null) {
-                        // 注意：如果出现 "The query requires an index" 错误，请查看 Logcat 中的链接去创建索引
                         Toast.makeText(this, "Load failed: " + error.getMessage(), Toast.LENGTH_LONG).show();
                         Log.e("UserProfile", "Error loading posts", error);
                         return;
@@ -233,13 +231,11 @@ public class UserProfile extends AppCompatActivity implements CommunityPostAdapt
         }
     }
 
-    // --- 3. 实现接口方法：评论点击 ---
     @Override
     public void onCommentClick(CommunityPost post) {
         showCommentDialog(post.getPostId());
     }
 
-    // --- 4. 实现接口方法：分享点击 ---
     public void onShareClick(CommunityPost post) {
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.setType("text/plain");
@@ -249,10 +245,8 @@ public class UserProfile extends AppCompatActivity implements CommunityPostAdapt
         startActivity(Intent.createChooser(shareIntent, "Share via"));
     }
 
-    // --- 5. 添加显示评论弹窗的逻辑 ---
     private void showCommentDialog(String postId) {
         BottomSheetDialog dialog = new BottomSheetDialog(this);
-        // 确保你的布局文件中有 dialog_comment_sheet.xml
         View view = getLayoutInflater().inflate(R.layout.dialog_comment_sheet, null);
         dialog.setContentView(view);
 
@@ -265,7 +259,6 @@ public class UserProfile extends AppCompatActivity implements CommunityPostAdapt
         rvComments.setLayoutManager(new LinearLayoutManager(this));
         rvComments.setAdapter(commentAdapter);
 
-        // 加载评论
         db.collection("community_posts").document(postId).collection("comments")
                 .orderBy("timestamp", Query.Direction.ASCENDING)
                 .addSnapshotListener((value, error) -> {
@@ -282,7 +275,6 @@ public class UserProfile extends AppCompatActivity implements CommunityPostAdapt
                     }
                 });
 
-        // 发送评论
         btnSend.setOnClickListener(v -> {
             String content = etCommentInput.getText().toString().trim();
             if (TextUtils.isEmpty(content)) return;
@@ -302,7 +294,6 @@ public class UserProfile extends AppCompatActivity implements CommunityPostAdapt
                                 etCommentInput.setText("");
                                 Toast.makeText(this, "Comment sent", Toast.LENGTH_SHORT).show();
 
-                                // 更新帖子评论数
                                 db.collection("community_posts").document(postId)
                                         .update("commentCount", FieldValue.increment(1));
                             });

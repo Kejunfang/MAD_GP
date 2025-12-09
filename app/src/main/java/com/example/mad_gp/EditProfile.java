@@ -80,8 +80,6 @@ public class EditProfile extends AppCompatActivity {
         dialog.setContentView(R.layout.activity_dialog_select_avatar);
         dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
-        // ★★★ 修复点 1：必须用真实的文件名 "smile"，不能用 "avatar_original" ★★★
-        // 因为 CommunityFeed 是通过文件名来找图片的
         setupDialogAvatar(dialog, R.id.imgAv1, "smile");
 
         setupDialogAvatar(dialog, R.id.imgAv2, "counsellor1");
@@ -135,8 +133,6 @@ public class EditProfile extends AppCompatActivity {
         if (tag == null) tag = "default";
 
         switch (tag) {
-            // ★★★ 修复点 2：这里也要改成 "smile" ★★★
-            // 这样在 EditProfile 页面里预览时也能正常显示
             case "smile": return R.drawable.smile;
 
             case "counsellor1": return R.drawable.counsellor1;
@@ -145,7 +141,6 @@ public class EditProfile extends AppCompatActivity {
             case "counsellor4": return R.drawable.counsellor4;
             case "counsellor5": return R.drawable.counsellor5;
 
-            // 处理旧数据：如果数据库里已经存了 "avatar_original"，为了兼容防止崩溃，也可以让它返回 smile
             case "avatar_original": return R.drawable.smile;
 
             default: return R.drawable.ic_default_avatar;

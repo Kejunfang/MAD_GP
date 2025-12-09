@@ -22,7 +22,7 @@ import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FieldValue; // ★★★ 关键导入：用于更新计数
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.Query;
@@ -30,38 +30,30 @@ import com.google.firebase.firestore.Query;
 import java.util.ArrayList;
 import java.util.List;
 
-// 实现 CommunityPostAdapter.OnPostActionListener 接口
+// Achive CommunityPostAdapter.OnPostActionListener api
 public class ProfilePage extends AppCompatActivity implements CommunityPostAdapter.OnPostActionListener {
 
-    // 1. 基本信息 UI
     private TextView tvUserName, tvUserBio, tvEventCount, tvPostCount;
     private TextView tvFollowingCount;
 
     private ImageView ivProfileImage, btnEditProfile;
 
-    // Posts 和 Following 的按钮容器
     private LinearLayout btnMyPostsContainer;
     private LinearLayout btnFollowingContainer;
 
-    // 2. 预约列表
     private TextView tvLabelAppointments;
     private RecyclerView rvAppointments;
     private AppointmentAdapter appointmentAdapter;
     private List<Appointment> appointmentList;
-
-    // 3. 参与活动列表
     private TextView tvLabelWorkshops;
     private RecyclerView rvParticipatedWorkshops;
     private ParticipatedWorkshopAdapter participatedAdapter;
     private List<Workshop> participatedWorkshopList;
-
-    // 4. 喜欢的帖子列表
     private TextView tvLabelLikedPosts;
     private RecyclerView rvLikedPosts;
     private CommunityPostAdapter likedPostAdapter;
     private List<CommunityPost> likedPostList;
 
-    // 5. 我的帖子列表
     private TextView tvLabelMyPosts;
     private RecyclerView rvMyPosts;
     private CommunityPostAdapter myPostAdapter;
@@ -81,7 +73,6 @@ public class ProfilePage extends AppCompatActivity implements CommunityPostAdapt
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
-        // --- 绑定基本控件 ---
         tvUserName = findViewById(R.id.tvUserName);
         tvUserBio = findViewById(R.id.tvUserBio);
         tvEventCount = findViewById(R.id.tvEventCount);
@@ -93,7 +84,6 @@ public class ProfilePage extends AppCompatActivity implements CommunityPostAdapt
         btnFollowingContainer = findViewById(R.id.btnFollowingContainer);
         btnMyPostsContainer = findViewById(R.id.btnMyPostsContainer);
 
-        // --- 初始化预约列表 ---
         tvLabelAppointments = findViewById(R.id.tvLabelAppointments);
         rvAppointments = findViewById(R.id.rvAppointments);
         rvAppointments.setLayoutManager(new LinearLayoutManager(this));
@@ -101,7 +91,6 @@ public class ProfilePage extends AppCompatActivity implements CommunityPostAdapt
         appointmentAdapter = new AppointmentAdapter(this, appointmentList);
         rvAppointments.setAdapter(appointmentAdapter);
 
-        // --- 初始化活动列表 ---
         tvLabelWorkshops = findViewById(R.id.tvLabelWorkshops);
         rvParticipatedWorkshops = findViewById(R.id.rvParticipatedWorkshops);
         rvParticipatedWorkshops.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
@@ -109,25 +98,22 @@ public class ProfilePage extends AppCompatActivity implements CommunityPostAdapt
         participatedAdapter = new ParticipatedWorkshopAdapter(this, participatedWorkshopList);
         rvParticipatedWorkshops.setAdapter(participatedAdapter);
 
-        // --- 初始化喜欢帖子列表 ---
         tvLabelLikedPosts = findViewById(R.id.tvLabelLikedPosts);
         rvLikedPosts = findViewById(R.id.rvLikedPosts);
         rvLikedPosts.setLayoutManager(new LinearLayoutManager(this));
         likedPostList = new ArrayList<>();
-        // 传入 'this' 作为监听器
+
         likedPostAdapter = new CommunityPostAdapter(this, likedPostList, this);
         rvLikedPosts.setAdapter(likedPostAdapter);
 
-        // --- 初始化我的帖子列表 ---
         tvLabelMyPosts = findViewById(R.id.tvLabelMyPosts);
         rvMyPosts = findViewById(R.id.rvMyPosts);
         rvMyPosts.setLayoutManager(new LinearLayoutManager(this));
         myPostList = new ArrayList<>();
-        // 传入 'this' 作为监听器
+
         myPostAdapter = new CommunityPostAdapter(this, myPostList, this);
         rvMyPosts.setAdapter(myPostAdapter);
 
-        // --- 点击事件 ---
         btnEditProfile.setOnClickListener(this::showPopupMenu);
 
         btnMyPostsContainer.setOnClickListener(v -> {
@@ -142,7 +128,6 @@ public class ProfilePage extends AppCompatActivity implements CommunityPostAdapt
 
         setupBottomNav();
 
-        // 开启喜欢帖子的实时监听
         startListeningToLikedPosts();
     }
 
@@ -406,8 +391,7 @@ public class ProfilePage extends AppCompatActivity implements CommunityPostAdapt
                     });
         }
     }
-
-    // --- 导航栏设置 (优化了动画) ---
+    //Navigation Bar
     private void setupBottomNav() {
         LinearLayout navHome = findViewById(R.id.navHome);
         LinearLayout navEvent = findViewById(R.id.navEvent);
@@ -419,7 +403,7 @@ public class ProfilePage extends AppCompatActivity implements CommunityPostAdapt
                 Intent intent = new Intent(ProfilePage.this, HomePage.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(intent);
-                overridePendingTransition(0, 0); // 取消动画，体验更佳
+                overridePendingTransition(0, 0);
             });
         }
         if (navEvent != null) {
@@ -438,12 +422,11 @@ public class ProfilePage extends AppCompatActivity implements CommunityPostAdapt
         }
         if (navProfile != null) {
             navProfile.setOnClickListener(v -> {
-                // 已经在 Profile 页，不需要跳转
+
             });
         }
     }
 
-    // --- 实现接口：分享 ---
 
     public void onShareClick(CommunityPost post) {
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
@@ -454,13 +437,11 @@ public class ProfilePage extends AppCompatActivity implements CommunityPostAdapt
         startActivity(Intent.createChooser(shareIntent, "Share via"));
     }
 
-    // --- 实现接口：评论 ---
     @Override
     public void onCommentClick(CommunityPost post) {
         showCommentDialog(post.getPostId());
     }
 
-    // --- 评论弹窗 (修复了评论数不更新的问题) ---
     private void showCommentDialog(String postId) {
         BottomSheetDialog dialog = new BottomSheetDialog(this);
         View view = getLayoutInflater().inflate(R.layout.dialog_comment_sheet, null);
@@ -475,7 +456,6 @@ public class ProfilePage extends AppCompatActivity implements CommunityPostAdapt
         rvComments.setLayoutManager(new LinearLayoutManager(this));
         rvComments.setAdapter(commentAdapter);
 
-        // 加载评论
         db.collection("community_posts").document(postId).collection("comments")
                 .orderBy("timestamp", Query.Direction.ASCENDING)
                 .addSnapshotListener((value, error) -> {
@@ -492,7 +472,6 @@ public class ProfilePage extends AppCompatActivity implements CommunityPostAdapt
                     }
                 });
 
-        // 发送评论
         btnSend.setOnClickListener(v -> {
             String content = etCommentInput.getText().toString().trim();
             if (TextUtils.isEmpty(content)) return;
@@ -505,14 +484,12 @@ public class ProfilePage extends AppCompatActivity implements CommunityPostAdapt
 
                     Comment newComment = new Comment(uid, name, content, Timestamp.now());
 
-                    // 1. 添加评论
                     db.collection("community_posts").document(postId).collection("comments")
                             .add(newComment)
                             .addOnSuccessListener(docRef -> {
                                 etCommentInput.setText("");
                                 Toast.makeText(this, "Comment sent", Toast.LENGTH_SHORT).show();
 
-                                // 2. ★★★ 关键修复：更新帖子的 commentCount 字段 (+1) ★★★
                                 db.collection("community_posts").document(postId)
                                         .update("commentCount", FieldValue.increment(1));
                             });

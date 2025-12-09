@@ -33,7 +33,6 @@ public class WorkshopRegistration extends AppCompatActivity {
         submitButton = findViewById(R.id.submitButton);
         cancelButton = findViewById(R.id.cancelButton);
 
-        // 接收上一页传来的标题和 ID
         String title = getIntent().getStringExtra("WORKSHOP_TITLE");
         workshopId = getIntent().getStringExtra("WORKSHOP_ID");
 

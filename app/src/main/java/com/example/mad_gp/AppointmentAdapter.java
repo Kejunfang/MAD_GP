@@ -37,7 +37,6 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
         holder.tvDate.setText(appt.getDate() + " • " + appt.getTime());
         holder.tvLocation.setText(appt.getLocation());
 
-        // 加载图片
         String imgName = appt.getCounsellorImage();
         if (imgName != null && !imgName.isEmpty()) {
             int resId = context.getResources().getIdentifier(imgName, "drawable", context.getPackageName());

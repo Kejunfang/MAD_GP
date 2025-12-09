@@ -26,7 +26,7 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
     public ChatListAdapter(Context context, List<ChatRoom> chatRooms) {
         this.context = context;
         this.chatRooms = chatRooms;
-        // 修复点 1: 安全获取当前用户 ID，防止空指针
+
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
             this.currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         }
@@ -43,10 +43,8 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         ChatRoom room = chatRooms.get(position);
 
-        // 显示最后一条消息
         holder.tvLastMessage.setText(room.getLastMessage() != null ? room.getLastMessage() : "");
 
-        // 核心：找出对方的 ID 并加载信息
         List<String> participants = room.getParticipants();
         String targetUserId = null;
 
@@ -62,13 +60,12 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
         if (targetUserId != null) {
             final String finalTargetId = targetUserId;
 
-            // 加载对方信息
             FirebaseFirestore.getInstance().collection("users").document(targetUserId)
                     .get()
                     .addOnSuccessListener(documentSnapshot -> {
                         if (documentSnapshot.exists()) {
                             String name = documentSnapshot.getString("name");
-                            // 修复点 2: 这里使用的是修正后的 holder.tvName
+
                             holder.tvName.setText(name != null ? name : "Unknown");
 
                             String avatarUrl = documentSnapshot.getString("profileImageUrl");
@@ -101,13 +98,11 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        // 修复点 3: 变量名改为 tvName 以匹配 XML，防止混淆
         public TextView tvName, tvLastMessage;
         public ImageView ivAvatar;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            // 修复点 4: ID 必须匹配 XML (activity_chat_row.xml 用的是 tvName)
             tvName = itemView.findViewById(R.id.tvName);
             tvLastMessage = itemView.findViewById(R.id.tvLastMessage);
             ivAvatar = itemView.findViewById(R.id.ivAvatar);

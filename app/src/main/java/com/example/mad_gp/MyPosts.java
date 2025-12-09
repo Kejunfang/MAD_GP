@@ -25,7 +25,7 @@ import com.google.firebase.firestore.Query;
 import java.util.ArrayList;
 import java.util.List;
 
-// 1. 实现 OnPostActionListener 接口
+// Achive OnPostActionListener api
 public class MyPosts extends AppCompatActivity implements CommunityPostAdapter.OnPostActionListener {
 
     private static final String TAG = "MyPosts";
@@ -55,7 +55,6 @@ public class MyPosts extends AppCompatActivity implements CommunityPostAdapter.O
         }
 
         postList = new ArrayList<>();
-        // 2. 传入 this 作为监听器
         postAdapter = new CommunityPostAdapter(this, postList, this);
         rvMyPosts.setLayoutManager(new LinearLayoutManager(this));
         rvMyPosts.setAdapter(postAdapter);
@@ -108,13 +107,11 @@ public class MyPosts extends AppCompatActivity implements CommunityPostAdapter.O
                 });
     }
 
-    // --- 3. 实现接口方法：评论点击 ---
     @Override
     public void onCommentClick(CommunityPost post) {
         showCommentDialog(post.getPostId());
     }
 
-    // --- 4. 实现接口方法：分享点击 ---
     public void onShareClick(CommunityPost post) {
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.setType("text/plain");
@@ -123,8 +120,6 @@ public class MyPosts extends AppCompatActivity implements CommunityPostAdapter.O
         shareIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
         startActivity(Intent.createChooser(shareIntent, "Share via"));
     }
-
-    // --- 5. 添加显示评论弹窗的逻辑 ---
     private void showCommentDialog(String postId) {
         BottomSheetDialog dialog = new BottomSheetDialog(this);
         View view = getLayoutInflater().inflate(R.layout.dialog_comment_sheet, null);
@@ -139,7 +134,6 @@ public class MyPosts extends AppCompatActivity implements CommunityPostAdapter.O
         rvComments.setLayoutManager(new LinearLayoutManager(this));
         rvComments.setAdapter(commentAdapter);
 
-        // 加载评论
         db.collection("community_posts").document(postId).collection("comments")
                 .orderBy("timestamp", Query.Direction.ASCENDING)
                 .addSnapshotListener((value, error) -> {
@@ -156,7 +150,6 @@ public class MyPosts extends AppCompatActivity implements CommunityPostAdapter.O
                     }
                 });
 
-        // 发送评论
         btnSend.setOnClickListener(v -> {
             String content = etCommentInput.getText().toString().trim();
             if (TextUtils.isEmpty(content)) return;

@@ -6,16 +6,16 @@ import java.util.List;
 public class CommunityPost {
     private String postId;
     private String userName;
-    private String userId; // 发帖人的ID
+    private String userId;
     private String userAvatar;
     private String timeAgo;
     private String content;
     private String postImage;
     private int likesCount;
     private int commentCount;
-    private List<String> likedBy; // 存储点赞用户的ID列表
+    private List<String> likedBy;
 
-    public CommunityPost() {} // Firebase 需要空构造函数
+    public CommunityPost() {}
 
     // Getters
     public String getPostId() { return postId; }
