@@ -108,21 +108,21 @@ public class HomePage extends AppCompatActivity {
             Intent intent = new Intent(HomePage.this, Event.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
             startActivity(intent);
-            overridePendingTransition(0, 0); // 【关键】取消跳转动画
+            overridePendingTransition(0, 0);
         });
 
         navSocial.setOnClickListener(v -> {
             Intent intent = new Intent(HomePage.this, CommunityFeed.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
             startActivity(intent);
-            overridePendingTransition(0, 0); // 【关键】取消跳转动画
+            overridePendingTransition(0, 0);
         });
 
         navProfile.setOnClickListener(v -> {
             Intent intent = new Intent(HomePage.this, ProfilePage.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
             startActivity(intent);
-            overridePendingTransition(0, 0); // 【关键】取消跳转动画
+            overridePendingTransition(0, 0);
         });
     }
 
