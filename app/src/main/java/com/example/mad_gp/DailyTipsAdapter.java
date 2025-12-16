@@ -57,7 +57,7 @@ public class DailyTipsAdapter extends RecyclerView.Adapter<DailyTipsAdapter.TipV
 
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(context, DailyTipsDetails.class);
-            intent.putExtra("TIP_ID", tip.getId()); // 传递 ID
+            intent.putExtra("TIP_ID", tip.getId()); //  ID
             context.startActivity(intent);
         });
     }
